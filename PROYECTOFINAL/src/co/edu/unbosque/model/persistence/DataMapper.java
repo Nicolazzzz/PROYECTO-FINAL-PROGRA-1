@@ -54,13 +54,13 @@ public class DataMapper {
 //
 	public static Especialista especialistaDTOToEspecialista(EspecialistaDTO dto) {
 		Especialista entidad = new Especialista(dto.getId(), dto.getNombre(), dto.getEdad(), dto.getGenero(),
-				dto.getCorreo(), dto.getEspecialidad());
+				dto.getCorreo(), dto.getEspecialidad(), dto.getPassword());
 		return entidad;
 	}
 
 	public static EspecialistaDTO especialistaToEspecialistaDTO(Especialista e) {
 		EspecialistaDTO dto = new EspecialistaDTO(e.getId(), e.getNombre(), e.getEdad(), e.getGenero(), e.getCorreo(),
-				e.getEspecialidad());
+				e.getEspecialidad(), e.getPassword());
 		return dto;
 	}
 
@@ -72,7 +72,7 @@ public class DataMapper {
 		for (EspecialistaDTO dto : listaDTO) {
 
 			listaEntidad.add(new Especialista(dto.getId(), dto.getNombre(), dto.getEdad(), dto.getGenero(),
-					dto.getCorreo(), dto.getEspecialidad()));
+					dto.getCorreo(), dto.getEspecialidad(), dto.getPassword()));
 
 		}
 
@@ -88,7 +88,7 @@ public class DataMapper {
 		for (Especialista e : listaEntity) {
 
 			listaDTO.add(new EspecialistaDTO(e.getId(), e.getNombre(), e.getEdad(), e.getGenero(), e.getCorreo(),
-					e.getEspecialidad()));
+					e.getEspecialidad(), e.getPassword()));
 
 		}
 

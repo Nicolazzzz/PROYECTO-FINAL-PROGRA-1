@@ -42,4 +42,9 @@ public class EmailController {
 
 	}
 
+	// DIRECTOR MEDICO
+	public static void sendChangeOfTurn(String correo) {
+
+	}
+
 }

@@ -16,6 +16,17 @@ public class Controller {
 
 	public void run() {
 
+		String menu = """
+
+				Bienvenido
+
+
+
+
+
+				""";
+		System.out.println();
+
 	}
 
 }

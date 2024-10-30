@@ -6,7 +6,7 @@ public interface CRUDOperation<D, E> {
 
 	public boolean add(D newData);
 
-	public boolean delete(D newData);
+	public boolean delete(D toDelete);
 
 	public boolean update(D previous, D newData);
 
