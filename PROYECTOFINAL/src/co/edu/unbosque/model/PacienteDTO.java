@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-public class Paciente extends Persona implements Serializable {
+public class PacienteDTO extends PersonaDTO implements Serializable {
 
 	/**
 	 * 
@@ -14,19 +14,21 @@ public class Paciente extends Persona implements Serializable {
 	private String tratamiento;
 	private String diagnostico;
 	private boolean requiereSeguimiento;
+	private Date fechaCita;
+	private LocalDateTime l;
 
-	public Paciente() {
+	public PacienteDTO() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Paciente(String tratamiento, String diagnostico, boolean requiereSeguimiento) {
+	public PacienteDTO(String tratamiento, String diagnostico, boolean requiereSeguimiento) {
 		super();
 		this.tratamiento = tratamiento;
 		this.diagnostico = diagnostico;
 		this.requiereSeguimiento = requiereSeguimiento;
 	}
 
-	public Paciente(long id, String nombre, int edad, String genero, String correo, String tratamiento,
+	public PacienteDTO(long id, String nombre, int edad, String genero, String correo, String tratamiento,
 			String diagnostico, boolean requiereSeguimiento) {
 		super(id, nombre, edad, genero, correo);
 		this.tratamiento = tratamiento;
@@ -34,7 +36,7 @@ public class Paciente extends Persona implements Serializable {
 		this.requiereSeguimiento = requiereSeguimiento;
 	}
 
-	public Paciente(long id, String nombre, int edad, String genero, String correo) {
+	public PacienteDTO(long id, String nombre, int edad, String genero, String correo) {
 		super(id, nombre, edad, genero, correo);
 		// TODO Auto-generated constructor stub
 	}

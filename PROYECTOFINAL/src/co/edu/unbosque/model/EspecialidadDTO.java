@@ -1,14 +1,14 @@
 package co.edu.unbosque.model;
 
-public class Area {
+public class EspecialidadDTO {
 
 	private String nombre;
 
-	public Area() {
+	public EspecialidadDTO() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Area(String nombre) {
+	public EspecialidadDTO(String nombre) {
 		super();
 		this.nombre = nombre;
 	}

@@ -1,30 +1,24 @@
 package co.edu.unbosque.model;
 
-import java.io.Serializable;
+public class EspecialistaDTO extends PersonaDTO {
 
-public class Especialista extends Persona implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	private String especialidad;
 
-	public Especialista() {
+	public EspecialistaDTO() {
 
 	}
 
-	public Especialista(String especialidad) {
+	public EspecialistaDTO(String especialidad) {
 		super();
 		this.especialidad = especialidad;
 	}
 
-	public Especialista(long id, String nombre, int edad, String genero, String correo, String especialidad) {
+	public EspecialistaDTO(long id, String nombre, int edad, String genero, String correo, String especialidad) {
 		super(id, nombre, edad, genero, correo);
 		this.especialidad = especialidad;
 	}
 
-	public Especialista(long id, String nombre, int edad, String genero, String correo) {
+	public EspecialistaDTO(long id, String nombre, int edad, String genero, String correo) {
 		super(id, nombre, edad, genero, correo);
 		// TODO Auto-generated constructor stub
 	}
