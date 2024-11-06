@@ -2,7 +2,7 @@ package co.edu.unbosque.model;
 
 import java.io.Serializable;
 
-public class Direccion extends Persona implements Serializable {
+public class Director extends Persona implements Serializable {
 
 	/**
 	 * 
@@ -10,21 +10,21 @@ public class Direccion extends Persona implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private long password;
 
-	public Direccion() {
+	public Director() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Direccion(long password) {
+	public Director(long password) {
 		super();
 		this.password = password;
 	}
 
-	public Direccion(long id, String nombre, int edad, String genero, String correo, long password) {
+	public Director(long id, String nombre, int edad, String genero, String correo, long password) {
 		super(id, nombre, edad, genero, correo);
 		this.password = password;
 	}
 
-	public Direccion(long id, String nombre, int edad, String genero, String correo) {
+	public Director(long id, String nombre, int edad, String genero, String correo) {
 		super(id, nombre, edad, genero, correo);
 		// TODO Auto-generated constructor stub
 	}
