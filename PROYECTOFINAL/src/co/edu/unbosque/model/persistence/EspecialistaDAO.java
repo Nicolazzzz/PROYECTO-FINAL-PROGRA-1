@@ -1,7 +1,6 @@
 package co.edu.unbosque.model.persistence;
 
 import java.util.ArrayList;
-
 import co.edu.unbosque.model.Especialista;
 import co.edu.unbosque.model.EspecialistaDTO;
 
@@ -108,7 +107,6 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 				temp.setEdad(Integer.parseInt(cols[2]));
 				temp.setGenero(cols[2]);
 				temp.setCorreo(cols[3]);
-
 			}
 		}
 	}
@@ -143,7 +141,25 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 	@Override
 	public void writeSerialized() {
 		FileHandler.writeSerialized(SERIALIZED_NAME, listaEspecialistas);
+	}
 
+	public String logIn(long id, long password) {
+
+		for (Especialista e : listaEspecialistas) {
+			if (e.getId() == id) {
+
+				if (e.getPassword() == password) {
+					return "Bienvenido!";
+				} else {
+					return "Contraseña equivocada, Verifique su contraseña";
+				}
+
+			} else {
+				return "Número de identificación equivocado, verifique los datos ingresados";
+			}
+		}
+
+		return null;
 	}
 
 }

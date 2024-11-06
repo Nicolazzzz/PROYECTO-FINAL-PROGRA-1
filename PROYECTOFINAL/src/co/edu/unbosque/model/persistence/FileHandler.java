@@ -81,7 +81,6 @@ public class FileHandler {
 			oos.close();
 
 		} catch (IOException e) {
-			e.printStackTrace();
 			System.out.println("ERROR EN CREAR ARCHIVO (Serialized)");
 		}
 
@@ -116,7 +115,7 @@ public class FileHandler {
 	public static void writeFile(String url, String content) {
 		try {
 
-			archivo = new File(FOLDER_NAME + "/" + url); // la instancia solo apunta a esa posicion en el disco
+			archivo = new File(FOLDER_NAME + "/" + url);
 			if (!archivo.exists()) {
 				archivo.createNewFile();
 			}
@@ -125,11 +124,8 @@ public class FileHandler {
 			pw.close();
 		} catch (FileNotFoundException e) {
 			System.out.println("ERROR EN LA ESCRITURA DEL ARCHIVO (PLAIN TEXT)");
-			// e.printStackTrace();
 		} catch (IOException e) {
-
 			System.out.println("ERROR EN LA CREACION DEL ARCHIVO (PLAIN TEXT)");
-			// e.printStackTrace();
 		}
 
 	}
@@ -151,7 +147,7 @@ public class FileHandler {
 			return content;
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("ERROR EN LA LECTURA DEL ARCHIVO (PLAIN TEXT)");
 		}
 
 		return null;

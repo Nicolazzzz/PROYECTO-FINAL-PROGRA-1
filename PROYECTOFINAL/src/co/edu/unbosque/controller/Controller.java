@@ -22,30 +22,58 @@ public class Controller {
 	public void run() {
 		mostrarMenuPrincipal();
 	}
-	
+
 	public void mostrarMenuPrincipal() {
-		
-		mainloop: while(true) {
-			vf.getCon().printLine(prop.getProperty("main.consola.menuprincipal"));			int op = vf.getCon().readInt();
+
+		mainloop: while (true) {
+			String menu = """
+
+					""";
+			vf.getCon().printLine(prop.getProperty("main.consola.menuprincipal"));
+			int op = vf.getCon().readInt();
 			vf.getCon().burnLine();
-			
+
 			switch (op) {
 			case 1:
-				
-				vf.getCon().printLine(prop.getProperty("paciente.consola.menu"));	
+
+				vf.getCon().printLine("Director");
+				mostrarMenuDirector();
 				break;
 			case 2:
-				vf.getCon().printLine(prop.getProperty("especialista.consola.menu"));	
+				vf.getCon().printLine("Especialista");
+				mostrarMenuEspecialista();
 				break;
-			
+
 			case 3:
-				vf.getCon().printLine(prop.getProperty("main.consola.salir"));
+				vf.getCon().printLine("Paciente");
+				mostrarMenuPaciente();
 				break mainloop;
-				
+
 			default:
-				vf.getCon().printLine(prop.getProperty("main.consola.opcioninvalida"));
-				break;
+				vf.getCon().printLine("Salir");
+				break mainloop;
 			}
 		}
+	}
+
+	public void mostrarMenuDirector() {
+
+		directorloop: while (true) {
+
+			String menuD = """
+
+					""";
+
+			vf.getCon().printLine(menuD);
+			int op = vf.getCon().readInt();
+
+		}
+
+	}
+
+	public void mostrarMenuEspecialista() {
+	}
+
+	public void mostrarMenuPaciente() {
 	}
 }

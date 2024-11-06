@@ -1,6 +1,6 @@
 package co.edu.unbosque.model;
 
-import co.edu.unbosque.model.persistence.DirreccionDAO;
+import co.edu.unbosque.model.persistence.DirectorDAO;
 import co.edu.unbosque.model.persistence.EspecialistaDAO;
 import co.edu.unbosque.model.persistence.PacienteDAO;
 
@@ -8,12 +8,12 @@ public class ModelFacade {
 
 	private PacienteDAO pacienteDAO;
 	private EspecialistaDAO especialistaDAO;
-	private DirreccionDAO dirreccionDAO;
+	private DirectorDAO dirreccionDAO;
 
 	public ModelFacade() {
 		pacienteDAO = new PacienteDAO();
 		especialistaDAO = new EspecialistaDAO();
-		dirreccionDAO = new DirreccionDAO();
+		dirreccionDAO = new DirectorDAO();
 
 	}
 
@@ -33,11 +33,11 @@ public class ModelFacade {
 		this.especialistaDAO = especialistaDAO;
 	}
 
-	public DirreccionDAO getDirreccionDAO() {
+	public DirectorDAO getDirreccionDAO() {
 		return dirreccionDAO;
 	}
 
-	public void setDirreccionDAO(DirreccionDAO dirreccionDAO) {
+	public void setDirreccionDAO(DirectorDAO dirreccionDAO) {
 		this.dirreccionDAO = dirreccionDAO;
 	}
 
