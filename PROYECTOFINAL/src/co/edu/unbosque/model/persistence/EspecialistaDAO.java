@@ -107,7 +107,6 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 				temp.setEdad(Integer.parseInt(cols[2]));
 				temp.setGenero(cols[2]);
 				temp.setCorreo(cols[3]);
-
 			}
 		}
 	}
