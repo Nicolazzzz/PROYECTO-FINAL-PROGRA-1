@@ -154,7 +154,7 @@ public class DirectorDAO implements CRUDOperation<DirectorDTO, Director> {
 		for (Director d : listaDirectores) {
 			if (d.getId() == id) {
 				if (d.getPassword() == password) {
-					return "Bienvenido!";
+					return "Bienvenido " + d.getNombre() + "!";
 				} else {
 					return "Contraseña equivocada, Verifique su contraseña";
 				}

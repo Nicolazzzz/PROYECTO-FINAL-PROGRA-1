@@ -56,7 +56,7 @@ public class Controller {
 			switch (op) {
 			case 1:
 				vf.getCon().printLine("Director");
-				mostrarMenuLogInDirector();
+				mostrarLogInDirector();
 				break;
 			case 2:
 				vf.getCon().printLine("Especialista");
@@ -79,7 +79,7 @@ public class Controller {
 		}
 	}
 
-	public void mostrarMenuLogInDirector() {
+	public void mostrarLogInDirector() {
 
 		directorloop: while (true) {
 
@@ -88,7 +88,7 @@ public class Controller {
 				String salir = vf.getCon().readLine();
 				if (salir.equalsIgnoreCase("si"))
 					break directorloop;
-				crearPrimerAdmin();
+				pedirDatosDirector(true, false);
 				break directorloop;
 			} else {
 				vf.getCon().printLine("Desea salir?");
@@ -108,35 +108,72 @@ public class Controller {
 		directorloop: while (true) {
 
 			String menuD = """
-					Bienvenido director!
+					Menu Director!
 
 					1. Modificar perfil
 					2. Eliminar perfil
-					3. Mostrar perfil
-					4. Apartado pacientes
-					5. Apartado especialistas
-					6. Salir
+					3. Agregar director
+					4. Mostrar directores
+					5. Apartado pacientes
+					6. Apartado especialistas
+					7. Salir
 
 					""";
 			vf.getCon().printLine(menuD);
 			int op = vf.getCon().readInt();
+			vf.getCon().burnLine();
 			switch (op) {
 			case 1:
+				vf.getCon().printLine("---MODIFICANDO DIRECTOR ACTUAL---");
+				vf.getCon().printLine("Ingrese sus datos: ");
+
+				pedirDatosDirector(false, true);
+
 				break;
 
 			case 2:
+				removeloop: while (true) {
+					vf.getCon().printLine("---ELIMINANDO DIRECTOR ACTUAL---");
+					vf.getCon().printLine("Esta seguro de eliminar su cuenta? \n1.SI \t2.NO");
+					int confirm = vf.getCon().readInt();
+					switch (confirm) {
+					case 1:
+						if (mf.getDirectorDAO()
+								.delete(new DirectorDTO(directorTempId, null, 0, null, null, 0)) == true) {
+							vf.getCon().printLine("Perfil eliminado con exito");
+							mostrarMenuPrincipal();
+							break removeloop;
+						} else {
+							vf.getCon().printLine("Error, intente nuevamente");
+						}
+						break;
+					case 2:
+						vf.getCon().printLine("Operacion cancelada");
+						break removeloop;
+					default:
+						vf.getCon().printLine("Seleccione una opción válida");
+						break;
+					}
+				}
+
 				break;
 
 			case 3:
 				break;
 
 			case 4:
+				vf.getCon().printLine("---MOSTRANDO DIRECTORES REGISTRADOS---");
+				vf.getCon().printLine(mf.getDirectorDAO().showAll());
 				break;
 
 			case 5:
 				break;
 
 			case 6:
+				break;
+
+			case 7:
+				directorTempId = 0;
 				break directorloop;
 
 			default:
@@ -154,20 +191,17 @@ public class Controller {
 	public void mostrarMenuPaciente() {
 	}
 
-	public void crearPrimerAdmin() {
+	public void pedirDatosDirector(boolean create, boolean update) {
 		try {
 			vf.getCon().print("ID: ");
 			long id = vf.getCon().readLong();
-			System.out.println(id);
 			ExceptionChecker.notValidIdException(id);
 			vf.getCon().burnLine();
 			vf.getCon().print("NOMBRE: ");
 			String nombre = vf.getCon().readLine();
-			System.out.println(nombre);
 			ExceptionChecker.notValidStringInputException(nombre);
 			vf.getCon().print("EDAD: ");
 			int edad = vf.getCon().readInt();
-			System.out.println(edad);
 			ExceptionChecker.negativeIntNumberException(edad);
 			vf.getCon().burnLine();
 
@@ -187,12 +221,10 @@ public class Controller {
 					break;
 				}
 			}
-			System.out.println(genero);
 
 			vf.getCon().print("CORREO: ");
 			String correo = vf.getCon().readLine();
 			ExceptionChecker.checkEmail(correo);
-			System.out.println(correo);
 
 			long password;
 			long confirmP;
@@ -208,16 +240,28 @@ public class Controller {
 
 				if (password != confirmP) {
 					vf.getCon().printLine("No coinciden las contraseñas, vuelva a ingresarlas");
-				} else {
+				}
+
+				if (password == confirmP) {
 					break passloop;
 				}
 			}
-			System.out.println(password);
-			System.out.println(confirmP);
 
-			if (mf.getDirectorDAO().add(new DirectorDTO(id, nombre, edad, genero, correo, password)) == true) {
-				vf.getCon().printLine(mf.getDirectorDAO().showAll());
-				vf.getCon().printLine("Usuario creado con exito");
+			if (create == true && update == false) {
+				if (mf.getDirectorDAO().add(new DirectorDTO(id, nombre, edad, genero, correo, password)) == true) {
+					vf.getCon().printLine("Usuario creado con exito");
+				} else {
+					vf.getCon().printLine("Intente nuevamente, verifique los datos ingresados");
+				}
+			} else if (update == true && create == false) {
+				if (mf.getDirectorDAO().update(new DirectorDTO(directorTempId, null, 0, null, null, 0),
+						new DirectorDTO(id, nombre, edad, genero, correo, password)) == true) {
+					vf.getCon().printLine("Usuario actualizado con exito");
+				} else {
+					vf.getCon().printLine("Intente nuevamente, verifique los datos ingresados");
+				}
+			} else {
+				vf.getCon().printLine("ERROR EN METODO PEDIR DATOS DIRECTOR");
 			}
 
 		} catch (NotValidIdException e) {
@@ -236,7 +280,8 @@ public class Controller {
 	public void logInDirector() {
 		passwordloop: while (true) {
 			try {
-				vf.getCon().printLine("Bienvenido \nID:");
+				vf.getCon().printLine("Bienvenido:");
+				vf.getCon().print("ID: ");
 				long id = vf.getCon().readLong();
 				ExceptionChecker.notValidIdException(id);
 				vf.getCon().print("Contraseña: ");
