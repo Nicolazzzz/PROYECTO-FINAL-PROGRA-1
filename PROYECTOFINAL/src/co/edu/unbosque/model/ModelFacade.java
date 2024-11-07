@@ -8,12 +8,12 @@ public class ModelFacade {
 
 	private PacienteDAO pacienteDAO;
 	private EspecialistaDAO especialistaDAO;
-	private DirectorDAO dirreccionDAO;
+	private DirectorDAO directorDAO;
 
 	public ModelFacade() {
 		pacienteDAO = new PacienteDAO();
 		especialistaDAO = new EspecialistaDAO();
-		dirreccionDAO = new DirectorDAO();
+		directorDAO = new DirectorDAO();
 
 	}
 
@@ -33,12 +33,12 @@ public class ModelFacade {
 		this.especialistaDAO = especialistaDAO;
 	}
 
-	public DirectorDAO getDirreccionDAO() {
-		return dirreccionDAO;
+	public DirectorDAO getDirectorDAO() {
+		return directorDAO;
 	}
 
-	public void setDirreccionDAO(DirectorDAO dirreccionDAO) {
-		this.dirreccionDAO = dirreccionDAO;
+	public void setDirectorDAO(DirectorDAO directorDAO) {
+		this.directorDAO = directorDAO;
 	}
 
 }

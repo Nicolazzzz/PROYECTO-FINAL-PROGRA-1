@@ -26,6 +26,10 @@ public class ViewConsole {
 		return sc.nextInt();
 	}
 
+	public long readLong() {
+		return sc.nextLong();
+	}
+
 	public double readDouble() {
 		return sc.nextDouble();
 	}

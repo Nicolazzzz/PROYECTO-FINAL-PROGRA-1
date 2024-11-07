@@ -5,12 +5,12 @@ import java.util.regex.Pattern;
 
 public class ExceptionChecker {
 
-	public static void notValidInputException(String txt) throws NotValidInputException {
+	public static void notValidStringInputException(String txt) throws NotValidStringInputException {
 		Pattern p = Pattern.compile("[^a-zA-ZñÑ ]");
 		Matcher m = p.matcher(txt);
 
 		if (m.find()) {
-			throw new NotValidInputException();
+			throw new NotValidStringInputException();
 		}
 	}
 
@@ -34,6 +34,32 @@ public class ExceptionChecker {
 		Matcher matcher = pattern.matcher(email);
 		if (!matcher.matches()) {
 			throw new EmailNotValidException();
+		}
+
+	}
+
+	public static void notValidIdException(long num) throws NotValidIdException {
+
+		String numTxt = Long.toString(num);
+		if (num < 0) {
+			throw new NotValidIdException();
+		}
+
+		if (numTxt.charAt(0) == 0 || numTxt.length() < 10 || numTxt.length() > 10) {
+			throw new NotValidIdException();
+		}
+
+	}
+
+	public static void notValidPasswordException(long password) throws NotValidPasswordException {
+
+		String passTxt = Long.toString(password);
+		if (password < 0) {
+			throw new NotValidPasswordException();
+		}
+
+		if (passTxt.charAt(0) == 0 || passTxt.length() < 5 || passTxt.length() > 10) {
+			throw new NotValidPasswordException();
 		}
 
 	}

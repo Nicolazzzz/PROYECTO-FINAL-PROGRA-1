@@ -2,8 +2,8 @@ package co.edu.unbosque.model.persistence;
 
 import java.util.ArrayList;
 
-import co.edu.unbosque.model.Direccion;
-import co.edu.unbosque.model.DireccionDTO;
+import co.edu.unbosque.model.Director;
+import co.edu.unbosque.model.DirectorDTO;
 import co.edu.unbosque.model.Especialista;
 import co.edu.unbosque.model.EspecialistaDTO;
 import co.edu.unbosque.model.Paciente;
@@ -97,41 +97,41 @@ public class DataMapper {
 		return listaDTO;
 
 	}
-	
-	//DIRECCION
+
+	// director
 //	
 //	
 //	
 
-	public static Direccion direccionDTOToDireccion(DireccionDTO dto) {
-		Direccion entidad = new Direccion(dto.getId(), dto.getNombre(), dto.getEdad(), dto.getGenero(), dto.getCorreo(),
+	public static Director directorDTOTodirector(DirectorDTO dto) {
+		Director entidad = new Director(dto.getId(), dto.getNombre(), dto.getEdad(), dto.getGenero(), dto.getCorreo(),
 				dto.getPassword());
 		return entidad;
 	}
 
-	public static ArrayList<Direccion> listaDireccionDTOToListaDireccion(ArrayList<DireccionDTO> listaDTO) {
+	public static ArrayList<Director> listadirectorDTOToListadirector(ArrayList<DirectorDTO> listaDTO) {
 
-		ArrayList<Direccion> listaEntidad = new ArrayList<>();
+		ArrayList<Director> listaEntidad = new ArrayList<>();
 
-		for (DireccionDTO dto : listaDTO) {
-			listaEntidad.add(new Direccion(dto.getId(), dto.getNombre(), dto.getEdad(), dto.getGenero(),
-					dto.getCorreo(), dto.getPassword()));
+		for (DirectorDTO dto : listaDTO) {
+			listaEntidad.add(new Director(dto.getId(), dto.getNombre(), dto.getEdad(), dto.getGenero(), dto.getCorreo(),
+					dto.getPassword()));
 		}
 
 		return listaEntidad;
 
 	}
 
-	public static DireccionDTO direccionToDireccionDTO(Direccion e) {
-		DireccionDTO dto = new DireccionDTO(e.getId(), e.getNombre(), e.getEdad(), e.getGenero(), e.getCorreo(),
+	public static DirectorDTO directorTodirectorDTO(Director e) {
+		DirectorDTO dto = new DirectorDTO(e.getId(), e.getNombre(), e.getEdad(), e.getGenero(), e.getCorreo(),
 				e.getPassword());
 		return dto;
 	}
 
-	public static ArrayList<DireccionDTO> listaDireccionToListaDireccionDTO(ArrayList<Direccion> listaEntidad) {
-		ArrayList<DireccionDTO> listaDto = new ArrayList<>();
-		for (Direccion e : listaEntidad) {
-			listaDto.add(new DireccionDTO(e.getId(), e.getNombre(), e.getEdad(), e.getGenero(), e.getCorreo(),
+	public static ArrayList<DirectorDTO> listadirectorToListadirectorDTO(ArrayList<Director> listaEntidad) {
+		ArrayList<DirectorDTO> listaDto = new ArrayList<>();
+		for (Director e : listaEntidad) {
+			listaDto.add(new DirectorDTO(e.getId(), e.getNombre(), e.getEdad(), e.getGenero(), e.getCorreo(),
 					e.getPassword()));
 		}
 

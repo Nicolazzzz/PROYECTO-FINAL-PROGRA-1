@@ -43,7 +43,7 @@ public class Director extends Persona implements Serializable {
 
 	@Override
 	public String toString() {
-		return "\nPassword= " + password;
+		return super.toString() + "\nPassword= " + password;
 	}
 
 }

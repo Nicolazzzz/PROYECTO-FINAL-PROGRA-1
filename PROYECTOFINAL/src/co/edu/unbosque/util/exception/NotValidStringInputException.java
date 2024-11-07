@@ -13,14 +13,14 @@ package co.edu.unbosque.util.exception;
  * @since 2024-09-24
  * @version 1.0
  */
-public class NotValidInputException extends Exception {
+public class NotValidStringInputException extends Exception {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public NotValidInputException() {
+	public NotValidStringInputException() {
 		super("NO INGRESE CARACTERES ESPECIALES O DATOS NUMERICOS");
 	}
 }

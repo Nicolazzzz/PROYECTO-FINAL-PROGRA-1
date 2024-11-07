@@ -1,6 +1,8 @@
 package co.edu.unbosque.model;
 
-public abstract class Persona {
+import java.io.Serializable;
+
+public abstract class Persona implements Serializable {
 
 	private long id;
 	private String nombre;
@@ -64,7 +66,7 @@ public abstract class Persona {
 	@Override
 	public String toString() {
 		return "\nNúmero de identificación= " + id + "\nNombre= " + nombre + "\nEdad= " + edad + "\nGenero= " + genero
-				+ "\nCorreo electrónico" + correo;
+				+ "\nCorreo electrónico= " + correo;
 	}
 
 }

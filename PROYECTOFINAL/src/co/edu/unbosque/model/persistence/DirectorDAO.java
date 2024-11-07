@@ -20,20 +20,24 @@ public class DirectorDAO implements CRUDOperation<DirectorDTO, Director> {
 	public String showAll() {
 		String content = "";
 		int pos = 1;
-		for (Director direccion : listaDirectores) {
-			content += "Director " + pos + "\n";
-			content += direccion + "\n";
-			pos++;
-		}
 
+		if (!listaDirectores.isEmpty()) {
+			for (Director direccion : listaDirectores) {
+				content += "Director " + pos + "\n";
+				content += direccion + "\n";
+				pos++;
+			}
+		} else {
+			content = "No hay elementos registrados";
+		}
 		return content;
 
 	}
 
 	@Override
 	public boolean add(DirectorDTO newData) {
-		if (true) {
-//		listaDirectores.add(newData);
+		if (find(DataMapper.directorDTOTodirector(newData)) == null) {
+			listaDirectores.add(DataMapper.directorDTOTodirector(newData));
 			writeFile();
 			writeSerialized();
 			return true;
@@ -45,7 +49,7 @@ public class DirectorDAO implements CRUDOperation<DirectorDTO, Director> {
 	@Override
 	public boolean delete(DirectorDTO toDelete) {
 
-		Director found = find(null);
+		Director found = find(DataMapper.directorDTOTodirector(toDelete));
 
 		if (found != null) {
 			listaDirectores.remove(found);
@@ -59,10 +63,10 @@ public class DirectorDAO implements CRUDOperation<DirectorDTO, Director> {
 
 	@Override
 	public boolean update(DirectorDTO previous, DirectorDTO newData) {
-		Director found = find(null);
+		Director found = find(DataMapper.directorDTOTodirector(newData));
 		if (found != null) {
 			listaDirectores.remove(found);
-//			listaDirectores.add(newData);
+			listaDirectores.add(DataMapper.directorDTOTodirector(newData));
 			writeFile();
 			writeSerialized();
 			return true;
@@ -161,5 +165,30 @@ public class DirectorDAO implements CRUDOperation<DirectorDTO, Director> {
 		}
 
 		return null;
+	}
+
+	public boolean checkLogIn(long id, long password) {
+
+		for (Director d : listaDirectores) {
+			if (d.getId() == id) {
+				if (d.getPassword() == password) {
+					return true;
+				} else {
+					return false;
+				}
+
+			} else {
+				return false;
+			}
+		}
+
+		return false;
+	}
+
+	public boolean checkAdmin() {
+		if (listaDirectores.isEmpty())
+			return false;
+		else
+			return true;
 	}
 }
