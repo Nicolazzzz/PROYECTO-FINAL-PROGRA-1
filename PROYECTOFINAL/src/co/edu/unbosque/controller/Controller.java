@@ -23,7 +23,18 @@ public class Controller {
 	private long directorTempId;
 
 	public Controller() {
-		EmailController.sendScheduled();
+//		EmailController.sendScheduled("carolinaavilaleon@gmail.com");
+//		EmailController.sendScheduled("m3ra2404@gmail.com");
+//		EmailController.sendCanceled("m3ra2404@gmail.com");
+//		EmailController.sendRescheduled("m3ra2404@gmail.com");
+//		EmailController.sendReminder("nicolaszambranoabril12@gmail.com");
+//		EmailController.sendReminder("m3ra2404@gmail.com");
+//		EmailController.sendTreatment("m3ra2404@gmail.com");
+//		EmailController.sendExaminationRequested("m3ra2404@gmail.com");
+//		EmailController.sendExaminationRequestedResults("m3ra2404@gmail.com");
+//		EmailController.sendNextDayAppointment("m3ra2404@gmail.com");
+//		EmailController.sendMonthShifts("m3ra2404@gmail.com");
+//		EmailController.sendChangeOfTurn("m3ra2404@gmail.com");
 		mf = new ModelFacade();
 		vf = new ViewFacade();
 		prop = FileHandler.loadProperties("config.properties");
