@@ -1,10 +1,6 @@
 package co.edu.unbosque.model;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.Date;
-
-public class PacienteDTO extends PersonaDTO implements Serializable {
+public class PacienteDTO extends PersonaDTO {
 
 	/**
 	 * 
@@ -13,26 +9,31 @@ public class PacienteDTO extends PersonaDTO implements Serializable {
 
 	private String tratamiento;
 	private String diagnostico;
+	private String especialidadCita;
+	private String especialistaAsignado;
 	private boolean requiereSeguimiento;
-	private Date fechaCita;
-	private LocalDateTime l;
 
 	public PacienteDTO() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public PacienteDTO(String tratamiento, String diagnostico, boolean requiereSeguimiento) {
+	public PacienteDTO(String tratamiento, String diagnostico, String especialidadCita, String especialistaAsignado,
+			boolean requiereSeguimiento) {
 		super();
 		this.tratamiento = tratamiento;
 		this.diagnostico = diagnostico;
+		this.especialidadCita = especialidadCita;
+		this.especialistaAsignado = especialistaAsignado;
 		this.requiereSeguimiento = requiereSeguimiento;
 	}
 
 	public PacienteDTO(long id, String nombre, int edad, String genero, String correo, String tratamiento,
-			String diagnostico, boolean requiereSeguimiento) {
+			String diagnostico, String especialidadCita, String especialistaAsignado, boolean requiereSeguimiento) {
 		super(id, nombre, edad, genero, correo);
 		this.tratamiento = tratamiento;
 		this.diagnostico = diagnostico;
+		this.especialidadCita = especialidadCita;
+		this.especialistaAsignado = especialistaAsignado;
 		this.requiereSeguimiento = requiereSeguimiento;
 	}
 
@@ -57,6 +58,22 @@ public class PacienteDTO extends PersonaDTO implements Serializable {
 		this.diagnostico = diagnostico;
 	}
 
+	public String getEspecialidadCita() {
+		return especialidadCita;
+	}
+
+	public void setEspecialidadCita(String especialidadCita) {
+		this.especialidadCita = especialidadCita;
+	}
+
+	public String getEspecialistaAsignado() {
+		return especialistaAsignado;
+	}
+
+	public void setEspecialistaAsignado(String especialistaAsignado) {
+		this.especialistaAsignado = especialistaAsignado;
+	}
+
 	public boolean isRequiereSeguimiento() {
 		return requiereSeguimiento;
 	}
@@ -71,8 +88,9 @@ public class PacienteDTO extends PersonaDTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return super.toString() + "\nTratamiento= " + tratamiento + "\nDiagnostico= " + diagnostico
-				+ "\nRequiere Seguimiento= " + requiereSeguimiento;
+		return super.toString() + "\nTratamiento= " + tratamiento + "\nDiagnostico= " + diagnostico + "\nEspecialidad= "
+				+ especialidadCita + "\nEspecialista Asignado= " + especialistaAsignado + "\nRequiere Seguimiento= "
+				+ requiereSeguimiento;
 	}
 
 }

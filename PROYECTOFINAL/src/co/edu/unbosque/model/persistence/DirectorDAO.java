@@ -114,6 +114,7 @@ public class DirectorDAO implements CRUDOperation<DirectorDTO, Director> {
 				temp.setEdad(Integer.parseInt(cols[2]));
 				temp.setGenero(cols[2]);
 				temp.setCorreo(cols[3]);
+				listaDirectores.add(temp);
 			}
 		}
 	}

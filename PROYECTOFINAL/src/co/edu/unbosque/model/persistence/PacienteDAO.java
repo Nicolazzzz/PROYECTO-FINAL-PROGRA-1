@@ -2,7 +2,6 @@ package co.edu.unbosque.model.persistence;
 
 import java.util.ArrayList;
 
-import co.edu.unbosque.model.Especialista;
 import co.edu.unbosque.model.Paciente;
 import co.edu.unbosque.model.PacienteDTO;
 
@@ -22,12 +21,51 @@ public class PacienteDAO implements CRUDOperation<PacienteDTO, Paciente> {
 	public String showAll() {
 		String content = "";
 		int pos = 1;
-		for (Paciente p : listaPacientes) {
-			content += "Paciente " + pos + "\n";
-			content += p + "\n";
-			pos++;
+		if (!listaPacientes.isEmpty()) {
+			for (Paciente p : listaPacientes) {
+				content += "Paciente " + pos + "\n";
+				content += p + "\n";
+				pos++;
+			}
+		} else {
+			content = "No hay elementos registrados";
 		}
 
+		return content;
+	}
+
+	public String showSpecificPatientSpecialty(String especialidad) {
+
+		String content = "";
+		int pos = 1;
+		for (Paciente p : listaPacientes) {
+			if (p.getEspecialidadCita() == especialidad) {
+				content += "Paciente " + pos + "\n";
+				content += p + "\n";
+				pos++;
+
+			}
+
+		}
+		if (content.equals("") || content == null) {
+			content = "No hay pacientes con cita en esa especialidad";
+		}
+		return content;
+	}
+
+	public String showSpecificPatient(long id) {
+		String content = "";
+		for (Paciente p : listaPacientes) {
+			if (p.getId() == id) {
+				content += "Paciente " + p.getNombre() + " cita en especialidad " + p.getEspecialidadCita();
+				content += p + "\n";
+
+			}
+
+		}
+		if (content.equals("") || content == null) {
+			content = "No se encontro al paciente, verifique el id";
+		}
 		return content;
 	}
 
@@ -105,12 +143,13 @@ public class PacienteDAO implements CRUDOperation<PacienteDTO, Paciente> {
 			String[] rows = content.split("\n");
 			for (String row : rows) {
 				String[] cols = row.split(";");
-				Especialista temp = new Especialista();
+				Paciente temp = new Paciente();
 				temp.setId(Long.parseLong(cols[0]));
 				temp.setNombre(cols[1]);
 				temp.setEdad(Integer.parseInt(cols[2]));
 				temp.setGenero(cols[2]);
 				temp.setCorreo(cols[3]);
+				listaPacientes.add(temp);
 
 			}
 		}

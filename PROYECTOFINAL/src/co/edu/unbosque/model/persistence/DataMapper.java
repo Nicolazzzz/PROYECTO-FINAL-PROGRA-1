@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import co.edu.unbosque.model.Director;
 import co.edu.unbosque.model.DirectorDTO;
+import co.edu.unbosque.model.Especialidad;
+import co.edu.unbosque.model.EspecialidadDTO;
 import co.edu.unbosque.model.Especialista;
 import co.edu.unbosque.model.EspecialistaDTO;
 import co.edu.unbosque.model.Paciente;
@@ -15,13 +17,15 @@ public class DataMapper {
 
 	public static Paciente pacienteDTOToPaciente(PacienteDTO dto) {
 		Paciente entidad = new Paciente(dto.getId(), dto.getNombre(), dto.getEdad(), dto.getGenero(), dto.getCorreo(),
-				dto.getTratamiento(), dto.getDiagnostico(), dto.isRequiereSeguimiento());
+				dto.getTratamiento(), dto.getDiagnostico(), dto.getEspecialidadCita(), dto.getEspecialistaAsignado(),
+				dto.isRequiereSeguimiento());
 		return entidad;
 	}
 
 	public static PacienteDTO pacienteToPacienteDTO(Paciente e) {
 		PacienteDTO dto = new PacienteDTO(e.getId(), e.getNombre(), e.getEdad(), e.getGenero(), e.getCorreo(),
-				e.getTratamiento(), e.getDiagnostico(), e.isRequiereSeguimiento());
+				e.getTratamiento(), e.getDiagnostico(), e.getEspecialidadCita(), e.getEspecialistaAsignado(),
+				e.isRequiereSeguimiento());
 		return dto;
 	}
 
@@ -31,7 +35,8 @@ public class DataMapper {
 
 		for (PacienteDTO dto : listaDTO) {
 			listaPacientes.add(new Paciente(dto.getId(), dto.getNombre(), dto.getEdad(), dto.getGenero(),
-					dto.getCorreo(), dto.getTratamiento(), dto.getDiagnostico(), dto.isRequiereSeguimiento()));
+					dto.getCorreo(), dto.getTratamiento(), dto.getDiagnostico(), dto.getEspecialistaAsignado(),
+					dto.getEspecialidadCita(), dto.isRequiereSeguimiento()));
 		}
 
 		return listaPacientes;
@@ -44,7 +49,8 @@ public class DataMapper {
 
 		for (Paciente e : listaEntity) {
 			listaDTO.add(new PacienteDTO(e.getId(), e.getNombre(), e.getEdad(), e.getGenero(), e.getCorreo(),
-					e.getTratamiento(), e.getDiagnostico(), e.isRequiereSeguimiento()));
+					e.getTratamiento(), e.getDiagnostico(), e.getEspecialidadCita(), e.getEspecialistaAsignado(),
+					e.isRequiereSeguimiento()));
 		}
 
 		return listaDTO;
@@ -137,4 +143,43 @@ public class DataMapper {
 
 		return listaDto;
 	}
+
+	// ESPECIALIDAD
+//	
+//	
+//	
+	public static Especialidad especialidadDTOToEspecialidad(EspecialidadDTO dto) {
+		Especialidad entidad = new Especialidad(dto.getNombre());
+		return entidad;
+	}
+
+	public static EspecialidadDTO especialidadToEspecialidadDTO(Especialidad entity) {
+		EspecialidadDTO dto = new EspecialidadDTO(entity.getNombre());
+		return dto;
+	}
+
+	public static ArrayList<Especialidad> listaEspecialidadesDTOToListaEspecialidades(
+			ArrayList<EspecialidadDTO> listaDTO) {
+
+		ArrayList<Especialidad> entityList = new ArrayList<>();
+		for (EspecialidadDTO dto : listaDTO) {
+			entityList.add(new Especialidad(dto.getNombre()));
+
+		}
+		return entityList;
+
+	}
+
+	public static ArrayList<EspecialidadDTO> listaEspecialidadesToListaEspecialidadesDTO(
+			ArrayList<Especialidad> listaE) {
+
+		ArrayList<EspecialidadDTO> dtoList = new ArrayList<>();
+		for (Especialidad e : listaE) {
+			dtoList.add(new EspecialidadDTO(e.getNombre()));
+
+		}
+		return dtoList;
+
+	}
+
 }

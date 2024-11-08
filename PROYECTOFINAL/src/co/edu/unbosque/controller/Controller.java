@@ -19,15 +19,31 @@ public class Controller {
 	private ViewFacade vf;
 	private Properties prop;
 
+	private String[] especialidades;
 	private long directorTempId;
 
 	public Controller() {
+		EmailController.sendScheduled();
 		mf = new ModelFacade();
 		vf = new ViewFacade();
-		prop = FileHandler.loadProperties("spanish.properties");
+		prop = FileHandler.loadProperties("config.properties");
 
-//		mf.getDirectorDAO().delete(new DirectorDTO(0, null, 0, null, null));
+//		mf.getEspecialidadDAO().add(new EspecialidadDTO("Cirugía"));
+//		mf.getEspecialidadDAO().add(new EspecialidadDTO("Oncología"));
+//		mf.getEspecialidadDAO().add(new EspecialidadDTO("Dermatología"));
+//		mf.getEspecialidadDAO().add(new EspecialidadDTO("Neumología"));
+//		mf.getEspecialidadDAO().add(new EspecialidadDTO("Cardiología"));
+//		mf.getEspecialidadDAO().add(new EspecialidadDTO("Medicina Interna"));
+
+		especialidades = mf.getEspecialidadDAO().getAll();
+		for (String string : especialidades) {
+			System.out.println(string);
+		}
+
 		vf.getCon().printLine(mf.getDirectorDAO().showAll());
+
+		mf.getEspecialistaDAO()
+				.setLimitSpecialist(Integer.parseInt(prop.getProperty("bosquehealth.especialistas.limite")));
 		run();
 
 	}
@@ -81,22 +97,22 @@ public class Controller {
 
 	public void mostrarLogInDirector() {
 
-		directorloop: while (true) {
+		directorloginloop: while (true) {
 
 			if (mf.getDirectorDAO().checkAdmin() == false) {
 				vf.getCon().printLine("Desea salir?");
 				String salir = vf.getCon().readLine();
 				if (salir.equalsIgnoreCase("si"))
-					break directorloop;
+					break directorloginloop;
 				pedirDatosDirector(true, false);
-				break directorloop;
+				break directorloginloop;
 			} else {
 				vf.getCon().printLine("Desea salir?");
 				String salir = vf.getCon().readLine();
 				if (salir.equalsIgnoreCase("si"))
-					break directorloop;
+					break directorloginloop;
 				logInDirector();
-				break directorloop;
+				break directorloginloop;
 			}
 
 		}
@@ -116,7 +132,8 @@ public class Controller {
 					4. Mostrar directores
 					5. Apartado pacientes
 					6. Apartado especialistas
-					7. Salir
+					7. Apartado especialidades
+					8. Salir
 
 					""";
 			vf.getCon().printLine(menuD);
@@ -124,11 +141,28 @@ public class Controller {
 			vf.getCon().burnLine();
 			switch (op) {
 			case 1:
-				vf.getCon().printLine("---MODIFICANDO DIRECTOR ACTUAL---");
-				vf.getCon().printLine("Ingrese sus datos: ");
+				updateloop: while (true) {
+					vf.getCon().printLine("---MODIFICANDO DIRECTOR ACTUAL---");
+					vf.getCon().printLine("Esta seguro de modificar su cuenta? \n1.SI \t2.NO");
+					int confirmU = vf.getCon().readInt();
+					vf.getCon().burnLine();
+					switch (confirmU) {
+					case 1:
+						vf.getCon().printLine("Ingrese sus datos: ");
+						pedirDatosDirector(false, true);
+						break updateloop;
 
-				pedirDatosDirector(false, true);
+					case 2:
 
+						vf.getCon().printLine("Operacion cancelada");
+						break updateloop;
+
+					default:
+						vf.getCon().printLine("Seleccione una opción válida");
+						break;
+					}
+
+				}
 				break;
 
 			case 2:
@@ -136,6 +170,7 @@ public class Controller {
 					vf.getCon().printLine("---ELIMINANDO DIRECTOR ACTUAL---");
 					vf.getCon().printLine("Esta seguro de eliminar su cuenta? \n1.SI \t2.NO");
 					int confirm = vf.getCon().readInt();
+					vf.getCon().burnLine();
 					switch (confirm) {
 					case 1:
 						if (mf.getDirectorDAO()
@@ -159,6 +194,8 @@ public class Controller {
 				break;
 
 			case 3:
+				vf.getCon().printLine("---AGREGANDO DIRECTOR---");
+				pedirDatosDirector(true, false);
 				break;
 
 			case 4:
@@ -167,12 +204,20 @@ public class Controller {
 				break;
 
 			case 5:
+				vf.getCon().printLine("--APARTADO PACIENTES--");
+				mostrarMenuDirectorPaciente();
 				break;
 
 			case 6:
+				vf.getCon().printLine("--APARTADO ESPECIALISTAS--");
 				break;
 
 			case 7:
+				vf.getCon().printLine("--APARTADO ESPECIALIDADES--");
+				break;
+
+			case 8:
+				vf.getCon().printLine("SALIENDO DE MENU DIRECTOR");
 				directorTempId = 0;
 				break directorloop;
 
@@ -300,5 +345,69 @@ public class Controller {
 				vf.getCon().printLine("Formato de contraseña no valido, verifique su contraseña");
 			}
 		}
+	}
+
+	public void mostrarMenuDirectorPaciente() {
+
+		pacienteloop: while (true) {
+			String menu = """
+
+					APARTADO PACIENTES
+
+					1. Ver pacientes
+					2. Agregar cita paciente
+					3. Modificar cita paciente
+					4. Eliminar cita paciente
+					5. Salir
+					""";
+			vf.getCon().printLine(menu);
+			int op = vf.getCon().readInt();
+			vf.getCon().burnLine();
+
+			switch (op) {
+			case 1:
+				vf.getCon().printLine("VIENDO CITAS PACIENTES");
+				vf.getCon().printLine("Elija la especialidad a la cual esta fijada la cita");
+				String[] out = new String[especialidades.length];
+				for (int i = 0; i < out.length; i++) {
+					out[i] = i + 1 + ". " + especialidades[i];
+				}
+				for (String o : out) {
+					vf.getCon().printLine(o);
+				}
+				int opE = vf.getCon().readInt() - 1;
+				vf.getCon().burnLine();
+				vf.getCon().printLine("PACIENTES CON CITA EN ESPECIALIDAD " + especialidades[opE]);
+				vf.getCon().printLine(mf.getPacienteDAO().showSpecificPatientSpecialty(especialidades[opE]));
+				break;
+
+			case 2:
+				vf.getCon().printLine("---AGREGANDO CITA PACIENTE---");
+
+				break;
+
+			case 3:
+				break;
+
+			case 4:
+				// PENDIENTE
+				vf.getCon().printLine("---Eliminando cita paciente");
+				vf.getCon().print("Ingrese el id del paciente a eliminar cita");
+				long id = vf.getCon().readLong();
+				vf.getCon().printLine(mf.getPacienteDAO().showSpecificPatient(id));
+				vf.getCon().printLine("Ingrese la especialidad de la cita a eliminar");
+
+				break;
+
+			case 5:
+				vf.getCon().printLine("SALIENDO MENU DIRECTOR PACIENTE");
+				break pacienteloop;
+
+			default:
+				vf.getCon().printLine("Ingrese una opcion valida");
+				break;
+			}
+		}
+
 	}
 }

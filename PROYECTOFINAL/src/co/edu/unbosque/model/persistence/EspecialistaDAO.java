@@ -9,6 +9,7 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 	private ArrayList<Especialista> listaEspecialistas;
 	private final String FILE_NAME = "especialistas.csv";
 	private final String SERIALIZED_NAME = "especialistas.bat";
+	private boolean limit = false;
 
 	public EspecialistaDAO() {
 		FileHandler.checkFolder();
@@ -19,12 +20,17 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 
 	@Override
 	public String showAll() {
+
 		String content = "";
 		int pos = 1;
-		for (Especialista s : listaEspecialistas) {
-			content += "Especialista " + pos + "\n";
-			content += s + "\n";
-			pos++;
+		if (!listaEspecialistas.isEmpty()) {
+			for (Especialista e : listaEspecialistas) {
+				content += "Especialista " + pos + "\n";
+				content += e + "\n";
+				pos++;
+			}
+		} else {
+			content = "No hay elementos registrados";
 		}
 		return content;
 
@@ -32,11 +38,17 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 
 	@Override
 	public boolean add(EspecialistaDTO newData) {
-		if (find(DataMapper.especialistaDTOToEspecialista(newData)) == null) {
-			listaEspecialistas.add(DataMapper.especialistaDTOToEspecialista(newData));
-			writeFile();
-			writeSerialized();
-			return true;
+
+		if (limit == false) {
+			if (find(DataMapper.especialistaDTOToEspecialista(newData)) == null) {
+				listaEspecialistas.add(DataMapper.especialistaDTOToEspecialista(newData));
+				writeFile();
+				writeSerialized();
+				return true;
+			}
+		} else {
+
+			return false;
 		}
 
 		return false;
@@ -107,6 +119,7 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 				temp.setEdad(Integer.parseInt(cols[2]));
 				temp.setGenero(cols[2]);
 				temp.setCorreo(cols[3]);
+				listaEspecialistas.add(temp);
 			}
 		}
 	}
@@ -160,6 +173,18 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 		}
 
 		return null;
+	}
+
+	public boolean setLimitSpecialist(int index) {
+
+		if (listaEspecialistas.size() >= index) {
+			limit = true;
+			return true;
+		} else {
+			limit = false;
+			return false;
+		}
+
 	}
 
 }

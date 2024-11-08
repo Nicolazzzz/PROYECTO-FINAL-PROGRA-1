@@ -1,7 +1,13 @@
 package co.edu.unbosque.model;
 
-public class Especialidad {
+import java.io.Serializable;
 
+public class Especialidad implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String nombre;
 
 	public Especialidad() {
