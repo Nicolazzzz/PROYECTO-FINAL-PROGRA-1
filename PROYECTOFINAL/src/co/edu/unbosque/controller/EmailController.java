@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
 public class EmailController {
 
 	private static String emailFrom = "bosquehealth.noreply@gmail.com";
-	private static String passwordFrom = "hqarrfsudlornhnt";
+	private static String passwordFrom = "etbu bjjd xvzc yenm";
 
 	private static String emailTo;
 	private static String subject;
@@ -27,17 +27,13 @@ public class EmailController {
 	private static Session mSession;
 	private static MimeMessage mCorreo;
 
-	public EmailController() {
+	public static void createScheduledEmail() {
 		mProperties = new Properties();
-	}
 
-	// PACIENTES
-
-	public static void sendScheduled() {
 		emailTo = "m3ra2404@gmail.com";
-		subject = "Prueba";
+		subject = "Cita Programada";
 		content = "Prueba gmail";
-
+		
 		// Simple mail transfer protocol
 		mProperties.put("mail.smtp.host", "smtp.gmail.com");
 		mProperties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
@@ -61,7 +57,10 @@ public class EmailController {
 		} catch (MessagingException ex) {
 			Logger.getLogger(EmailController.class.getName()).log(Level.SEVERE, null, ex);
 		}
+	}
 
+	public static void sendScheduled() {
+		createScheduledEmail();
 		try {
 			Transport mTransport = mSession.getTransport("smtp");
 			mTransport.connect(emailFrom, passwordFrom);
