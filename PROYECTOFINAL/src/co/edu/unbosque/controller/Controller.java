@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Properties;
 
 import co.edu.unbosque.model.DirectorDTO;
+import co.edu.unbosque.model.EspecialidadDTO;
 import co.edu.unbosque.model.EspecialistaDTO;
 import co.edu.unbosque.model.ModelFacade;
 import co.edu.unbosque.model.PacienteDTO;
@@ -195,8 +196,7 @@ public class Controller {
 					vf.getCon().burnLine();
 					switch (confirm) {
 					case 1:
-						if (mf.getDirectorDAO()
-								.delete(new DirectorDTO(directorTempId, null, 0, null, null, 0)) == true) {
+						if (mf.getDirectorDAO().delete(new DirectorDTO(directorTempId, null, 0, null, null, 0))) {
 							vf.getCon().printLine("Perfil eliminado con exito");
 							mostrarMenuPrincipal();
 							break removeloop;
@@ -236,6 +236,7 @@ public class Controller {
 
 			case 7:
 				vf.getCon().printLine("--APARTADO ESPECIALIDADES--");
+				mostrarMenuDirectorEspecialidades();
 				break;
 
 			case 8:
@@ -282,6 +283,98 @@ public class Controller {
 			} catch (NotValidPasswordException e) {
 				vf.getCon().printLine("Formato de contraseña no valido, verifique su contraseña");
 			}
+		}
+	}
+
+	public void mostrarMenuDirectorEspecialidades() {
+		mainspecialtyloop: while (true) {
+
+			String menu = """
+
+					APARTADO ESPECIALIDADES
+
+					1. Ver especialidades
+					2. Agregar Especialidad
+					3. Modificar Especialidad
+					4. Eliminar Especialidad
+					5. Salir
+					""";
+
+			vf.getCon().printLine(menu);
+			int op = vf.getCon().readInt();
+			vf.getCon().burnLine();
+
+			switch (op) {
+			case 1:
+				vf.getCon().printLine("---MOSTRANDO ESPECIALIDADES---");
+				vf.getCon().printLine(mf.getEspecialidadDAO().showAll());
+				break;
+
+			case 2:
+				vf.getCon().printLine("---AGREGANDO ESPECIALIDAD---");
+				vf.getCon().print("NOMBRE: ");
+				String especialidad = vf.getCon().readLine();
+				if (mf.getEspecialidadDAO().add(new EspecialidadDTO(especialidad))) {
+					vf.getCon().printLine("Operacion completada");
+				} else {
+					vf.getCon().printLine("Operacion incompleta");
+				}
+				break;
+
+			case 3:
+				vf.getCon().printLine("---MODIFICANDO ESPECIALIDAD---");
+				int opE;
+				specialtyloop: while (true) {
+					vf.getCon().printLine("Seleccione la especialidad a modificar: ");
+					mostrarLista();
+					opE = vf.getCon().readInt();
+					vf.getCon().burnLine();
+					if (opE > especialidades.length) {
+						vf.getCon().printLine("Opcion invalida, seleccione nuevamente");
+					} else {
+						break specialtyloop;
+					}
+				}
+				String name = especialidades[opE - 1];
+				vf.getCon().printLine("Ingrese el nombre nuevo del area");
+				String nameA = vf.getCon().readLine();
+				if (mf.getEspecialidadDAO().update(new EspecialidadDTO(name), new EspecialidadDTO(nameA))) {
+					vf.getCon().printLine("Operacion Completada");
+				} else {
+					vf.getCon().printLine("Operacion incompleta");
+				}
+
+				break;
+
+			case 4:
+				vf.getCon().printLine("---ELIMINANDO ESPECIALIDAD---");
+				int opE1;
+				specialtyloop: while (true) {
+					vf.getCon().printLine("Seleccione la especialidad a modificar: ");
+					mostrarLista();
+					opE1 = vf.getCon().readInt();
+					vf.getCon().burnLine();
+					if (opE1 > especialidades.length) {
+						vf.getCon().printLine("Opcion invalida, seleccione nuevamente");
+					} else {
+						break specialtyloop;
+					}
+				}
+				if (mf.getEspecialidadDAO().delete(new EspecialidadDTO(especialidades[opE1 - 1]))) {
+					vf.getCon().printLine("Operacion completada");
+				} else {
+					vf.getCon().printLine("Operacion incompleta");
+				}
+				break;
+
+			case 5:
+				vf.getCon().printLine("SALIENDO DE DIRECTOR ESPECIALIDADES");
+				break mainspecialtyloop;
+
+			default:
+				break;
+			}
+
 		}
 	}
 
@@ -372,8 +465,12 @@ public class Controller {
 					vf.getCon().printLine("Ingrese la cedula del paciente a eliminar: ");
 					long id = vf.getCon().readLong();
 					vf.getCon().burnLine();
-					mf.getPacienteDAO()
-							.delete(new PacienteDTO(id, null, 0, null, null, null, null, specialty, null, false));
+					if (mf.getPacienteDAO()
+							.delete(new PacienteDTO(id, null, 0, null, null, null, null, specialty, null, false))) {
+						vf.getCon().printLine("Operacion completada");
+					} else {
+						vf.getCon().printLine("Operacion incompleta");
+					}
 				}
 
 				break;
@@ -460,6 +557,7 @@ public class Controller {
 				break;
 
 			case 4:
+				vf.getCon().printLine("---ELIMINANDO ESPECIALISTA---");
 				vf.getCon().printLine("Elija el area del especialista");
 				int opE2;
 				specialtyloop: while (true) {
@@ -475,7 +573,11 @@ public class Controller {
 					vf.getCon().printLine("Ingrese la cedula del especialista a eliminar");
 					long id = vf.getCon().readLong();
 					vf.getCon().burnLine();
-					mf.getEspecialistaDAO().delete(new EspecialistaDTO(id, null, 0, null, null, null, 0));
+					if (mf.getEspecialistaDAO().delete(new EspecialistaDTO(id, null, 0, null, null, null, 0))) {
+						vf.getCon().printLine("Operacion completada");
+					} else {
+						vf.getCon().printLine("Operacion incompleta");
+					}
 				}
 				break;
 
