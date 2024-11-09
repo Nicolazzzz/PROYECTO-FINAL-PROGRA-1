@@ -34,39 +34,19 @@ public class Controller {
 	public Controller() {
 		enviarCorreosCitas();
 
-//		EmailController.sendScheduled("carolinaavilaleon@gmail.com");
-//		EmailController.sendScheduled("m3ra2404@gmail.com");
-//		EmailController.sendCanceled("m3ra2404@gmail.com");
-//		EmailController.sendRescheduled("m3ra2404@gmail.com");
-//		EmailController.sendReminder("nicolaszambranoabril12@gmail.com");
-//		EmailController.sendReminder("m3ra2404@gmail.com");
-//		EmailController.sendTreatment("m3ra2404@gmail.com");
-//		EmailController.sendExaminationRequested("m3ra2404@gmail.com");
-//		EmailController.sendExaminationRequestedResults("m3ra2404@gmail.com");
-//		EmailController.sendNextDayAppointment("m3ra2404@gmail.com");
-//		EmailController.sendMonthShifts("m3ra2404@gmail.com");
-//		EmailController.sendChangeOfTurn("m3ra2404@gmail.com");
 		mf = new ModelFacade();
 		vf = new ViewFacade();
 		prop = FileHandler.loadProperties("config.properties");
-		mf.getPacienteDAO().delete(new PacienteDTO(1122515555, null, 0, null, null, null, null, null, null, false));
 
-//		mf.getEspecialidadDAO().add(new EspecialidadDTO("Cirugía"));
-//		mf.getEspecialidadDAO().add(new EspecialidadDTO("Oncología"));
-//		mf.getEspecialidadDAO().add(new EspecialidadDTO("Dermatología"));
-//		mf.getEspecialidadDAO().add(new EspecialidadDTO("Neumología"));
-//		mf.getEspecialidadDAO().add(new EspecialidadDTO("Cardiología"));
-//		mf.getEspecialidadDAO().add(new EspecialidadDTO("Medicina Interna"));
+//		vf.getCon().printLine("PACIENTES");
+//		vf.getCon().printLine(mf.getPacienteDAO().showAll());
+		vf.getCon().printLine("DIRECTOR");
+		vf.getCon().printLine(mf.getDirectorDAO().showAll());
+//		vf.getCon().printLine("ESPECIALISTA");
+//		vf.getCon().printLine(mf.getEspecialistaDAO().showAll());
 
 		especialidades = mf.getEspecialidadDAO().getAll();
-		for (String string : especialidades) {
-			System.out.println(string);
-		}
 
-		vf.getCon().printLine(mf.getDirectorDAO().showAll());
-
-		mf.getEspecialistaDAO()
-				.setLimitSpecialist(Integer.parseInt(prop.getProperty("bosquehealth.especialistas.limite")));
 		run();
 
 	}
@@ -254,6 +234,19 @@ public class Controller {
 	}
 
 	public void mostrarMenuEspecialista() {
+		String menu = """
+
+				Menu Especialista
+
+				1. Ver turnos
+				2. Generar tratamiento
+				3. Solicitar examen medico
+				4. Generar resultados examen
+				5. Intercambiar turno
+				5. Salir
+
+
+				""";
 
 	}
 
@@ -268,7 +261,7 @@ public class Controller {
 				long password = vf.getCon().readLong();
 				ExceptionChecker.notValidPasswordException(password);
 				vf.getCon().printLine(mf.getEspecialistaDAO().verifyPassword(id, password));
-				if (mf.getDirectorDAO().checkLogIn(id, password) == true) {
+				if (mf.getEspecialistaDAO().checkLogIn(id, password) == true) {
 					directorTempId = id;
 					mostrarMenuEspecialista();
 					break passwordloop;
@@ -574,16 +567,16 @@ public class Controller {
 					} else {
 						break specialtyloop;
 					}
-					String specialty = especialidades[opE1 - 1];
-					vf.getCon().printLine(mf.getEspecialistaDAO().showSpecificArea(specialty));
-					vf.getCon().printLine("Ingrese la cedula del especialista a modificar: ");
-					long id = vf.getCon().readLong();
-					especialistaTempId = id;
-					vf.getCon().burnLine();
-					pedirDatosEspecialista(false, true);
-					especialistaTempId = 0;
-
 				}
+				String specialty = especialidades[opE1 - 1];
+				vf.getCon().printLine(mf.getEspecialistaDAO().showSpecificArea(specialty));
+				vf.getCon().printLine("Ingrese la cedula del especialista a modificar: ");
+				long id1 = vf.getCon().readLong();
+				especialistaTempId = id1;
+				vf.getCon().burnLine();
+				pedirDatosEspecialista(false, true);
+				especialistaTempId = 0;
+
 				break;
 
 			case 4:
@@ -600,14 +593,17 @@ public class Controller {
 					} else {
 						break specialtyloop;
 					}
-					vf.getCon().printLine("Ingrese la cedula del especialista a eliminar");
-					long id = vf.getCon().readLong();
-					vf.getCon().burnLine();
-					if (mf.getEspecialistaDAO().delete(new EspecialistaDTO(id, null, 0, null, null, null, 0))) {
-						vf.getCon().printLine("Operacion completada");
-					} else {
-						vf.getCon().printLine("Operacion incompleta");
-					}
+
+				}
+				String specialty1 = especialidades[opE2 - 1];
+				vf.getCon().printLine(mf.getEspecialistaDAO().showSpecificArea(specialty1));
+				vf.getCon().printLine("Ingrese la cedula del especialista a eliminar");
+				long id = vf.getCon().readLong();
+				vf.getCon().burnLine();
+				if (mf.getEspecialistaDAO().delete(new EspecialistaDTO(id, null, 0, null, null, null, 0))) {
+					vf.getCon().printLine("Operacion completada");
+				} else {
+					vf.getCon().printLine("Operacion incompleta");
 				}
 				break;
 
@@ -654,7 +650,7 @@ public class Controller {
 			}
 			int opE;
 			specialtyloop: while (true) {
-				vf.getCon().printLine("ESPECIALIDAD CITA: ");
+				vf.getCon().printLine("ESPECIALIDAD: ");
 				vf.getCon().printLine("Seleccione la especialidad: ");
 				mostrarLista();
 				opE = vf.getCon().readInt();
@@ -693,27 +689,35 @@ public class Controller {
 				}
 			}
 
-			if (create == true && update == false) {
-				if (mf.getEspecialistaDAO()
-						.add(new EspecialistaDTO(id, nombre, edad, genero, correo, especialidad, password)) == true) {
-					vf.getCon().printLine("Especialista creado con exito");
+			if (mf.getEspecialistaDAO().setLimitSpecialist(
+					Integer.parseInt(prop.getProperty("bosquehealth.especialidad.limite")),
+					especialidades[opE - 1]) == true) {
+				vf.getCon().printLine("No es posible agregar mas especialistas al area, llego a su limite");
+			} else {
+
+				if (create == true && update == false) {
+					if (mf.getEspecialistaDAO().add(
+							new EspecialistaDTO(id, nombre, edad, genero, correo, especialidad, password)) == true) {
+						vf.getCon().printLine("Especialista creado con exito");
+					} else {
+						vf.getCon().printLine("Intente nuevamente, verifique los datos ingresados");
+					}
+
+				} else if (update == true && create == false) {
+					if (mf.getEspecialistaDAO().update(
+							new EspecialistaDTO(especialistaTempId, null, 0, null, null, null, 0),
+							new EspecialistaDTO(id, nombre, edad, genero, correo, especialidad, password)) == true) {
+						vf.getCon().printLine("Especialista actualizado con exito");
+					} else {
+						vf.getCon().printLine("Intente nuevamente, verifique los datos ingresados");
+					}
 				} else {
-					vf.getCon().printLine("Intente nuevamente, verifique los datos ingresados");
+					vf.getCon().printLine("ERROR EN METODO PEDIR DATOS DIRECTOR");
 				}
 
-			} else if (update == true && create == false) {
-				if (mf.getEspecialistaDAO().update(
-						new EspecialistaDTO(especialistaTempId, null, 0, null, null, null, 0),
-						new EspecialistaDTO(id, nombre, edad, genero, correo, especialidad, password)) == true) {
-					vf.getCon().printLine("Especialista actualizado con exito");
-				} else {
-					vf.getCon().printLine("Intente nuevamente, verifique los datos ingresados");
-				}
-			} else {
-				vf.getCon().printLine("ERROR EN METODO PEDIR DATOS DIRECTOR");
 			}
 		} catch (NotValidIdException e) {
-			vf.getCon().printLine("Formato de id no valido, verifique que tenga 10 digitos");
+			vf.getCon().printLine("Formato de id no valido, verifique que tenga minimo 8 digitos y maximo 10 digitos");
 		} catch (NotValidStringInputException e) {
 			vf.getCon().printLine("Formato de nombre no valido, no ingrese caracteres especiales");
 		} catch (NegativeIntNumberException e) {
@@ -798,7 +802,7 @@ public class Controller {
 				vf.getCon().printLine("ERROR EN METODO PEDIR DATOS DIRECTOR");
 			}
 		} catch (NotValidIdException e) {
-			vf.getCon().printLine("Formato de id no valido, verifique que tenga 10 digitos");
+			vf.getCon().printLine("Formato de id no valido, verifique que tenga minimo 8 digitos y maximo 10 digitos");
 		} catch (NotValidStringInputException e) {
 			vf.getCon().printLine("Formato de nombre no valido, no ingrese caracteres especiales");
 		} catch (NegativeIntNumberException e) {
@@ -882,7 +886,7 @@ public class Controller {
 			}
 
 		} catch (NotValidIdException e) {
-			vf.getCon().printLine("Formato de id no valido, verifique que tenga 10 digitos");
+			vf.getCon().printLine("Formato de id no valido, verifique que tenga minimo 8 digitos y maximo 10 digitos");
 		} catch (NotValidStringInputException e) {
 			vf.getCon().printLine("Formato de nombre no valido, no ingrese caracteres especiales");
 		} catch (NegativeIntNumberException e) {

@@ -23,7 +23,7 @@ public class DirectorDAO implements CRUDOperation<DirectorDTO, Director> {
 
 		if (!listaDirectores.isEmpty()) {
 			for (Director direccion : listaDirectores) {
-				content += "Director " + pos + "\n";
+				content += "\nDirector " + pos;
 				content += direccion + "\n";
 				pos++;
 			}
@@ -152,38 +152,47 @@ public class DirectorDAO implements CRUDOperation<DirectorDTO, Director> {
 
 	public String verifyPassword(long id, long password) {
 
-		for (Director d : listaDirectores) {
-			if (d.getId() == id) {
-				if (d.getPassword() == password) {
-					return "Bienvenido " + d.getNombre() + "!";
-				} else {
-					return "Contraseña equivocada, Verifique su contraseña";
-				}
+		String content = "";
+		boolean cc = false;
+		boolean pswrd = false;
 
-			} else {
-				return "Número de identificación equivocado, verifique los datos ingresados";
+		for (Director d : listaDirectores) {
+			if (d.getPassword() == password)
+				pswrd = true;
+			if (d.getId() == id) {
+				cc = true;
+				if (d.getPassword() == password) {
+					pswrd = true;
+					content = "Bienvenido " + d.getNombre() + "!";
+				}
 			}
 		}
 
-		return null;
+		if (cc == false) {
+			content = "Número de identificación equivocado, verifique los datos ingresados";
+		} else if (pswrd == false) {
+			content = "Contraseña equivocada, Verifique su contraseña";
+		}
+		if (cc == false && pswrd == false) {
+			content = "Contraseña y usuario incorrectos, intente nuevamente";
+		}
+
+		return content;
 	}
 
 	public boolean checkLogIn(long id, long password) {
 
+		boolean confirmed = false;
 		for (Director d : listaDirectores) {
 			if (d.getId() == id) {
 				if (d.getPassword() == password) {
-					return true;
-				} else {
-					return false;
+					confirmed = true;
 				}
 
-			} else {
-				return false;
 			}
 		}
 
-		return false;
+		return confirmed;
 	}
 
 	public boolean checkAdmin() {

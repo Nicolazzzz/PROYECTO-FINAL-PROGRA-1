@@ -45,7 +45,7 @@ public class ExceptionChecker {
 			throw new NotValidIdException();
 		}
 
-		if (numTxt.charAt(0) == 0 || numTxt.length() < 10 || numTxt.length() > 10) {
+		if (numTxt.charAt(0) == 0 || numTxt.length() < 8 || numTxt.length() > 10) {
 			throw new NotValidIdException();
 		}
 

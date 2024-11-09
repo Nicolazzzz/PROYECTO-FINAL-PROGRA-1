@@ -10,7 +10,6 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 	private ArrayList<Especialista> listaEspecialistas;
 	private final String FILE_NAME = "especialistas.csv";
 	private final String SERIALIZED_NAME = "especialistas.bat";
-	private boolean limit = false;
 
 	public EspecialistaDAO() {
 		FileHandler.checkFolder();
@@ -26,7 +25,7 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 		int pos = 1;
 		if (!listaEspecialistas.isEmpty()) {
 			for (Especialista e : listaEspecialistas) {
-				content += "Especialista " + pos + "\n";
+				content += "\nEspecialista " + pos;
 				content += e + "\n";
 				pos++;
 			}
@@ -41,7 +40,7 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 		int pos = 1;
 		for (Especialista e : listaEspecialistas) {
 			if (e.getEspecialidad().equalsIgnoreCase(area)) {
-				content += "Especialista " + pos;
+				content += "\nEspecialista " + pos;
 				content += e + "\n";
 				pos++;
 			}
@@ -56,16 +55,11 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 	@Override
 	public boolean add(EspecialistaDTO newData) {
 
-		if (limit == false) {
-			if (find(DataMapper.especialistaDTOToEspecialista(newData)) == null) {
-				listaEspecialistas.add(DataMapper.especialistaDTOToEspecialista(newData));
-				writeFile();
-				writeSerialized();
-				return true;
-			}
-		} else {
-
-			return false;
+		if (find(DataMapper.especialistaDTOToEspecialista(newData)) == null) {
+			listaEspecialistas.add(DataMapper.especialistaDTOToEspecialista(newData));
+			writeFile();
+			writeSerialized();
+			return true;
 		}
 
 		return false;
@@ -210,16 +204,40 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 		return null;
 	}
 
-	public boolean setLimitSpecialist(int index) {
+	public boolean checkLogIn(long id, long password) {
 
-		if (listaEspecialistas.size() >= index) {
-			limit = true;
-			return true;
-		} else {
-			limit = false;
-			return false;
+		for (Especialista e : listaEspecialistas) {
+			if (e.getId() == id) {
+				if (e.getPassword() == password) {
+					return true;
+				} else {
+					return false;
+				}
+
+			} else {
+				return false;
+			}
 		}
 
+		return false;
+	}
+
+	public boolean setLimitSpecialist(int index, String especialidad) {
+
+		int conta = 0;
+		boolean limite = false;
+
+		for (Especialista e : listaEspecialistas) {
+			if (e.getEspecialidad().equalsIgnoreCase(especialidad)) {
+				conta++;
+				if (conta >= index) {
+					limite = true;
+					break;
+				}
+			}
+		}
+
+		return limite;
 	}
 
 }
