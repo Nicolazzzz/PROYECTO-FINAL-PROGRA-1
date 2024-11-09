@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Properties;
 
 import co.edu.unbosque.model.DirectorDTO;
+import co.edu.unbosque.model.EspecialistaDTO;
 import co.edu.unbosque.model.ModelFacade;
 import co.edu.unbosque.model.PacienteDTO;
 import co.edu.unbosque.model.persistence.EspecialistaDAO;
@@ -23,7 +24,11 @@ public class Controller {
 	private Properties prop;
 
 	private String[] especialidades;
+
 	private long directorTempId;
+	private long pacienteTempId;
+	private String pacienteTempECita;
+	private long especialistaTempId;
 
 	public Controller() {
 		enviarCorreosCitas();
@@ -207,7 +212,6 @@ public class Controller {
 						break;
 					}
 				}
-
 				break;
 
 			case 3:
@@ -227,6 +231,7 @@ public class Controller {
 
 			case 6:
 				vf.getCon().printLine("--APARTADO ESPECIALISTAS--");
+				mostrarMenuDirectorEspecialista();
 				break;
 
 			case 7:
@@ -300,16 +305,18 @@ public class Controller {
 			switch (op) {
 			case 1:
 				vf.getCon().printLine("VIENDO CITAS PACIENTES");
-				vf.getCon().printLine("Elija la especialidad a la cual esta fijada la cita");
-				String[] out = new String[especialidades.length];
-				for (int i = 0; i < out.length; i++) {
-					out[i] = i + 1 + ". " + especialidades[i];
+				int opE;
+				specialtyloop: while (true) {
+					vf.getCon().printLine("Seleccione la especialidad a la cual se asigno la cita: ");
+					mostrarLista();
+					opE = vf.getCon().readInt();
+					vf.getCon().burnLine();
+					if (opE > especialidades.length) {
+						vf.getCon().printLine("Opcion invalida, seleccione nuevamente");
+					} else {
+						break specialtyloop;
+					}
 				}
-				for (String o : out) {
-					vf.getCon().printLine(o);
-				}
-				int opE = vf.getCon().readInt() - 1;
-				vf.getCon().burnLine();
 				vf.getCon().printLine("PACIENTES CON CITA EN ESPECIALIDAD " + especialidades[opE]);
 				vf.getCon().printLine(mf.getPacienteDAO().showSpecificPatientSpecialty(especialidades[opE]));
 				break;
@@ -324,13 +331,7 @@ public class Controller {
 				int opE1;
 				specialtyloop: while (true) {
 					vf.getCon().printLine("Seleccione la especialidad: ");
-					String[] out1 = new String[especialidades.length];
-					for (int i = 0; i < out1.length; i++) {
-						out1[i] = i + 1 + ". " + especialidades[i];
-					}
-					for (String o : out1) {
-						vf.getCon().printLine(o);
-					}
+					mostrarLista();
 					opE1 = vf.getCon().readInt();
 					vf.getCon().burnLine();
 					if (opE1 > especialidades.length) {
@@ -339,18 +340,41 @@ public class Controller {
 						break specialtyloop;
 					}
 					String specialty = especialidades[opE1 - 1];
+					pacienteTempECita = specialty;
 					vf.getCon().printLine(mf.getPacienteDAO().showSpecificPatientSpecialty(specialty));
-
+					vf.getCon().printLine("Ingrese la cedula del paciente a modificar: ");
+					long id = vf.getCon().readLong();
+					pacienteTempId = id;
+					vf.getCon().burnLine();
+					pedirDatosPaciente(false, true);
+					pacienteTempECita = null;
+					pacienteTempId = 0;
 				}
 				break;
 
 			case 4:
 				// PENDIENTE
-				vf.getCon().printLine("---Eliminando cita paciente");
-				vf.getCon().print("Ingrese el id del paciente a eliminar cita");
-				long id = vf.getCon().readLong();
-				vf.getCon().printLine(mf.getPacienteDAO().showSpecificPatient(id));
-				vf.getCon().printLine("Ingrese la especialidad de la cita a eliminar");
+				vf.getCon().printLine("---ELIMINANDO PACIENTE---");
+				int opE2;
+				specialtyloop: while (true) {
+					vf.getCon().printLine("Seleccione la especialidad: ");
+					mostrarLista();
+					opE2 = vf.getCon().readInt();
+					vf.getCon().burnLine();
+					if (opE2 > especialidades.length) {
+						vf.getCon().printLine("Opcion invalida, seleccione nuevamente");
+					} else {
+						break specialtyloop;
+					}
+
+					String specialty = especialidades[opE2 - 1];
+					vf.getCon().printLine(mf.getPacienteDAO().showSpecificPatientSpecialty(specialty));
+					vf.getCon().printLine("Ingrese la cedula del paciente a eliminar: ");
+					long id = vf.getCon().readLong();
+					vf.getCon().burnLine();
+					mf.getPacienteDAO()
+							.delete(new PacienteDTO(id, null, 0, null, null, null, null, specialty, null, false));
+				}
 
 				break;
 
@@ -366,15 +390,207 @@ public class Controller {
 
 	}
 
-	public void enviarCorreosCitas() {
-		// generar el formato de hora del properties
-		Calendar calendario = Calendar.getInstance();
-		int h = calendario.get(Calendar.HOUR_OF_DAY);
-		int m = calendario.get(Calendar.MINUTE);
-		String hora = h + ":" + m;
+	public void mostrarMenuDirectorEspecialista() {
 
-		EspecialistaDAO edao = new EspecialistaDAO();
+		especialistaloop: while (true) {
 
+			String menu = """
+
+					APARTADO ESPECIALISTAS
+
+					1. Ver especialistas
+					2. Agregar especialistas
+					3. Modificar especialistas
+					4. Eliminar especialistas
+					5. Salir
+					""";
+
+			vf.getCon().printLine(menu);
+			int op = vf.getCon().readInt();
+			vf.getCon().burnLine();
+
+			switch (op) {
+			case 1:
+				vf.getCon().printLine("---MOSTRANDO ESPECIALISTAS---");
+				vf.getCon().printLine("Elija el area del especialista");
+				int opE;
+				specialtyloop: while (true) {
+					vf.getCon().printLine("Seleccione la especialidad: ");
+					mostrarLista();
+					opE = vf.getCon().readInt();
+					vf.getCon().burnLine();
+					if (opE > especialidades.length) {
+						vf.getCon().printLine("Opcion invalida, seleccione nuevamente");
+					} else {
+						break specialtyloop;
+					}
+				}
+				vf.getCon().printLine("Mostrando especialistas del area " + especialidades[opE - 1]);
+				vf.getCon().printLine(mf.getEspecialistaDAO().showSpecificArea(especialidades[opE - 1]));
+				break;
+
+			case 2:
+				vf.getCon().printLine("---AGREGANDO ESPECIALISTA---");
+				pedirDatosEspecialista(true, false);
+				break;
+
+			case 3:
+				vf.getCon().printLine("---MODIFICANDO ESPECIALISTA---");
+				int opE1;
+				specialtyloop: while (true) {
+					vf.getCon().printLine("Seleccione la especialidad: ");
+					mostrarLista();
+					opE1 = vf.getCon().readInt();
+					vf.getCon().burnLine();
+					if (opE1 > especialidades.length) {
+						vf.getCon().printLine("Opcion invalida, seleccione nuevamente");
+					} else {
+						break specialtyloop;
+					}
+					String specialty = especialidades[opE1 - 1];
+					vf.getCon().printLine(mf.getEspecialistaDAO().showSpecificArea(specialty));
+					vf.getCon().printLine("Ingrese la cedula del especialista a modificar: ");
+					long id = vf.getCon().readLong();
+					especialistaTempId = id;
+					vf.getCon().burnLine();
+					pedirDatosEspecialista(false, true);
+					especialistaTempId = 0;
+
+				}
+				break;
+
+			case 4:
+				vf.getCon().printLine("Elija el area del especialista");
+				int opE2;
+				specialtyloop: while (true) {
+					vf.getCon().printLine("Seleccione la especialidad: ");
+					mostrarLista();
+					opE2 = vf.getCon().readInt();
+					vf.getCon().burnLine();
+					if (opE2 > especialidades.length) {
+						vf.getCon().printLine("Opcion invalida, seleccione nuevamente");
+					} else {
+						break specialtyloop;
+					}
+					vf.getCon().printLine("Ingrese la cedula del especialista a eliminar");
+					long id = vf.getCon().readLong();
+					vf.getCon().burnLine();
+					mf.getEspecialistaDAO().delete(new EspecialistaDTO(id, null, 0, null, null, null, 0));
+				}
+				break;
+
+			case 5:
+				vf.getCon().printLine("SALIENDO MENU DIRECTOR ESPECIALISTA");
+				break especialistaloop;
+
+			default:
+				break;
+			}
+
+		}
+	}
+
+	public void pedirDatosEspecialista(boolean create, boolean update) {
+		try {
+			vf.getCon().print("ID: ");
+			long id = vf.getCon().readLong();
+			ExceptionChecker.notValidIdException(id);
+			vf.getCon().burnLine();
+			vf.getCon().print("NOMBRE: ");
+			String nombre = vf.getCon().readLine();
+			ExceptionChecker.notValidStringInputException(nombre);
+			vf.getCon().print("EDAD: ");
+			int edad = vf.getCon().readInt();
+			ExceptionChecker.negativeIntNumberException(edad);
+			vf.getCon().burnLine();
+
+			String genero = null;
+			genreloop: while (true) {
+				vf.getCon().printLine("GENERO: \n1. Masculino \t2.Femenino");
+				int opG = vf.getCon().readInt();
+				vf.getCon().burnLine();
+				if (opG == 1) {
+					genero = "Masculino";
+					break genreloop;
+				} else if (opG == 2) {
+					genero = "Femenino";
+					break genreloop;
+				} else {
+					vf.getCon().printLine("Seleccione una opción");
+					break;
+				}
+			}
+			int opE;
+			specialtyloop: while (true) {
+				vf.getCon().printLine("ESPECIALIDAD CITA: ");
+				vf.getCon().printLine("Seleccione la especialidad: ");
+				mostrarLista();
+				opE = vf.getCon().readInt();
+				vf.getCon().burnLine();
+				if (opE > especialidades.length) {
+					vf.getCon().printLine("Opcion invalida, seleccione nuevamente");
+				} else {
+					break specialtyloop;
+				}
+			}
+
+			String especialidad = especialidades[opE - 1];
+
+			vf.getCon().print("CORREO: ");
+			String correo = vf.getCon().readLine();
+			ExceptionChecker.checkEmail(correo);
+
+			long password;
+			long confirmP;
+			passloop: while (true) {
+
+				vf.getCon().print("CONTRASENA: ");
+				password = vf.getCon().readLong();
+				ExceptionChecker.notValidPasswordException(password);
+
+				vf.getCon().print("CONFIRMAR CONTRASENA: ");
+				confirmP = vf.getCon().readLong();
+				ExceptionChecker.notValidPasswordException(confirmP);
+
+				if (password != confirmP) {
+					vf.getCon().printLine("No coinciden las contraseñas, vuelva a ingresarlas");
+				}
+
+				if (password == confirmP) {
+					break passloop;
+				}
+			}
+
+			if (create == true && update == false) {
+				if (mf.getEspecialistaDAO()
+						.add(new EspecialistaDTO(id, nombre, edad, genero, correo, especialidad, password)) == true) {
+					vf.getCon().printLine("Especialista creado con exito");
+				} else {
+					vf.getCon().printLine("Intente nuevamente, verifique los datos ingresados");
+				}
+
+			} else if (update == true && create == false) {
+				if (mf.getEspecialistaDAO().update(
+						new EspecialistaDTO(especialistaTempId, null, 0, null, null, null, 0),
+						new EspecialistaDTO(id, nombre, edad, genero, correo, especialidad, password)) == true) {
+					vf.getCon().printLine("Especialista actualizado con exito");
+				} else {
+					vf.getCon().printLine("Intente nuevamente, verifique los datos ingresados");
+				}
+			} else {
+				vf.getCon().printLine("ERROR EN METODO PEDIR DATOS DIRECTOR");
+			}
+		} catch (NotValidIdException e) {
+			vf.getCon().printLine("Formato de id no valido, verifique que tenga 10 digitos");
+		} catch (NotValidStringInputException e) {
+			vf.getCon().printLine("Formato de nombre no valido, no ingrese caracteres especiales");
+		} catch (NegativeIntNumberException e) {
+			vf.getCon().printLine("La edad no puede ser 0, negativa, mayor a 122 años");
+		} catch (EmailNotValidException e) {
+			vf.getCon().printLine("Formato de correo no valido");
+		} catch (NotValidPasswordException e) {
+			vf.getCon().printLine("Formato de contraseña no valido, minimo 5 digitos y maximo 10 digitos");
+		}
 	}
 
 	public void pedirDatosPaciente(boolean create, boolean update) {
@@ -411,13 +627,7 @@ public class Controller {
 			specialtyloop: while (true) {
 				vf.getCon().printLine("ESPECIALIDAD CITA: ");
 				vf.getCon().printLine("Seleccione la especialidad: ");
-				String[] out = new String[especialidades.length];
-				for (int i = 0; i < out.length; i++) {
-					out[i] = i + 1 + ". " + especialidades[i];
-				}
-				for (String o : out) {
-					vf.getCon().printLine(o);
-				}
+				mostrarLista();
 				opE = vf.getCon().readInt();
 				vf.getCon().burnLine();
 				if (opE > especialidades.length) {
@@ -437,17 +647,21 @@ public class Controller {
 				if (mf.getPacienteDAO().add(new PacienteDTO(id, nombre, edad, genero, correo, null, null,
 						especialidadCita, null, false)) == true) {
 					vf.getCon().printLine("Paciente creado con exito");
+					EmailController.sendScheduled(correo);
 				} else {
 					vf.getCon().printLine("Intente nuevamente, verifique los datos ingresados");
 				}
 
-//			} else if (update == true && create == false) {
-//				if (mf.getDirectorDAO().update(new DirectorDTO(directorTempId, null, 0, null, null, 0),
-//						new DirectorDTO(id, nombre, edad, genero, correo, password)) == true) {
-//					vf.getCon().printLine("Usuario actualizado con exito");
-//				} else {
-//					vf.getCon().printLine("Intente nuevamente, verifique los datos ingresados");
-//				}
+			} else if (update == true && create == false) {
+				if (mf.getPacienteDAO()
+						.update(new PacienteDTO(pacienteTempId, null, 0, null, null, null, null, pacienteTempECita,
+								null, false),
+								new PacienteDTO(id, nombre, edad, genero, correo, null, null, especialidadCita, null,
+										false)) == true) {
+					vf.getCon().printLine("Paciente actualizado con exito");
+				} else {
+					vf.getCon().printLine("Intente nuevamente, verifique los datos ingresados");
+				}
 			} else {
 				vf.getCon().printLine("ERROR EN METODO PEDIR DATOS DIRECTOR");
 			}
@@ -546,5 +760,26 @@ public class Controller {
 		} catch (NotValidPasswordException e) {
 			vf.getCon().printLine("Formato de contraseña no valido, minimo 5 digitos y maximo 10 digitos");
 		}
+	}
+
+	public void mostrarLista() {
+		String[] out1 = new String[especialidades.length];
+		for (int i = 0; i < out1.length; i++) {
+			out1[i] = i + 1 + ". " + especialidades[i];
+		}
+		for (String o : out1) {
+			vf.getCon().printLine(o);
+		}
+	}
+
+	public void enviarCorreosCitas() {
+		// generar el formato de hora del properties
+		Calendar calendario = Calendar.getInstance();
+		int h = calendario.get(Calendar.HOUR_OF_DAY);
+		int m = calendario.get(Calendar.MINUTE);
+		String hora = h + ":" + m;
+
+		EspecialistaDAO edao = new EspecialistaDAO();
+
 	}
 }

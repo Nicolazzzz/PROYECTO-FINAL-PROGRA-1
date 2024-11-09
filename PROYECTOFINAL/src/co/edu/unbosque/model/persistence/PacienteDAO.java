@@ -118,7 +118,8 @@ public class PacienteDAO implements CRUDOperation<PacienteDTO, Paciente> {
 		Paciente found = null;
 		if (!listaPacientes.isEmpty()) {
 			for (Paciente p : listaPacientes) {
-				if (p.getId() == toFind.getId()) {
+				if (p.getId() == toFind.getId()
+						&& p.getEspecialidadCita().equalsIgnoreCase(toFind.getEspecialidadCita())) {
 					found = p;
 					return found;
 				} else {

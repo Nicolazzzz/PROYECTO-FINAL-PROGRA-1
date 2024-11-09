@@ -33,7 +33,23 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 			content = "No hay elementos registrados";
 		}
 		return content;
+	}
 
+	public String showSpecificArea(String area) {
+		String content = "";
+		int pos = 1;
+		for (Especialista e : listaEspecialistas) {
+			if (e.getEspecialidad().equalsIgnoreCase(area)) {
+				content += "Especialista " + pos;
+				content += e + "\n";
+				pos++;
+			}
+
+		}
+		if (content.equals("") || content == null) {
+			content = "No hay especialistas en esa especialidad";
+		}
+		return content;
 	}
 
 	@Override
