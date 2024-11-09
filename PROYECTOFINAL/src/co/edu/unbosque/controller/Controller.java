@@ -340,6 +340,8 @@ public class Controller {
 				String especialidad = vf.getCon().readLine();
 				if (mf.getEspecialidadDAO().add(new EspecialidadDTO(especialidad))) {
 					vf.getCon().printLine("Operacion completada");
+
+					especialidades = mf.getEspecialidadDAO().getAll();
 				} else {
 					vf.getCon().printLine("Operacion incompleta");
 				}
@@ -364,6 +366,8 @@ public class Controller {
 				String nameA = vf.getCon().readLine();
 				if (mf.getEspecialidadDAO().update(new EspecialidadDTO(name), new EspecialidadDTO(nameA))) {
 					vf.getCon().printLine("Operacion Completada");
+
+					especialidades = mf.getEspecialidadDAO().getAll();
 				} else {
 					vf.getCon().printLine("Operacion incompleta");
 				}
@@ -386,6 +390,8 @@ public class Controller {
 				}
 				if (mf.getEspecialidadDAO().delete(new EspecialidadDTO(especialidades[opE1 - 1]))) {
 					vf.getCon().printLine("Operacion completada");
+
+					especialidades = mf.getEspecialidadDAO().getAll();
 				} else {
 					vf.getCon().printLine("Operacion incompleta");
 				}
