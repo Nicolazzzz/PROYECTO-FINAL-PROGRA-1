@@ -1,6 +1,7 @@
 package co.edu.unbosque.model.persistence;
 
 import java.util.ArrayList;
+
 import co.edu.unbosque.model.Especialista;
 import co.edu.unbosque.model.EspecialistaDTO;
 
@@ -179,6 +180,24 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 
 				if (e.getPassword() == password) {
 					return "Bienvenido!";
+				} else {
+					return "Contraseña equivocada, Verifique su contraseña";
+				}
+
+			} else {
+				return "Número de identificación equivocado, verifique los datos ingresados";
+			}
+		}
+
+		return null;
+	}
+
+	public String verifyPassword(long id, long password) {
+
+		for (Especialista d : listaEspecialistas) {
+			if (d.getId() == id) {
+				if (d.getPassword() == password) {
+					return "Bienvenido " + d.getNombre() + "!";
 				} else {
 					return "Contraseña equivocada, Verifique su contraseña";
 				}

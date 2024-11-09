@@ -99,7 +99,7 @@ public class Controller {
 				break;
 			case 2:
 				vf.getCon().printLine("Especialista");
-				mostrarMenuEspecialista();
+				logInEspecialista();
 				break;
 
 			case 3:
@@ -254,8 +254,32 @@ public class Controller {
 	}
 
 	public void mostrarMenuEspecialista() {
-		// aqui toca agregar el menu de especialistas y hacerlo funcional
-		// antes de hacer lo de los correos
+
+	}
+
+	public void logInEspecialista() {
+		passwordloop: while (true) {
+			try {
+				vf.getCon().printLine("Bienvenido:");
+				vf.getCon().print("ID: ");
+				long id = vf.getCon().readLong();
+				ExceptionChecker.notValidIdException(id);
+				vf.getCon().print("Contraseña: ");
+				long password = vf.getCon().readLong();
+				ExceptionChecker.notValidPasswordException(password);
+				vf.getCon().printLine(mf.getEspecialistaDAO().verifyPassword(id, password));
+				if (mf.getDirectorDAO().checkLogIn(id, password) == true) {
+					directorTempId = id;
+					mostrarMenuEspecialista();
+					break passwordloop;
+				}
+
+			} catch (NotValidIdException e) {
+				vf.getCon().printLine("Formato de id no valido, verifique que tenga 10 digitos");
+			} catch (NotValidPasswordException e) {
+				vf.getCon().printLine("Formato de contraseña no valido, verifique su contraseña");
+			}
+		}
 	}
 
 	public void mostrarMenuPaciente() {
@@ -354,7 +378,7 @@ public class Controller {
 				vf.getCon().printLine("---ELIMINANDO ESPECIALIDAD---");
 				int opE1;
 				specialtyloop: while (true) {
-					vf.getCon().printLine("Seleccione la especialidad a modificar: ");
+					vf.getCon().printLine("Seleccione la especialidad a eliminar: ");
 					mostrarLista();
 					opE1 = vf.getCon().readInt();
 					vf.getCon().burnLine();
