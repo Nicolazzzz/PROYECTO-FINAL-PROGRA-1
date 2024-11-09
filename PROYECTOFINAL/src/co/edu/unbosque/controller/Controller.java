@@ -1,6 +1,7 @@
 package co.edu.unbosque.controller;
 
 import java.util.Calendar;
+import java.util.InputMismatchException;
 import java.util.Properties;
 
 import co.edu.unbosque.model.DirectorDTO;
@@ -47,12 +48,8 @@ public class Controller {
 
 		especialidades = mf.getEspecialidadDAO().getAll();
 
-		run();
-
-	}
-
-	public void run() {
 		mostrarMenuPrincipal();
+
 	}
 
 	public void mostrarMenuPrincipal() {
@@ -79,7 +76,7 @@ public class Controller {
 				break;
 			case 2:
 				vf.getCon().printLine("Especialista");
-				logInEspecialista();
+				mostrarLogInEspecialista();
 				break;
 
 			case 3:
@@ -96,30 +93,6 @@ public class Controller {
 				break;
 			}
 		}
-	}
-
-	public void mostrarLogInDirector() {
-
-		directorloginloop: while (true) {
-
-			if (mf.getDirectorDAO().checkAdmin() == false) {
-				vf.getCon().printLine("Desea salir?");
-				String salir = vf.getCon().readLine();
-				if (salir.equalsIgnoreCase("si"))
-					break directorloginloop;
-				pedirDatosDirector(true, false);
-				break directorloginloop;
-			} else {
-				vf.getCon().printLine("Desea salir?");
-				String salir = vf.getCon().readLine();
-				if (salir.equalsIgnoreCase("si"))
-					break directorloginloop;
-				logInDirector();
-				break directorloginloop;
-			}
-
-		}
-
 	}
 
 	public void mostrarMenuDirector() {
@@ -234,73 +207,50 @@ public class Controller {
 	}
 
 	public void mostrarMenuEspecialista() {
-		String menu = """
 
-				Menu Especialista
+		specialistloop: while (true) {
 
-				1. Ver turnos
-				2. Generar tratamiento
-				3. Solicitar examen medico
-				4. Generar resultados examen
-				5. Intercambiar turno
-				5. Salir
+			String menu = """
+
+					Menu Especialista
+
+					1. Ver turnos
+					2. Generar tratamiento
+					3. Solicitar examen medico
+					4. Generar resultados examen
+					5. Intercambiar turno
+					5. Salir
 
 
-				""";
+					""";
 
-	}
+			vf.getCon().printLine(menu);
+			int op = vf.getCon().readInt();
+			switch (op) {
+			case 1:
 
-	public void logInEspecialista() {
-		passwordloop: while (true) {
-			try {
-				vf.getCon().printLine("Bienvenido:");
-				vf.getCon().print("ID: ");
-				long id = vf.getCon().readLong();
-				ExceptionChecker.notValidIdException(id);
-				vf.getCon().print("Contraseña: ");
-				long password = vf.getCon().readLong();
-				ExceptionChecker.notValidPasswordException(password);
-				vf.getCon().printLine(mf.getEspecialistaDAO().verifyPassword(id, password));
-				if (mf.getEspecialistaDAO().checkLogIn(id, password) == true) {
-					directorTempId = id;
-					mostrarMenuEspecialista();
-					break passwordloop;
-				}
+				break;
+			case 2:
 
-			} catch (NotValidIdException e) {
-				vf.getCon().printLine("Formato de id no valido, verifique que tenga 10 digitos");
-			} catch (NotValidPasswordException e) {
-				vf.getCon().printLine("Formato de contraseña no valido, verifique su contraseña");
+				break;
+			case 3:
+
+				break;
+			case 4:
+
+				break;
+			case 5:
+				vf.getCon().printLine("SALIENDO MENU ESPECIALISTA");
+				break specialistloop;
+
+			default:
+				break;
 			}
 		}
+
 	}
 
 	public void mostrarMenuPaciente() {
-	}
-
-	public void logInDirector() {
-		passwordloop: while (true) {
-			try {
-				vf.getCon().printLine("Bienvenido:");
-				vf.getCon().print("ID: ");
-				long id = vf.getCon().readLong();
-				ExceptionChecker.notValidIdException(id);
-				vf.getCon().print("Contraseña: ");
-				long password = vf.getCon().readLong();
-				ExceptionChecker.notValidPasswordException(password);
-				vf.getCon().printLine(mf.getDirectorDAO().verifyPassword(id, password));
-				if (mf.getDirectorDAO().checkLogIn(id, password) == true) {
-					directorTempId = id;
-					mostrarMenuDirector();
-					break passwordloop;
-				}
-
-			} catch (NotValidIdException e) {
-				vf.getCon().printLine("Formato de id no valido, verifique que tenga 10 digitos");
-			} catch (NotValidPasswordException e) {
-				vf.getCon().printLine("Formato de contraseña no valido, verifique su contraseña");
-			}
-		}
 	}
 
 	public void mostrarMenuDirectorEspecialidades() {
@@ -726,6 +676,8 @@ public class Controller {
 			vf.getCon().printLine("Formato de correo no valido");
 		} catch (NotValidPasswordException e) {
 			vf.getCon().printLine("Formato de contraseña no valido, minimo 5 digitos y maximo 10 digitos");
+		} catch (InputMismatchException e) {
+			vf.getCon().printLine("Verifique el tipo de datos que va en los campos y lo que ingreso");
 		}
 	}
 
@@ -779,6 +731,8 @@ public class Controller {
 			String correo = vf.getCon().readLine();
 			ExceptionChecker.checkEmail(correo);
 
+			String especialistaAsignado = "";
+
 			if (create == true && update == false) {
 				if (mf.getPacienteDAO().add(new PacienteDTO(id, nombre, edad, genero, correo, null, null,
 						especialidadCita, null, false)) == true) {
@@ -809,6 +763,8 @@ public class Controller {
 			vf.getCon().printLine("La edad no puede ser 0, negativa, mayor a 122 años");
 		} catch (EmailNotValidException e) {
 			vf.getCon().printLine("Formato de correo no valido");
+		} catch (InputMismatchException e) {
+			vf.getCon().printLine("Verifique el tipo de datos que va en los campos y lo que ingreso");
 		}
 	}
 
@@ -895,6 +851,82 @@ public class Controller {
 			vf.getCon().printLine("Formato de correo no valido");
 		} catch (NotValidPasswordException e) {
 			vf.getCon().printLine("Formato de contraseña no valido, minimo 5 digitos y maximo 10 digitos");
+		} catch (InputMismatchException e) {
+			vf.getCon().printLine("Verifique el tipo de datos que va en los campos y lo que ingreso");
+		}
+	}
+
+	public void mostrarValidacionLogInDirector() {
+
+		directorloginloop: while (true) {
+
+			if (mf.getDirectorDAO().checkAdmin() == false) {
+				vf.getCon().printLine("Desea salir?");
+				String salir = vf.getCon().readLine();
+				if (salir.equalsIgnoreCase("si"))
+					break directorloginloop;
+				pedirDatosDirector(true, false);
+				break directorloginloop;
+			} else {
+				vf.getCon().printLine("Desea salir?");
+				String salir = vf.getCon().readLine();
+				if (salir.equalsIgnoreCase("si"))
+					break directorloginloop;
+				mostrarLogInDirector();
+				break directorloginloop;
+			}
+
+		}
+
+	}
+
+	public void mostrarLogInDirector() {
+		passwordloop: while (true) {
+			try {
+				vf.getCon().printLine("Bienvenido:");
+				vf.getCon().print("ID: ");
+				long id = vf.getCon().readLong();
+				ExceptionChecker.notValidIdException(id);
+				vf.getCon().print("Contraseña: ");
+				long password = vf.getCon().readLong();
+				ExceptionChecker.notValidPasswordException(password);
+				vf.getCon().printLine(mf.getDirectorDAO().verifyPassword(id, password));
+				if (mf.getDirectorDAO().checkLogIn(id, password) == true) {
+					directorTempId = id;
+					mostrarMenuDirector();
+					break passwordloop;
+				}
+
+			} catch (NotValidIdException e) {
+				vf.getCon().printLine("Formato de id no valido, verifique que tenga 10 digitos");
+			} catch (NotValidPasswordException e) {
+				vf.getCon().printLine("Formato de contraseña no valido, verifique su contraseña");
+			}
+		}
+	}
+
+	public void mostrarLogInEspecialista() {
+		passwordloop: while (true) {
+			try {
+				vf.getCon().printLine("Bienvenido:");
+				vf.getCon().print("ID: ");
+				long id = vf.getCon().readLong();
+				ExceptionChecker.notValidIdException(id);
+				vf.getCon().print("Contraseña: ");
+				long password = vf.getCon().readLong();
+				ExceptionChecker.notValidPasswordException(password);
+				vf.getCon().printLine(mf.getEspecialistaDAO().verifyPassword(id, password));
+				if (mf.getEspecialistaDAO().checkLogIn(id, password) == true) {
+					directorTempId = id;
+					mostrarMenuEspecialista();
+					break passwordloop;
+				}
+
+			} catch (NotValidIdException e) {
+				vf.getCon().printLine("Formato de id no valido, verifique que tenga 10 digitos");
+			} catch (NotValidPasswordException e) {
+				vf.getCon().printLine("Formato de contraseña no valido, verifique su contraseña");
+			}
 		}
 	}
 
@@ -906,6 +938,10 @@ public class Controller {
 		for (String o : out1) {
 			vf.getCon().printLine(o);
 		}
+	}
+
+	public void asignarEspecialista(String especialidad) {
+
 	}
 
 	public void enviarCorreosCitas() {

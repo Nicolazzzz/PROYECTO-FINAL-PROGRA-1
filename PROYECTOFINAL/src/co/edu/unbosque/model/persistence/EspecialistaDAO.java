@@ -240,4 +240,20 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 		return limite;
 	}
 
+	public String getRandomSpecialist(String especialidad) {
+
+		String especialista = "";
+		int contaEspecialista = 0;
+
+		for (Especialista e : listaEspecialistas) {
+			if (e.getEspecialidad().equalsIgnoreCase(especialista)) {
+				contaEspecialista++;
+			}
+		}
+
+		String[] especialistaA = new String[contaEspecialista];
+		return null;
+
+	}
+
 }
