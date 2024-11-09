@@ -1,9 +1,14 @@
 package co.edu.unbosque.controller;
 
+import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 
 import co.edu.unbosque.model.DirectorDTO;
 import co.edu.unbosque.model.ModelFacade;
+import co.edu.unbosque.model.persistence.EspecialidadDAO;
+import co.edu.unbosque.model.persistence.EspecialistaDAO;
 import co.edu.unbosque.model.persistence.FileHandler;
 import co.edu.unbosque.util.exception.EmailNotValidException;
 import co.edu.unbosque.util.exception.ExceptionChecker;
@@ -23,6 +28,8 @@ public class Controller {
 	private long directorTempId;
 
 	public Controller() {
+		enviarCorreosCitas();
+		
 //		EmailController.sendScheduled("carolinaavilaleon@gmail.com");
 //		EmailController.sendScheduled("m3ra2404@gmail.com");
 //		EmailController.sendCanceled("m3ra2404@gmail.com");
@@ -242,6 +249,8 @@ public class Controller {
 	}
 
 	public void mostrarMenuEspecialista() {
+		//aqui toca agregar el menu de especialistas y hacerlo funcional
+		//antes de hacer lo de los correos
 	}
 
 	public void mostrarMenuPaciente() {
@@ -420,5 +429,16 @@ public class Controller {
 			}
 		}
 
+	}
+	
+	public void enviarCorreosCitas() {
+		//generar el formato de hora del properties
+		Calendar calendario = Calendar.getInstance();
+		int h = calendario.get(Calendar.HOUR_OF_DAY);
+		int m = calendario.get(Calendar.MINUTE);
+		String hora = h +":"+m;
+		
+		EspecialistaDAO edao = new EspecialistaDAO();
+		
 	}
 }
