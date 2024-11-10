@@ -41,12 +41,10 @@ public class Controller implements ActionListener {
 	private boolean createDirector;
 	private boolean createEspecialista;
 	private boolean createPaciente;
-	private boolean createArea;
 
 	private boolean modDirector;
 	private boolean modEspecialista;
 	private boolean modPaciente;
-	private boolean modArea;
 
 	private boolean apartadoPaciente;
 	private boolean apartadoEspecialista;
@@ -74,8 +72,10 @@ public class Controller implements ActionListener {
 		vf.getCon().printLine(mf.getDirectorDAO().showAll());
 
 		asignarLectores();
-		vf.getVp().getPanelEntrada().getImg().setVisible(true);
-		vf.getVp().mostrarPanelWelcome();
+		vf.getVp().getPanelHEspecialista().getImg().setVisible(true);
+		vf.getVp().mostrarPanelHomeEspecialista();
+//		vf.getVp().getPanelEntrada().getImg().setVisible(true);
+//		vf.getVp().mostrarPanelWelcome();
 
 		vf.getCon().printLine(mf.getPacienteDAO().showAll());
 		prop = FileHandler.loadProperties("config.properties");
@@ -583,11 +583,9 @@ public class Controller implements ActionListener {
 			apartadoEspecialidad = false;
 			apartadoEspecialista = false;
 			apartadoPaciente = false;
-			createArea = false;
 			createDirector = false;
 			createEspecialista = false;
 			createPaciente = false;
-			modArea = false;
 			modDirector = false;
 			modEspecialista = false;
 			modPaciente = false;
@@ -610,6 +608,9 @@ public class Controller implements ActionListener {
 				getDatosDirector(false, true);
 			}
 			if (modPaciente) {
+				getDatosPaciente(false, true);
+			}
+			if (modEspecialista) {
 				getDatosPaciente(false, true);
 			}
 
