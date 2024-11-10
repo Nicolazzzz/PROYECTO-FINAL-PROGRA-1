@@ -23,7 +23,7 @@ public class EspecialidadDAO implements CRUDOperation<EspecialidadDTO, Especiali
 		int pos = 1;
 		if (!listaEspecialidades.isEmpty()) {
 			for (Especialidad e : listaEspecialidades) {
-				content += "\nEspecialidad " + pos ;
+				content += "\nEspecialidad " + pos;
 				content += e + "\n";
 				pos++;
 			}
@@ -32,6 +32,10 @@ public class EspecialidadDAO implements CRUDOperation<EspecialidadDTO, Especiali
 		}
 		return content;
 
+	}
+
+	public ArrayList<EspecialidadDTO> getAllDto() {
+		return DataMapper.listaEspecialidadesToListaEspecialidadesDTO(listaEspecialidades);
 	}
 
 	@Override

@@ -35,6 +35,44 @@ public class ViewConsole {
 		JOptionPane.showMessageDialog(null, texto, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 
+	public Long pedirLong(String mensaje) {
+		Long numero = null;
+		boolean esValido = false;
+
+		while (!esValido) {
+			String input = JOptionPane.showInputDialog(null, mensaje, "Ingresar número", JOptionPane.QUESTION_MESSAGE);
+			if (input == null) {
+				return null;
+			}
+
+			try {
+				numero = Long.parseLong(input);
+				esValido = true;
+			} catch (NumberFormatException e) {
+				JOptionPane.showMessageDialog(null, "Por favor ingrese un número válido", "Entrada inválida",
+						JOptionPane.WARNING_MESSAGE);
+			}
+		}
+
+		return numero;
+	}
+
+	public String pedirString(String mensaje) {
+		String input = null;
+
+		while (input == null || input.trim().isEmpty()) {
+			input = JOptionPane.showInputDialog(null, mensaje, "Ingresar texto", JOptionPane.QUESTION_MESSAGE);
+			if (input == null) {
+				return null;
+			} else if (input.trim().isEmpty()) {
+				JOptionPane.showMessageDialog(null, "Por favor ingrese un texto válido.", "Entrada inválida",
+						JOptionPane.WARNING_MESSAGE);
+			}
+		}
+
+		return input;
+	}
+
 	public int mostrarYesOrNo(String txt) {
 		int op = JOptionPane.showConfirmDialog(null, txt, "Confirmación", JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE);

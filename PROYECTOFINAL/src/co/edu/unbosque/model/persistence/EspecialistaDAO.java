@@ -36,6 +36,10 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 		return content;
 	}
 
+	public ArrayList<EspecialistaDTO> getAll() {
+		return DataMapper.listaEspecialistasToListaEspecialistasDTO(listaEspecialistas);
+	}
+
 	public String showSpecificArea(String area) {
 		String content = "";
 		int pos = 1;

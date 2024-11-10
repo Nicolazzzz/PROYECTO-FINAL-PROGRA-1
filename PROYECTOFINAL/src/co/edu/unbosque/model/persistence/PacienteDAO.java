@@ -34,6 +34,10 @@ public class PacienteDAO implements CRUDOperation<PacienteDTO, Paciente> {
 		return content;
 	}
 
+	public ArrayList<PacienteDTO> getAll() {
+		return DataMapper.listaPacientesToListaPacientesDTO(listaPacientes);
+	}
+
 	public String showSpecificPatientSpecialty(String especialidad) {
 
 		String content = "";

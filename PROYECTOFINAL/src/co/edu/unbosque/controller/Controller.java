@@ -2,10 +2,12 @@ package co.edu.unbosque.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 import co.edu.unbosque.model.DirectorDTO;
 import co.edu.unbosque.model.EspecialidadDTO;
@@ -40,10 +42,16 @@ public class Controller implements ActionListener {
 	private boolean createDirector;
 	private boolean createEspecialista;
 	private boolean createPaciente;
+	private boolean createArea;
 
 	private boolean modDirector;
 	private boolean modEspecialista;
 	private boolean modPaciente;
+	private boolean modArea;
+
+	private boolean apartadoPaciente;
+	private boolean apartadoEspecialista;
+	private boolean apartadoEspecialidad;
 
 	private boolean paciente;
 
@@ -121,6 +129,22 @@ public class Controller implements ActionListener {
 
 		vf.getVp().getPanelHDirector().getBtnEspecialidades().addActionListener(this);
 		vf.getVp().getPanelHDirector().getBtnEspecialidades().setActionCommand("ESPECIALIDADES");
+
+		// APARTADOS
+		vf.getVp().getPanelApartado().getBtnVolver().addActionListener(this);
+		vf.getVp().getPanelApartado().getBtnVolver().setActionCommand("APARTADOBACK");
+
+		vf.getVp().getPanelApartado().getBtnVer().addActionListener(this);
+		vf.getVp().getPanelApartado().getBtnVer().setActionCommand("APARTADOVER");
+
+		vf.getVp().getPanelApartado().getBtnAgregar().addActionListener(this);
+		vf.getVp().getPanelApartado().getBtnAgregar().setActionCommand("APARTADOADD");
+
+		vf.getVp().getPanelApartado().getBtnMod().addActionListener(this);
+		vf.getVp().getPanelApartado().getBtnMod().setActionCommand("APARTADOMOD");
+
+		vf.getVp().getPanelApartado().getBtnDelete().addActionListener(this);
+		vf.getVp().getPanelApartado().getBtnDelete().setActionCommand("APARTADODEL");
 
 		// Input
 		// 2
@@ -244,7 +268,6 @@ public class Controller implements ActionListener {
 			break;
 
 		case "VOLVER":
-
 			vf.getVp().getPanelLogin().getTxtId().setText("");
 			vf.getVp().getPanelLogin().getTxtPwd().setText("");
 			vf.getVp().getPanelEntrada().getImg().setVisible(true);
@@ -252,7 +275,6 @@ public class Controller implements ActionListener {
 			break;
 
 		// HOME DIRECTOR
-
 		case "ELIMINARPERFIL":
 			int eliminar = vf.getCon().mostrarYesOrNo("Esta seguro de eliminar este perfil?");
 			boolean com = vf.getCon().validarYesOrNo(eliminar);
@@ -276,16 +298,33 @@ public class Controller implements ActionListener {
 				vf.getVp().getPanelInput().getImgD().setVisible(true);
 				vf.getVp().getPanelInput().getCmbxEspecialidad().setVisible(false);
 				vf.getVp().mostrarPanelInput();
+			} else {
+				vf.getCon().mostrarMensajeEmergente("Operación cancelada");
 			}
 			break;
 
 		case "PACIENTES":
-//vf.getVp().getPanelHPaciente().
+			apartadoPaciente = true;
+
+			vf.getVp().getPanelApartado().getImgP().setVisible(true);
+			vf.getVp().getPanelApartado().getImgE().setVisible(false);
+			vf.getVp().getPanelApartado().getImgA().setVisible(false);
+			vf.getVp().mostrarPanelApartado();
 			break;
 		case "ESPECIALISTAS":
+			apartadoEspecialista = true;
+			vf.getVp().getPanelApartado().getImgP().setVisible(false);
+			vf.getVp().getPanelApartado().getImgE().setVisible(true);
+			vf.getVp().getPanelApartado().getImgA().setVisible(false);
+			vf.getVp().mostrarPanelApartado();
 			break;
 
 		case "ESPECIALIDADES":
+			apartadoEspecialidad = true;
+			vf.getVp().getPanelApartado().getImgP().setVisible(false);
+			vf.getVp().getPanelApartado().getImgE().setVisible(false);
+			vf.getVp().getPanelApartado().getImgA().setVisible(true);
+			vf.getVp().mostrarPanelApartado();
 			break;
 
 		case "VOLVERHOMEDIRECTOR":
@@ -294,6 +333,60 @@ public class Controller implements ActionListener {
 			vf.getVp().getPanelLogin().getTxtPwd().setText("");
 			vf.getVp().mostrarPanelLogin();
 
+			break;
+
+		// APARTADOS
+		case "APARTADOVER":
+			vf.getVp().getPanelApartado().getScroll().setVisible(true);
+			vf.getVp().getPanelApartado().getTabla().setVisible(true);
+
+			if (apartadoPaciente)
+				setUpPatientTable();
+
+			if (apartadoEspecialista)
+				setUpEspecialistTable();
+
+			if (apartadoEspecialidad)
+				setUpAreaTable();
+			break;
+
+		case "APARTADOADD":
+			if (apartadoPaciente) {
+				createPaciente = true;
+				getDatosPaciente(true, false);
+			}
+
+			if (apartadoEspecialidad) {
+				String especialidad = vf.getCon().pedirString("Ingrese el nombre de la especialidad a agregar");
+				if (mf.getEspecialidadDAO().add(new EspecialidadDTO(especialidad))) {
+					vf.getCon().mostrarMensajeEmergente("Especialidad agregada");
+					especialidades = mf.getEspecialidadDAO().getAll();
+				}
+
+				else
+					vf.getCon().mostrarAlerta("Intente nuevamente");
+			}
+
+			if (apartadoEspecialista) {
+				createEspecialista = true;
+				getDatosEspecialista(true, false);
+			}
+
+			break;
+
+		case "APARTADOMOD":
+			
+			break;
+
+		case "APARTADODEL":
+
+			break;
+
+		case "APARTADOBACK":
+			vf.getVp().mostrarPanelHomeDirector();
+			apartadoEspecialidad = false;
+			apartadoEspecialista = false;
+			apartadoPaciente = false;
 			break;
 
 		// INPUT
@@ -309,12 +402,12 @@ public class Controller implements ActionListener {
 				getDatosDirector(false, true);
 			}
 
-//			createDirector = false;
-//			modDirector = false;
-//			createEspecialista = false;
-//			modEspecialista = false;
-//			createPaciente = false;
-//			modPaciente = false;
+			createDirector = false;
+			modDirector = false;
+			createEspecialista = false;
+			modEspecialista = false;
+			createPaciente = false;
+			modPaciente = false;
 			break;
 
 		case "VOLVERINPUT":
@@ -534,6 +627,122 @@ public class Controller implements ActionListener {
 		} catch (InputMismatchException e) {
 			vf.getCon().mostrarAlerta("Verifique el tipo de datos que va en los campos y lo que ingreso");
 		}
+	}
+
+	public void setUpPatientTable() {
+		String column[] = { "ID", "NOMBRE", "GMAIL", "EDAD", "GENERO", "ESPECIALISTA", "ESPECIALIDAD", "SEGUIMIENTO" };
+		ArrayList<PacienteDTO> pList = mf.getPacienteDAO().getAll();
+
+		String[][] rows = new String[1][8];
+		if (pList != null) {
+			rows = new String[pList.size()][8];
+		}
+
+		int i = 0;
+		for (PacienteDTO p : pList) {
+			rows[i][0] = Long.toString(p.getId());
+			// recuperar el Especialista
+
+			rows[i][1] = p.getNombre();
+			rows[i][2] = p.getCorreo();
+			rows[i][3] = Integer.toString(p.getEdad());
+			rows[i][4] = p.getGenero();
+			rows[i][5] = p.getEspecialistaAsignado();
+			rows[i][6] = p.getEspecialidadCita();
+			boolean translate = p.isRequiereSeguimiento();
+			String mean = "";
+			if (translate) {
+				mean = "si";
+			} else {
+				mean = "no";
+			}
+			rows[i][7] = mean;
+			i++;
+		}
+
+		DefaultTableModel model = new DefaultTableModel(rows, column) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+
+		vf.getVp().getPanelApartado().getTabla().setModel(model);
+		vf.getVp().getPanelApartado().getTabla().repaint();
+	}
+
+	public void setUpEspecialistTable() {
+		String column[] = { "ID", "NOMBRE", "GMAIL", "EDAD", "GENERO", "ESPECIALIDAD" };
+		ArrayList<EspecialistaDTO> eList = mf.getEspecialistaDAO().getAll();
+
+		String[][] rows = new String[1][6];
+		if (eList != null) {
+			rows = new String[eList.size()][6];
+		}
+
+		int i = 0;
+		for (EspecialistaDTO p : eList) {
+			rows[i][0] = Long.toString(p.getId());
+			// recuperar el Especialista
+
+			rows[i][1] = p.getNombre();
+			rows[i][2] = p.getCorreo();
+			rows[i][3] = Integer.toString(p.getEdad());
+			rows[i][4] = p.getGenero();
+			rows[i][5] = p.getEspecialidad();
+			i++;
+		}
+
+		DefaultTableModel model = new DefaultTableModel(rows, column) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+
+		vf.getVp().getPanelApartado().getTabla().setModel(model);
+		vf.getVp().getPanelApartado().getTabla().repaint();
+	}
+
+	public void setUpAreaTable() {
+		String column[] = { "NOMBRE" };
+		ArrayList<EspecialidadDTO> eList = mf.getEspecialidadDAO().getAllDto();
+
+		String[][] rows = new String[1][1];
+		if (eList != null) {
+			rows = new String[eList.size()][1];
+		}
+
+		int i = 0;
+		for (EspecialidadDTO p : eList) {
+			rows[i][0] = p.getNombre();
+			i++;
+		}
+
+		DefaultTableModel model = new DefaultTableModel(rows, column) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+
+		vf.getVp().getPanelApartado().getTabla().setModel(model);
+		vf.getVp().getPanelApartado().getTabla().repaint();
 	}
 
 	public void mostrarMenuPrincipal() {

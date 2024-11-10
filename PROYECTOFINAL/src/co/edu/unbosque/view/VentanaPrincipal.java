@@ -16,6 +16,7 @@ public class VentanaPrincipal extends JFrame {
 	private PanelHomeDirector panelHDirector;
 	private PanelHomeEspecialista panelHEspecialista;
 	private PanelHomePaciente panelHPaciente;
+	private PanelApartado panelApartado;
 
 	public VentanaPrincipal() {
 
@@ -36,6 +37,7 @@ public class VentanaPrincipal extends JFrame {
 		panelHDirector = new PanelHomeDirector();
 		panelHEspecialista = new PanelHomeEspecialista();
 		panelHPaciente = new PanelHomePaciente();
+		panelApartado = new PanelApartado();
 
 	}
 
@@ -91,6 +93,14 @@ public class VentanaPrincipal extends JFrame {
 		this.panelHPaciente = panelHPaciente;
 	}
 
+	public PanelApartado getPanelApartado() {
+		return panelApartado;
+	}
+
+	public void setPanelApartado(PanelApartado panelApartado) {
+		this.panelApartado = panelApartado;
+	}
+
 	public void mostrarPanelWelcome() {
 		setContentPane(panelEntrada);
 	}
@@ -113,6 +123,10 @@ public class VentanaPrincipal extends JFrame {
 
 	public void mostrarPanelHomePaciente() {
 		setContentPane(panelHDirector);
+	}
+
+	public void mostrarPanelApartado() {
+		setContentPane(panelApartado);
 	}
 
 }
