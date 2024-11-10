@@ -1,5 +1,6 @@
 package co.edu.unbosque.controller;
 
+import java.util.ArrayList;
 import java.util.Properties;
 
 import java.util.logging.Level;
@@ -28,15 +29,18 @@ public class EmailController {
 	private static Properties mProperties;
 	private static Session mSession;
 	private static MimeMessage mCorreo;
+	private static AppointmentController citas = new AppointmentController();
+	
 
 	public static void createScheduledEmail(String correo, String nombrePaciente, String nombreEspecialista,
-			String especialidad) {
+			String especialidad, String fechaC) {
 		mProperties = new Properties();
-
+		fechaC = citas.generarCitas(); 
+		
 		emailTo = correo;
 		subject = "Cita Agendada";
 		content = "Estimado/a " + nombrePaciente
-				+ "\n\nNos complace informarle que su cita ha sido agengada, su especialista asigando es "
+				+ "\n\nNos complace informarle que su cita ha sido agengada para el dia: "+"\n"+ fechaC +"\nSu especialista asigando es "
 				+ nombreEspecialista + " de la especialidad de " + especialidad
 				+ "\n\nAgradecemos su confianza en nuestros servicios y nos mantenemos a su disposición para cualquier duda o consulta que pueda tener respecto a su tratamiento. \nCordialmente,\nEquipo de BosqueHealth";
 
@@ -66,7 +70,7 @@ public class EmailController {
 
 	public static void sendScheduled(String correo, String nombrePaciente, String nombreEspecialista,
 			String especialidad) {
-		createScheduledEmail(correo, nombrePaciente, nombreEspecialista, especialidad);
+		createScheduledEmail(correo, nombrePaciente, nombreEspecialista, especialidad, null);
 		try {
 			Transport mTransport = mSession.getTransport("smtp");
 			mTransport.connect(emailFrom, passwordFrom);

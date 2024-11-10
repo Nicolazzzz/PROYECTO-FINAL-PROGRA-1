@@ -19,6 +19,7 @@ public class AppointmentController {
 	private Set<String> citasAsignadas = new HashSet<>();
     private LocalDateTime ultimaCitaAsignada = null;
     private final String ARCHIVO_CITAS = "citas.txt";
+    private static ArrayList<String> listaCitas = new ArrayList<>();
 
     public AppointmentController() {
         cargarCitasGuardadas();
@@ -61,7 +62,7 @@ public class AppointmentController {
         }
     }
 
-    public void generarCitas() {
+    public String generarCitas() {
         final int HORA_INICIO = 7;   // 7am
         final int HORA_FIN = 17;     // 5pm
         final int DURACION_CITA = 30; // duración en minutos
@@ -79,8 +80,7 @@ public class AppointmentController {
         ultimaCitaAsignada = citaAjustada;
 
         String citaFormateada = citaAjustada.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
-        citasAsignadas.add(citaFormateada);
-
+        
         guardarCitas();
 
         System.out.println("Su cita está asignada para el día: " +
@@ -89,7 +89,17 @@ public class AppointmentController {
             citaAjustada.getYear() +
             "\nA las " + citaAjustada.getHour() + ":" +
             String.format("%02d", citaAjustada.getMinute()));
-    }
+        listaCitas.add(citaFormateada);
+        if(citaFormateada.contains(citaFormateada)) {
+        	return   citaAjustada.getDayOfMonth() + "/" +
+                    citaAjustada.getMonthValue() + "/" +
+                    citaAjustada.getYear() +
+                    "\nA las " + citaAjustada.getHour() + ":" +
+                    String.format("%02d", citaAjustada.getMinute());
+        }else {
+        return citaFormateada;
+    }}
+
 
     private LocalDateTime encontrarSiguienteCitaDisponible(LocalDateTime fecha, int horaInicio, int horaFin, int duracionCita) {
         // Si es fin de semana, ajustar al próximo día laboral
