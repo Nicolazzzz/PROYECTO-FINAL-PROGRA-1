@@ -2,71 +2,165 @@ package co.edu.unbosque.model;
 
 import java.io.Serializable;
 
+/**
+ * La clase abstracta Persona representa a una persona con atributos básicos comunes 
+ * como el identificador, nombre, edad, género y correo electrónico. 
+ * Las clases que extienden de Persona pueden agregar propiedades adicionales 
+ * específicas de cada tipo de persona, como Paciente, Especialista, Director, etc.
+ * 
+ * @author Mario Rodriguez
+ * @version 1.0
+ */
 public abstract class Persona implements Serializable {
 
-	private long id;
-	private String nombre;
-	private int edad;
-	private String genero;
-	private String correo;
+    /**
+     * Identificador único de la persona.
+     */
+    private long id;
 
-	public Persona() {
-		// TODO Auto-generated constructor stub
-	}
+    /**
+     * Nombre de la persona.
+     */
+    private String nombre;
 
-	public Persona(long id, String nombre, int edad, String genero, String correo) {
-		super();
-		this.id = id;
-		this.nombre = nombre;
-		this.edad = edad;
-		this.genero = genero;
-		this.correo = correo;
-	}
+    /**
+     * Edad de la persona.
+     */
+    private int edad;
 
-	public long getId() {
-		return id;
-	}
+    /**
+     * Género de la persona.
+     */
+    private String genero;
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    /**
+     * Correo electrónico de la persona.
+     */
+    private String correo;
 
-	public String getNombre() {
-		return nombre;
-	}
+    /**
+     * Constructor vacío de la clase Persona.
+     */
+    public Persona() {
+        // Constructor vacío
+    }
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
+    /**
+     * Constructor que inicializa los atributos de la persona.
+     * 
+     * @param id Identificador único de la persona.
+     * @param nombre Nombre de la persona.
+     * @param edad Edad de la persona.
+     * @param genero Género de la persona.
+     * @param correo Correo electrónico de la persona.
+     */
+    public Persona(long id, String nombre, int edad, String genero, String correo) {
+        super();
+        this.id = id;
+        this.nombre = nombre;
+        this.edad = edad;
+        this.genero = genero;
+        this.correo = correo;
+    }
 
-	public int getEdad() {
-		return edad;
-	}
+    /**
+     * Obtiene el identificador único de la persona.
+     * 
+     * @return El identificador único de la persona.
+     */
+    public long getId() {
+        return id;
+    }
 
-	public void setEdad(int edad) {
-		this.edad = edad;
-	}
+    /**
+     * Establece el identificador único de la persona.
+     * 
+     * @param id Nuevo identificador de la persona.
+     */
+    public void setId(long id) {
+        this.id = id;
+    }
 
-	public String getGenero() {
-		return genero;
-	}
+    /**
+     * Obtiene el nombre de la persona.
+     * 
+     * @return El nombre de la persona.
+     */
+    public String getNombre() {
+        return nombre;
+    }
 
-	public void setGenero(String genero) {
-		this.genero = genero;
-	}
+    /**
+     * Establece el nombre de la persona.
+     * 
+     * @param nombre Nuevo nombre de la persona.
+     */
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	public String getCorreo() {
-		return correo;
-	}
+    /**
+     * Obtiene la edad de la persona.
+     * 
+     * @return La edad de la persona.
+     */
+    public int getEdad() {
+        return edad;
+    }
 
-	public void setCorreo(String correo) {
-		this.correo = correo;
-	}
+    /**
+     * Establece la edad de la persona.
+     * 
+     * @param edad Nueva edad de la persona.
+     */
+    public void setEdad(int edad) {
+        this.edad = edad;
+    }
 
-	@Override
-	public String toString() {
-		return "\nNúmero de identificación= " + id + "\nNombre= " + nombre + "\nEdad= " + edad + "\nGenero= " + genero
-				+ "\nCorreo electrónico= " + correo;
-	}
+    /**
+     * Obtiene el género de la persona.
+     * 
+     * @return El género de la persona.
+     */
+    public String getGenero() {
+        return genero;
+    }
 
+    /**
+     * Establece el género de la persona.
+     * 
+     * @param genero Nuevo género de la persona.
+     */
+    public void setGenero(String genero) {
+        this.genero = genero;
+    }
+
+    /**
+     * Obtiene el correo electrónico de la persona.
+     * 
+     * @return El correo electrónico de la persona.
+     */
+    public String getCorreo() {
+        return correo;
+    }
+
+    /**
+     * Establece el correo electrónico de la persona.
+     * 
+     * @param correo Nuevo correo electrónico de la persona.
+     */
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
+    /**
+     * Retorna una representación en cadena de los datos de la persona.
+     * 
+     * @return Una cadena que representa los datos de la persona.
+     */
+    @Override
+    public String toString() {
+        return "\nNúmero de identificación= " + id + "\nNombre= " + nombre + "\nEdad= " + edad + "\nGenero= " + genero
+                + "\nCorreo electrónico= " + correo;
+    }
 }

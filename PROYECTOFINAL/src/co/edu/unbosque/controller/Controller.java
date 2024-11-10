@@ -1210,7 +1210,7 @@ public class Controller implements ActionListener {
 
 					""";
 			vf.getCon().printLine(menu);
-			int op = vf.getCon().readInt();
+			int op = vf.getCon().readInt();//agg excepciones
 			vf.getCon().burnLine();
 
 			switch (op) {
@@ -1235,6 +1235,7 @@ public class Controller implements ActionListener {
 			case 2:
 				vf.getCon().printLine("---AGREGANDO CITA PACIENTE---");
 				pedirDatosPaciente(true, false);
+				
 				break;
 
 			case 3:

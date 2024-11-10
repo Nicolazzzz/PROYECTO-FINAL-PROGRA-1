@@ -25,7 +25,7 @@ public class AppointmentController {
         cargarCitasGuardadas();
     }
 
-    private void cargarCitasGuardadas() {
+    public void cargarCitasGuardadas() {
         try {
             File archivo = new File(ARCHIVO_CITAS);
             if (archivo.exists()) {
@@ -47,7 +47,7 @@ public class AppointmentController {
         }
     }
 
-    private void guardarCitas() {
+    public void guardarCitas() {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(ARCHIVO_CITAS));
             List<String> citasOrdenadas = new ArrayList<>(citasAsignadas);
@@ -101,7 +101,7 @@ public class AppointmentController {
     }}
 
 
-    private LocalDateTime encontrarSiguienteCitaDisponible(LocalDateTime fecha, int horaInicio, int horaFin, int duracionCita) {
+    public LocalDateTime encontrarSiguienteCitaDisponible(LocalDateTime fecha, int horaInicio, int horaFin, int duracionCita) {
         // Si es fin de semana, ajustar al próximo día laboral
         if (fecha.getDayOfWeek() == DayOfWeek.SATURDAY) {
             fecha = fecha.plusDays(2).withHour(horaInicio).withMinute(0);
