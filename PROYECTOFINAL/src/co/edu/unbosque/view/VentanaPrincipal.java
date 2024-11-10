@@ -12,6 +12,7 @@ public class VentanaPrincipal extends JFrame {
 
 	private PanelEntrada panelEntrada;
 	private PanelLogIn panelLogin;
+	private PanelInput panelInput;
 
 	public VentanaPrincipal() {
 
@@ -28,6 +29,8 @@ public class VentanaPrincipal extends JFrame {
 
 		panelEntrada = new PanelEntrada();
 		panelLogin = new PanelLogIn();
+		panelInput = new PanelInput();
+
 	}
 
 	public PanelEntrada getPanelEntrada() {
@@ -50,12 +53,24 @@ public class VentanaPrincipal extends JFrame {
 		this.panelLogin = panelLogin;
 	}
 
+	public PanelInput getPanelInput() {
+		return panelInput;
+	}
+
+	public void setPanelInput(PanelInput panelInput) {
+		this.panelInput = panelInput;
+	}
+
 	public void mostrarPanelWelcome() {
 		setContentPane(panelEntrada);
 	}
 
 	public void mostrarPanelLogin() {
 		setContentPane(panelLogin);
+	}
+
+	public void mostrarPanelInput() {
+		setContentPane(panelInput);
 	}
 
 }

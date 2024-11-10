@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.util.InputMismatchException;
 import java.util.Properties;
 
+import javax.swing.JOptionPane;
+
 import co.edu.unbosque.model.DirectorDTO;
 import co.edu.unbosque.model.EspecialidadDTO;
 import co.edu.unbosque.model.EspecialistaDTO;
@@ -51,13 +53,21 @@ public class Controller implements ActionListener {
 		mf = new ModelFacade();
 		vf = new ViewFacade();
 
+		// prueba de yes or no
+		int yeso = vf.getCon().mostrarYesOrNo("Seguro?");
+		boolean com = vf.getCon().validarYesOrNo(yeso);
+
 		asignarLectores();
+		vf.getVp().getPanelEntrada().getImg().setVisible(true);
 		vf.getVp().mostrarPanelWelcome();
 
 		vf.getCon().printLine(mf.getPacienteDAO().showAll());
 		prop = FileHandler.loadProperties("config.properties");
 
 		especialidades = mf.getEspecialidadDAO().getAll();
+		for (int i = 0; i < especialidades.length; i++) {
+			vf.getVp().getPanelInput().getCmbxEspecialidad().addItem(especialidades[i]);
+		}
 
 		mostrarMenuPrincipal();
 
@@ -81,6 +91,12 @@ public class Controller implements ActionListener {
 		vf.getVp().getPanelLogin().getBtnVolver().addActionListener(this);
 		vf.getVp().getPanelLogin().getBtnVolver().setActionCommand("VOLVER");
 
+		// Input
+		vf.getVp().getPanelInput().getBtnVolver().addActionListener(this);
+		vf.getVp().getPanelInput().getBtnVolver().setActionCommand("VOLVERINPUT");
+
+		vf.getVp().getPanelInput().getBtnGuardar().addActionListener(this);
+		vf.getVp().getPanelInput().getBtnGuardar().setActionCommand("GUARDAR");
 	}
 
 	@Override
@@ -89,52 +105,296 @@ public class Controller implements ActionListener {
 		switch (e.getActionCommand()) {
 		// WELCOME
 		case "DIRECTOR":
+			vf.getVp().getPanelEntrada().getImg().setVisible(false);
 			vf.getVp().getPanelLogin().getImgD().setVisible(true);
 			vf.getVp().getPanelLogin().getImgE().setVisible(false);
+			loginDirector = true;
+			loginEspecialista = false;
 
 			vf.getVp().mostrarPanelLogin();
 			break;
 
 		case "ESPECIALISTA":
+			vf.getVp().getPanelEntrada().getImg().setVisible(false);
 			vf.getVp().getPanelLogin().getImgE().setVisible(true);
 			vf.getVp().getPanelLogin().getImgD().setVisible(false);
 			vf.getVp().mostrarPanelLogin();
+			loginDirector = false;
+			loginEspecialista = true;
 			break;
 
 		case "PACIENTE":
+
 			break;
 
 		// LOGIN
 		case "ENTRAR":
-			try {
-				vf.getCon().printLine("Bienvenido:");
-				vf.getCon().print("ID: ");
-				long id = vf.getCon().readLong();
-				ExceptionChecker.notValidIdException(id);
-				vf.getCon().print("Contraseña: ");
-				long password = vf.getCon().readLong();
-				ExceptionChecker.notValidPasswordException(password);
-				vf.getCon().printLine(mf.getDirectorDAO().verifyPassword(id, password));
-				if (mf.getDirectorDAO().checkLogIn(id, password) == true) {
-					directorTempId = id;
-					mostrarMenuDirector();
-				}
 
-			} catch (NotValidIdException j) {
-				vf.getCon().printLine("Formato de id no valido, verifique que tenga 10 digitos");
-			} catch (NotValidPasswordException j) {
-				vf.getCon().printLine("Formato de contraseña no valido, verifique su contraseña");
+			if (loginDirector == true) {
+				if (mf.getDirectorDAO().checkAdmin() == false) {
+					vf.getVp().getPanelInput().getCmbxEspecialidad().setVisible(false);
+					vf.getVp().getPanelInput().getImgD().setVisible(true);
+					vf.getVp().getPanelInput().getImgE().setVisible(false);
+					vf.getVp().getPanelInput().getImgP().setVisible(false);
+					vf.getVp().mostrarPanelInput();
+				} else {
+
+					try {
+						long id = Long.parseLong(vf.getVp().getPanelLogin().getTxtId().getText());
+						ExceptionChecker.notValidIdException(id);
+
+						long password = Long.parseLong(vf.getVp().getPanelLogin().getTxtPwd().getText());
+						ExceptionChecker.notValidPasswordException(password);
+						vf.getCon().mostrarAlerta(mf.getDirectorDAO().verifyPassword(id, password));
+						if (mf.getDirectorDAO().checkLogIn(id, password) == true) {
+							vf.getVp().getPanelInput().getCmbxEspecialidad().setVisible(false);
+							vf.getVp().getPanelInput().getImgD().setVisible(true);
+							vf.getVp().getPanelInput().getImgE().setVisible(false);
+							vf.getVp().getPanelInput().getImgP().setVisible(false);
+							vf.getVp().mostrarPanelInput();
+							directorTempId = id;
+						}
+
+					} catch (NotValidIdException j) {
+						vf.getCon().mostrarAlerta("Formato de id no valido, verifique que tenga 10 digitos");
+						vf.getVp().getPanelLogin().getTxtId().setText("");
+						vf.getVp().getPanelLogin().getTxtPwd().setText("");
+					} catch (NotValidPasswordException j) {
+						vf.getVp().getPanelLogin().getTxtId().setText("");
+						vf.getVp().getPanelLogin().getTxtPwd().setText("");
+						vf.getCon().mostrarAlerta("Formato de contraseña no valido, verifique su contraseña");
+					}
+				}
+			}
+
+			if (loginEspecialista == true) {
+				try {
+					long id = Long.parseLong(vf.getVp().getPanelLogin().getTxtId().getText());
+					ExceptionChecker.notValidIdException(id);
+
+					long password = Long.parseLong(vf.getVp().getPanelLogin().getTxtPwd().getText());
+					ExceptionChecker.notValidPasswordException(password);
+					vf.getCon().mostrarAlerta(mf.getEspecialistaDAO().verifyPassword(id, password));
+					if (mf.getEspecialistaDAO().checkLogIn(id, password) == true) {
+						vf.getVp().getPanelInput().getCmbxEspecialidad().setVisible(true);
+						vf.getVp().getPanelInput().getImgD().setVisible(false);
+						vf.getVp().getPanelInput().getImgE().setVisible(true);
+						vf.getVp().getPanelInput().getImgP().setVisible(false);
+						vf.getVp().mostrarPanelInput();
+						especialistaTempId = id;
+					}
+
+				} catch (NotValidIdException j) {
+					vf.getCon().mostrarAlerta("Formato de id no valido, verifique que tenga 10 digitos");
+				} catch (NotValidPasswordException j) {
+					vf.getCon().mostrarAlerta("Formato de contraseña no valido, verifique su contraseña");
+				}
 			}
 			break;
 
 		case "VOLVER":
 			vf.getVp().getPanelLogin().getTxtId().setText("");
 			vf.getVp().getPanelLogin().getTxtPwd().setText("");
+			vf.getVp().getPanelEntrada().getImg().setVisible(true);
 			vf.getVp().mostrarPanelWelcome();
 			break;
 
+		// INPUT
+
+		case "GUARDAR":
+			break;
+
+		case "VOLVERINPUT":
+			vf.getVp().mostrarPanelLogin();
+			break;
 		}
 
+	}
+
+	public void getDatosDirector(boolean create, boolean update) {
+		try {
+			long id = Long.parseLong(vf.getVp().getPanelInput().getTxtId().getText());
+			ExceptionChecker.notValidIdException(id);
+
+			String nombre = vf.getVp().getPanelInput().getTxtName().getText();
+			ExceptionChecker.notValidStringInputException(nombre);
+
+			int edad = Integer.parseInt(vf.getVp().getPanelInput().getTxtEdad().getText());
+			ExceptionChecker.negativeIntNumberException(edad);
+
+			String genero = vf.getVp().getPanelInput().getCmbxGenero().getSelectedItem().toString();
+
+			String correo = vf.getVp().getPanelInput().getTxtGmail().getText();
+			ExceptionChecker.checkEmail(correo);
+
+			long password = Long.parseLong(vf.getVp().getPanelInput().getTxtPswd().getText());
+			ExceptionChecker.notValidPasswordException(password);
+
+			long confirmP = Long.parseLong(vf.getVp().getPanelInput().getTxtConfirmPswd().getText());
+			ExceptionChecker.notValidPasswordException(confirmP);
+			if (password != confirmP) {
+				vf.getCon().mostrarAlerta("No coinciden las contraseñas, vuelva a ingresarlas");
+				vf.getVp().getPanelInput().getTxtPswd().setText("");
+				vf.getVp().getPanelInput().getTxtConfirmPswd().setText("");
+			}
+
+			if (create == true && update == false) {
+				if (mf.getDirectorDAO().add(new DirectorDTO(id, nombre, edad, genero, correo, password)) == true) {
+					vf.getCon().mostrarMensajeEmergente("Director creado exitosamente");
+				} else {
+					vf.getCon().mostrarAlerta("Intente nuevamente, verifique los datos ingresados");
+				}
+			} else if (update == true && create == false) {
+				if (mf.getDirectorDAO().update(new DirectorDTO(directorTempId, null, 0, null, null, 0),
+						new DirectorDTO(id, nombre, edad, genero, correo, password)) == true) {
+					vf.getCon().mostrarMensajeEmergente("Director actualizado exitosamente");
+				} else {
+					vf.getCon().mostrarAlerta("Intente nuevamente, verifique los datos ingresados");
+				}
+			}
+
+		} catch (NotValidIdException e) {
+			vf.getCon()
+					.mostrarAlerta("Formato de id no valido, verifique que tenga minimo 8 digitos y maximo 10 digitos");
+		} catch (NotValidStringInputException e) {
+			vf.getCon().mostrarAlerta("Formato de nombre no valido, no ingrese caracteres especiales");
+		} catch (NegativeIntNumberException e) {
+			vf.getCon().mostrarAlerta("La edad no puede ser 0, negativa, mayor a 122 años");
+		} catch (EmailNotValidException e) {
+			vf.getCon().mostrarAlerta("Formato de correo no valido");
+		} catch (NotValidPasswordException e) {
+			vf.getCon().mostrarAlerta("Formato de contraseña no valido, minimo 5 digitos y maximo 10 digitos");
+		} catch (InputMismatchException e) {
+			vf.getCon().mostrarAlerta("Verifique el tipo de datos que va en los campos y lo que ingreso");
+		}
+	}
+
+	public void getDatosEspecialista(boolean create, boolean update) {
+		try {
+			long id = Long.parseLong(vf.getVp().getPanelInput().getTxtId().getText());
+			ExceptionChecker.notValidIdException(id);
+
+			String nombre = vf.getVp().getPanelInput().getTxtName().getText();
+			ExceptionChecker.notValidStringInputException(nombre);
+
+			int edad = Integer.parseInt(vf.getVp().getPanelInput().getTxtEdad().getText());
+			ExceptionChecker.negativeIntNumberException(edad);
+
+			String genero = vf.getVp().getPanelInput().getCmbxGenero().getSelectedItem().toString();
+
+			String especialidad = vf.getVp().getPanelInput().getCmbxEspecialidad().getSelectedItem().toString();
+
+			String correo = vf.getVp().getPanelInput().getTxtGmail().getText();
+			ExceptionChecker.checkEmail(correo);
+
+			long password = Long.parseLong(vf.getVp().getPanelInput().getTxtPswd().getText());
+			ExceptionChecker.notValidPasswordException(password);
+
+			long confirmP = Long.parseLong(vf.getVp().getPanelInput().getTxtConfirmPswd().getText());
+			ExceptionChecker.notValidPasswordException(confirmP);
+
+			if (password != confirmP) {
+				vf.getCon().mostrarAlerta("No coinciden las contraseñas, vuelva a ingresarlas");
+				vf.getVp().getPanelInput().getTxtPswd().setText("");
+				vf.getVp().getPanelInput().getTxtConfirmPswd().setText("");
+			}
+
+			if (mf.getEspecialistaDAO().setLimitSpecialist(
+					Integer.parseInt(prop.getProperty("bosquehealth.especialidad.limite")), especialidad) == true) {
+				vf.getCon().mostrarAlerta("No es posible agregar mas especialistas al area, llego a su limite");
+			} else {
+
+				if (create == true && update == false) {
+					if (mf.getEspecialistaDAO().add(
+							new EspecialistaDTO(id, nombre, edad, genero, correo, especialidad, password)) == true) {
+						vf.getCon().mostrarMensajeEmergente("Especialista creado con exito");
+					} else {
+						vf.getCon().mostrarAlerta("Intente nuevamente, verifique los datos ingresados");
+					}
+
+				} else if (update == true && create == false) {
+					if (mf.getEspecialistaDAO().update(
+							new EspecialistaDTO(especialistaTempId, null, 0, null, null, null, 0),
+							new EspecialistaDTO(id, nombre, edad, genero, correo, especialidad, password)) == true) {
+						vf.getCon().mostrarMensajeEmergente("Especialista actualizado con exito");
+					} else {
+						vf.getCon().mostrarAlerta("Intente nuevamente, verifique los datos ingresados");
+					}
+				}
+			}
+		} catch (NotValidIdException e) {
+			vf.getCon()
+					.mostrarAlerta("Formato de id no valido, verifique que tenga minimo 8 digitos y maximo 10 digitos");
+		} catch (NotValidStringInputException e) {
+			vf.getCon().mostrarAlerta("Formato de nombre no valido, no ingrese caracteres especiales");
+		} catch (NegativeIntNumberException e) {
+			vf.getCon().mostrarAlerta("La edad no puede ser 0, negativa, mayor a 122 años");
+		} catch (EmailNotValidException e) {
+			vf.getCon().mostrarAlerta("Formato de correo no valido");
+		} catch (NotValidPasswordException e) {
+			vf.getCon().mostrarAlerta("Formato de contraseña no valido, minimo 5 digitos y maximo 10 digitos");
+		} catch (InputMismatchException e) {
+			vf.getCon().mostrarAlerta("Verifique el tipo de datos que va en los campos y lo que ingreso");
+		}
+	}
+
+	public void getDatosPaciente(boolean create, boolean update) {
+		try {
+			long id = Long.parseLong(vf.getVp().getPanelInput().getTxtId().getText());
+			ExceptionChecker.notValidIdException(id);
+
+			String nombre = vf.getVp().getPanelInput().getTxtName().getText();
+			ExceptionChecker.notValidStringInputException(nombre);
+
+			int edad = Integer.parseInt(vf.getVp().getPanelInput().getTxtEdad().getText());
+			ExceptionChecker.negativeIntNumberException(edad);
+
+			String genero = vf.getVp().getPanelInput().getCmbxGenero().getSelectedItem().toString();
+
+			String especialidad = vf.getVp().getPanelInput().getCmbxEspecialidad().getSelectedItem().toString();
+
+			String correo = vf.getVp().getPanelInput().getTxtGmail().getText();
+			ExceptionChecker.checkEmail(correo);
+//
+//			
+//		PENDIENTE			
+//			
+//			
+			String especialistaAsignado = "";
+
+			if (create == true && update == false) {
+				if (mf.getPacienteDAO().add(new PacienteDTO(id, nombre, edad, genero, correo, null, null, especialidad,
+						especialistaAsignado, false)) == true) {
+					vf.getCon().mostrarMensajeEmergente("Paciente creado con exito");
+					EmailController.sendScheduled(correo, nombre, especialistaAsignado, especialidad);
+				} else {
+					vf.getCon().mostrarAlerta("Intente nuevamente, verifique los datos ingresados");
+				}
+
+			} else if (update == true && create == false) {
+				if (mf.getPacienteDAO()
+						.update(new PacienteDTO(pacienteTempId, null, 0, null, null, null, null, pacienteTempECita,
+								null, false),
+								new PacienteDTO(id, nombre, edad, genero, correo, null, null, especialidad, null,
+										false)) == true) {
+					vf.getCon().mostrarMensajeEmergente("Paciente actualizado con exito");
+					EmailController.sendRescheduled(correo);
+				} else {
+					vf.getCon().mostrarAlerta("Intente nuevamente, verifique los datos ingresados");
+				}
+			}
+		} catch (NotValidIdException e) {
+			vf.getCon()
+					.mostrarAlerta("Formato de id no valido, verifique que tenga minimo 8 digitos y maximo 10 digitos");
+		} catch (NotValidStringInputException e) {
+			vf.getCon().mostrarAlerta("Formato de nombre no valido, no ingrese caracteres especiales");
+		} catch (NegativeIntNumberException e) {
+			vf.getCon().mostrarAlerta("La edad no puede ser 0, negativa, mayor a 122 años");
+		} catch (EmailNotValidException e) {
+			vf.getCon().mostrarAlerta("Formato de correo no valido");
+		} catch (InputMismatchException e) {
+			vf.getCon().mostrarAlerta("Verifique el tipo de datos que va en los campos y lo que ingreso");
+		}
 	}
 
 	public void mostrarMenuPrincipal() {

@@ -30,7 +30,7 @@ public class PanelEntrada extends JPanel {
 		Image portadaRedimensionada2 = imagenPortada2.getImage().getScaledInstance(1280, 720, Image.SCALE_SMOOTH);
 		img.setIcon(new ImageIcon(portadaRedimensionada2));
 		img.setBounds(0, 0, 1280, 720);
-		img.setVisible(true);
+		img.setVisible(false);
 
 		btnDirector = new JButton("DIRECTOR");
 		btnDirector.setActionCommand("DIRECTOR");

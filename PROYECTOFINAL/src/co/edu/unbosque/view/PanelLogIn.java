@@ -9,6 +9,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
@@ -19,9 +20,10 @@ public class PanelLogIn extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private JTextField txtId, txtPwd;
+	private JTextField txtId;
 	private JButton btnVolver, btnEntrar;
 	private JLabel imgD, imgE, lblHelp;
+	private JPasswordField txtPwd;
 
 	public PanelLogIn() {
 		setSize(1280, 720);
@@ -72,7 +74,7 @@ public class PanelLogIn extends JPanel {
 		txtId.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.GRAY, 2),
 				BorderFactory.createEmptyBorder(5, 15, 5, 15)));
 
-		txtPwd = new JTextField("", SwingConstants.CENTER);
+		txtPwd = new JPasswordField("", SwingConstants.CENTER);
 		txtPwd.setFont(new Font("SansSerif", Font.BOLD, 30));
 		txtPwd.setForeground(Color.BLACK);
 		txtPwd.setBackground(new Color(240, 240, 240));
@@ -97,11 +99,19 @@ public class PanelLogIn extends JPanel {
 		this.txtId = txtId;
 	}
 
-	public JTextField getTxtPwd() {
+	public JLabel getLblHelp() {
+		return lblHelp;
+	}
+
+	public void setLblHelp(JLabel lblHelp) {
+		this.lblHelp = lblHelp;
+	}
+
+	public JPasswordField getTxtPwd() {
 		return txtPwd;
 	}
 
-	public void setTxtPwd(JTextField txtPwd) {
+	public void setTxtPwd(JPasswordField txtPwd) {
 		this.txtPwd = txtPwd;
 	}
 
