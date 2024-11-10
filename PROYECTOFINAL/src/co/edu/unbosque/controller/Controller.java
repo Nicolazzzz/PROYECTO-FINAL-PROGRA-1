@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Properties;
 
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import co.edu.unbosque.model.DirectorDTO;
@@ -65,7 +64,6 @@ public class Controller implements ActionListener {
 //		}
 //
 //		// Mostrar todas las citas asignadas
-		
 
 		mf = new ModelFacade();
 		vf = new ViewFacade();
@@ -80,11 +78,7 @@ public class Controller implements ActionListener {
 		vf.getCon().printLine(mf.getPacienteDAO().showAll());
 		prop = FileHandler.loadProperties("config.properties");
 
-		especialidades = mf.getEspecialidadDAO().getAll();
-		for (int i = 0; i < especialidades.length; i++) {
-			vf.getVp().getPanelInput().getCmbxEspecialidad().addItem(especialidades[i]);
-		}
-
+		fillCombxEspecialidades();
 		mostrarMenuPrincipal();
 
 	}
@@ -304,7 +298,6 @@ public class Controller implements ActionListener {
 
 		case "PACIENTES":
 			apartadoPaciente = true;
-
 			vf.getVp().getPanelApartado().getImgP().setVisible(true);
 			vf.getVp().getPanelApartado().getImgE().setVisible(false);
 			vf.getVp().getPanelApartado().getImgA().setVisible(false);
@@ -352,14 +345,30 @@ public class Controller implements ActionListener {
 		case "APARTADOADD":
 			if (apartadoPaciente) {
 				createPaciente = true;
-				getDatosPaciente(true, false);
+
+				vf.getVp().getPanelInput().getImgE().setVisible(false);
+				vf.getVp().getPanelInput().getImgP().setVisible(true);
+				vf.getVp().getPanelInput().getImgD().setVisible(false);
+				vf.getVp().getPanelInput().getCmbxEspecialidad().setVisible(true);
+				vf.getVp().getPanelInput().getCmbxGenero().setVisible(true);
+				vf.getVp().getPanelInput().getTxtId().setVisible(true);
+				vf.getVp().getPanelInput().getTxtName().setVisible(true);
+				vf.getVp().getPanelInput().getTxtEdad().setVisible(true);
+				vf.getVp().getPanelInput().getTxtConfirmPswd().setVisible(false);
+				vf.getVp().getPanelInput().getTxtPswd().setVisible(false);
+				vf.getVp().getPanelInput().getTxtGmail().setVisible(true);
+
+				vf.getVp().mostrarPanelInput();
+
 			}
 
 			if (apartadoEspecialidad) {
 				String especialidad = vf.getCon().pedirString("Ingrese el nombre de la especialidad a agregar");
-				if (mf.getEspecialidadDAO().add(new EspecialidadDTO(especialidad))) {
-					vf.getCon().mostrarMensajeEmergente("Especialidad agregada");
-					especialidades = mf.getEspecialidadDAO().getAll();
+				if (especialidad != null) {
+					if (mf.getEspecialidadDAO().add(new EspecialidadDTO(especialidad))) {
+						vf.getCon().mostrarMensajeEmergente("Especialidad agregada");
+						especialidades = mf.getEspecialidadDAO().getAll();
+					}
 				}
 
 				else
@@ -368,16 +377,202 @@ public class Controller implements ActionListener {
 
 			if (apartadoEspecialista) {
 				createEspecialista = true;
-				getDatosEspecialista(true, false);
+				vf.getVp().getPanelInput().getImgE().setVisible(true);
+				vf.getVp().getPanelInput().getImgD().setVisible(false);
+				vf.getVp().getPanelInput().getImgP().setVisible(false);
+				vf.getVp().getPanelInput().getCmbxEspecialidad().setVisible(true);
+				vf.getVp().getPanelInput().getCmbxGenero().setVisible(true);
+				vf.getVp().getPanelInput().getTxtId().setVisible(true);
+				vf.getVp().getPanelInput().getTxtName().setVisible(true);
+				vf.getVp().getPanelInput().getTxtEdad().setVisible(true);
+				vf.getVp().getPanelInput().getTxtConfirmPswd().setVisible(true);
+				vf.getVp().getPanelInput().getTxtPswd().setVisible(true);
+				vf.getVp().getPanelInput().getTxtGmail().setVisible(true);
+
+				vf.getVp().mostrarPanelInput();
 			}
 
 			break;
-//a
 		case "APARTADOMOD":
-			
+
+			if (apartadoEspecialidad) {
+				String msg[] = mf.getEspecialidadDAO().getAll();
+				int op = vf.getCon().pedirOpcionDeLista("Especialidad a modifical", msg);
+				if (op >= 0) {
+
+					String name = especialidades[op];
+					String newName = vf.getCon().pedirString("Ingrese el nombre de la especialidad: ");
+					if (newName != null) {
+
+						if (mf.getEspecialidadDAO().update(new EspecialidadDTO(name), new EspecialidadDTO(newName))) {
+							vf.getCon().mostrarMensajeEmergente("Operacion Completada");
+							especialidades = mf.getEspecialidadDAO().getAll();
+						}
+					}
+				} else {
+					vf.getCon().mostrarAlerta("Operacion incompleta");
+				}
+				break;
+			}
+
+			if (apartadoPaciente) {
+				modPaciente = true;
+				try {
+					int op = vf.getCon().pedirOpcionDeLista(
+							"Ingrese la especialidad a la cual esta citado el paciente: ", especialidades);
+					ExceptionChecker.negativeIntNumberException(op);
+					if (op < 0) {
+						vf.getCon().mostrarAlerta("Entrada Inválida");
+					} else {
+						vf.getVp().getPanelApartado().getScroll().setVisible(true);
+						vf.getVp().getPanelApartado().getTabla().setVisible(true);
+						setUpPatientSpecialtyTable(especialidades[op]);
+						Long id = vf.getCon().pedirLong("Ingrese el número de identificación");
+
+						if (id == null) {
+							vf.getCon().mostrarAlerta("Entrada inválida");
+						} else {
+							ExceptionChecker.notValidIdException(id);
+
+							pacienteTempECita = especialidades[op];
+							pacienteTempId = id;
+
+							vf.getVp().mostrarPanelInput();
+						}
+					}
+
+				} catch (NegativeIntNumberException j) {
+					vf.getCon().mostrarAlerta("Entrada no valida, solo ingrese numeros enteros positivos");
+				} catch (NotValidIdException j) {
+					vf.getCon().mostrarAlerta(
+							"Formato de id no valido, verifique que tenga minimo 8 digitos y maximo 10 digitos");
+				}
+
+			}
+
+			if (apartadoEspecialista) {
+				modEspecialista = true;
+				try {
+					int op = vf.getCon().pedirOpcionDeLista(
+							"Ingrese la especialidad a la cual pertenece el especialista: ", especialidades);
+					ExceptionChecker.negativeIntNumberException(op);
+					if (op < 0) {
+						vf.getCon().mostrarAlerta("Entrada Inválida");
+					} else {
+
+						vf.getVp().getPanelApartado().getScroll().setVisible(true);
+						vf.getVp().getPanelApartado().getTabla().setVisible(true);
+						setUpEspecialistAreaTable(especialidades[op]);
+						Long id = vf.getCon().pedirLong("Ingrese el número de identificación");
+						if (id == null) {
+							vf.getCon().mostrarAlerta("Entrada inválida");
+						} else {
+							ExceptionChecker.notValidIdException(id);
+							especialistaTempId = id;
+							vf.getVp().mostrarPanelInput();
+						}
+					}
+				} catch (NegativeIntNumberException j) {
+					vf.getCon().mostrarAlerta("Entrada no valida, solo ingrese numeros enteros positivos");
+				} catch (NotValidIdException j) {
+					vf.getCon().mostrarAlerta(
+							"Formato de id no valido, verifique que tenga minimo 8 digitos y maximo 10 digitos");
+				}
+
+			}
+
 			break;
 
 		case "APARTADODEL":
+			if (apartadoEspecialidad) {
+				String msg[] = mf.getEspecialidadDAO().getAll();
+				int op = vf.getCon().pedirOpcionDeLista("Especialidad a eliminar", msg);
+				if (op >= 0) {
+					if (mf.getEspecialidadDAO().delete(new EspecialidadDTO(especialidades[op]))) {
+						vf.getCon().mostrarMensajeEmergente("Operacion completada");
+						especialidades = mf.getEspecialidadDAO().getAll();
+					}
+				} else {
+					vf.getCon().mostrarAlerta("Operacion incompleta");
+				}
+
+			}
+
+			if (apartadoEspecialista) {
+				try {
+					int op = vf.getCon().pedirOpcionDeLista(
+							"Ingrese la especialidad a la cual pertenece el especialista: ", especialidades);
+					ExceptionChecker.negativeIntNumberException(op);
+					if (op < 0) {
+						vf.getCon().mostrarAlerta("Entrada Inválida");
+					} else {
+						vf.getVp().getPanelApartado().getScroll().setVisible(true);
+						vf.getVp().getPanelApartado().getTabla().setVisible(true);
+						setUpEspecialistAreaTable(especialidades[op]);
+						Long id = vf.getCon().pedirLong("Ingrese el número de identificación");
+						if (id == null) {
+							vf.getCon().mostrarAlerta("Entrada Inválida");
+						} else {
+							ExceptionChecker.notValidIdException(id);
+
+							String nombre = mf.getEspecialistaDAO().pickSpecialistData(id, true, false);
+
+							if (mf.getEspecialistaDAO().delete(new EspecialistaDTO(id, null, 0, null, null, null, 0))) {
+								vf.getCon().mostrarMensajeEmergente("El especialista " + nombre + " ha sido eliminado");
+							} else {
+								vf.getCon().mostrarAlerta("Operacion incompleta");
+							}
+						}
+					}
+
+				} catch (NegativeIntNumberException j) {
+					vf.getCon().mostrarAlerta("Entrada no valida, solo ingrese numeros enteros positivos");
+				} catch (NotValidIdException j) {
+					vf.getCon().mostrarAlerta(
+							"Formato de id no valido, verifique que tenga minimo 8 digitos y maximo 10 digitos");
+				}
+
+			}
+
+			if (apartadoPaciente) {
+				try {
+					int op = vf.getCon().pedirOpcionDeLista("Ingrese la especialidad a la cual esta asignada la cita: ",
+							especialidades);
+					ExceptionChecker.negativeIntNumberException(op);
+					if (op < 0) {
+						vf.getCon().mostrarAlerta("Entrada Inválida");
+					} else {
+						vf.getVp().getPanelApartado().getScroll().setVisible(true);
+						vf.getVp().getPanelApartado().getTabla().setVisible(true);
+						setUpPatientSpecialtyTable(especialidades[op]);
+						Long id = vf.getCon().pedirLong("Ingrese el número de identificación");
+						if (id == null) {
+							vf.getCon().mostrarAlerta("Entrada Inválida");
+						} else {
+							ExceptionChecker.notValidIdException(id);
+							String tempCorreo = mf.getPacienteDAO().pickData(id, especialidades[op], true, false);
+							String nombre = mf.getPacienteDAO().pickData(id, especialidades[op], false, true);
+
+							if (mf.getPacienteDAO().delete(new PacienteDTO(id, null, 0, null, null, null, null,
+									especialidades[op], null, false))) {
+								vf.getCon().mostrarAlerta("Paciente " + nombre + " eliminado");
+								vf.getCon()
+										.mostrarMensajeEmergente("Espere a recibir la confirmación de correo enviado");
+								EmailController.sendCanceled(tempCorreo, nombre);
+							} else {
+								vf.getCon().mostrarAlerta("Operacion incompleta");
+							}
+						}
+					}
+
+				} catch (NegativeIntNumberException j) {
+					vf.getCon().mostrarAlerta("Entrada no valida, solo ingrese numeros enteros positivos");
+				} catch (NotValidIdException j) {
+					vf.getCon().mostrarAlerta(
+							"Formato de id no valido, verifique que tenga minimo 8 digitos y maximo 10 digitos");
+				}
+
+			}
 
 			break;
 
@@ -386,6 +581,14 @@ public class Controller implements ActionListener {
 			apartadoEspecialidad = false;
 			apartadoEspecialista = false;
 			apartadoPaciente = false;
+			createArea = false;
+			createDirector = false;
+			createEspecialista = false;
+			createPaciente = false;
+			modArea = false;
+			modDirector = false;
+			modEspecialista = false;
+			modPaciente = false;
 			break;
 
 		// INPUT
@@ -397,25 +600,46 @@ public class Controller implements ActionListener {
 			if (createDirector) {
 				getDatosDirector(true, false);
 			}
+			if (createEspecialista) {
+				getDatosEspecialista(true, false);
+			}
+
 			if (modDirector) {
 				getDatosDirector(false, true);
 			}
+			if (modPaciente) {
+				getDatosPaciente(false, true);
+			}
 
+			break;
+
+		case "VOLVERINPUT":
+
+			if (apartadoEspecialista) {
+				vf.getVp().getPanelApartado().getImgA().setVisible(false);
+				vf.getVp().getPanelApartado().getImgE().setVisible(true);
+				vf.getVp().getPanelApartado().getImgP().setVisible(false);
+				vf.getVp().mostrarPanelApartado();
+			}
+
+			if (apartadoPaciente) {
+				vf.getVp().getPanelApartado().getImgA().setVisible(false);
+				vf.getVp().getPanelApartado().getImgE().setVisible(false);
+				vf.getVp().getPanelApartado().getImgP().setVisible(true);
+				vf.getVp().mostrarPanelApartado();
+			}
+
+			if (paciente) {
+				vf.getVp().mostrarPanelWelcome();
+			}
+
+			paciente = false;
 			createDirector = false;
 			modDirector = false;
 			createEspecialista = false;
 			modEspecialista = false;
 			createPaciente = false;
 			modPaciente = false;
-			break;
-
-		case "VOLVERINPUT":
-			if (paciente) {
-				vf.getVp().mostrarPanelWelcome();
-			} else {
-				vf.getVp().mostrarPanelLogin();
-			}
-			paciente = false;
 			break;
 		}
 
@@ -535,6 +759,13 @@ public class Controller implements ActionListener {
 				if (create == true && update == false) {
 					if (mf.getEspecialistaDAO().add(
 							new EspecialistaDTO(id, nombre, edad, genero, correo, especialidad, password)) == true) {
+						if (apartadoEspecialista) {
+							vf.getVp().getPanelApartado().getImgE().setVisible(true);
+							vf.getVp().getPanelApartado().getImgA().setVisible(false);
+							vf.getVp().getPanelApartado().getImgP().setVisible(false);
+							vf.getVp().mostrarPanelApartado();
+							vf.getCon().mostrarMensajeEmergente("Especialista creado con exito");
+						}
 						vf.getCon().mostrarMensajeEmergente("Especialista creado con exito");
 					} else {
 						vf.getCon().mostrarAlerta("Intente nuevamente, verifique los datos ingresados");
@@ -544,7 +775,15 @@ public class Controller implements ActionListener {
 					if (mf.getEspecialistaDAO().update(
 							new EspecialistaDTO(especialistaTempId, null, 0, null, null, null, 0),
 							new EspecialistaDTO(id, nombre, edad, genero, correo, especialidad, password)) == true) {
-						vf.getCon().mostrarMensajeEmergente("Especialista actualizado con exito");
+						if (apartadoEspecialista) {
+							vf.getVp().getPanelApartado().getImgE().setVisible(true);
+							vf.getVp().getPanelApartado().getImgA().setVisible(false);
+							vf.getVp().getPanelApartado().getImgP().setVisible(false);
+							vf.getVp().mostrarPanelApartado();
+							vf.getCon().mostrarMensajeEmergente("Especialista actualizado con exito");
+						} else {
+							vf.getCon().mostrarMensajeEmergente("Especialista actualizado con exito");
+						}
 					} else {
 						vf.getCon().mostrarAlerta("Intente nuevamente, verifique los datos ingresados");
 					}
@@ -593,11 +832,21 @@ public class Controller implements ActionListener {
 			if (create == true && update == false) {
 				if (mf.getPacienteDAO().add(new PacienteDTO(id, nombre, edad, genero, correo, null, null, especialidad,
 						especialistaAsignado, false)) == true) {
-					vf.getCon().mostrarMensajeEmergente("Paciente creado con exito");
-					vf.getCon().mostrarMensajeEmergente("Espere a recibir la confirmación de correo enviado");
-					pacienteTempId = id;
-					pacienteTempECita = especialidad;
-					EmailController.sendScheduled(correo, nombre, especialistaAsignado, especialidad);
+					if (apartadoPaciente) {
+						vf.getVp().getPanelApartado().getImgE().setVisible(false);
+						vf.getVp().getPanelApartado().getImgA().setVisible(false);
+						vf.getVp().getPanelApartado().getImgP().setVisible(true);
+						vf.getCon().mostrarMensajeEmergente("Paciente creado con exito");
+						vf.getCon().mostrarMensajeEmergente("Espere a recibir la confirmación de correo enviado");
+						EmailController.sendScheduled(correo, nombre, especialistaAsignado, especialidad);
+						vf.getVp().mostrarPanelApartado();
+					} else {
+						vf.getCon().mostrarMensajeEmergente("Paciente creado con exito");
+						vf.getCon().mostrarMensajeEmergente("Espere a recibir la confirmación de correo enviado");
+						pacienteTempId = id;
+						pacienteTempECita = especialidad;
+						EmailController.sendScheduled(correo, nombre, especialistaAsignado, especialidad);
+					}
 				} else {
 					vf.getCon().mostrarAlerta("Intente nuevamente, verifique los datos ingresados");
 				}
@@ -608,8 +857,21 @@ public class Controller implements ActionListener {
 								null, false),
 								new PacienteDTO(id, nombre, edad, genero, correo, null, null, especialidad, null,
 										false)) == true) {
-					vf.getCon().mostrarMensajeEmergente("Paciente actualizado con exito");
-					EmailController.sendRescheduled(correo);
+					if (apartadoPaciente) {
+
+						vf.getVp().getPanelApartado().getImgE().setVisible(false);
+						vf.getVp().getPanelApartado().getImgA().setVisible(false);
+						vf.getVp().getPanelApartado().getImgP().setVisible(true);
+						vf.getCon().mostrarMensajeEmergente("Paciente actualizado con exito");
+						vf.getCon().mostrarMensajeEmergente("Espere a recibir la confirmación de correo enviado");
+						EmailController.sendRescheduled(correo);
+						vf.getVp().mostrarPanelApartado();
+					} else {
+						vf.getCon().mostrarMensajeEmergente("Paciente actualizado con exito");
+						vf.getCon().mostrarMensajeEmergente("Espere a recibir la confirmación de correo enviado");
+						EmailController.sendRescheduled(correo);
+
+					}
 				} else {
 					vf.getCon().mostrarAlerta("Intente nuevamente, verifique los datos ingresados");
 				}
@@ -675,6 +937,56 @@ public class Controller implements ActionListener {
 		vf.getVp().getPanelApartado().getTabla().repaint();
 	}
 
+	public void setUpPatientSpecialtyTable(String especialidad) {
+		String column[] = { "ID", "NOMBRE", "GMAIL", "EDAD", "GENERO", "ESPECIALISTA", "ESPECIALIDAD", "SEGUIMIENTO" };
+		ArrayList<PacienteDTO> pList = mf.getPacienteDAO().getAll();
+
+		String[][] rows = new String[1][8];
+		if (pList != null) {
+			rows = new String[pList.size()][8];
+		}
+
+		int i = 0;
+		for (PacienteDTO p : pList) {
+
+			if (p.getEspecialidadCita().equalsIgnoreCase(especialidad)) {
+
+				rows[i][0] = Long.toString(p.getId());
+
+				rows[i][1] = p.getNombre();
+				rows[i][2] = p.getCorreo();
+				rows[i][3] = Integer.toString(p.getEdad());
+				rows[i][4] = p.getGenero();
+				rows[i][5] = p.getEspecialistaAsignado();
+				rows[i][6] = p.getEspecialidadCita();
+				boolean translate = p.isRequiereSeguimiento();
+				String mean = "";
+				if (translate) {
+					mean = "si";
+				} else {
+					mean = "no";
+				}
+				rows[i][7] = mean;
+				i++;
+			}
+		}
+
+		DefaultTableModel model = new DefaultTableModel(rows, column) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+
+		vf.getVp().getPanelApartado().getTabla().setModel(model);
+		vf.getVp().getPanelApartado().getTabla().repaint();
+	}
+
 	public void setUpEspecialistTable() {
 		String column[] = { "ID", "NOMBRE", "GMAIL", "EDAD", "GENERO", "ESPECIALIDAD" };
 		ArrayList<EspecialistaDTO> eList = mf.getEspecialistaDAO().getAll();
@@ -695,6 +1007,44 @@ public class Controller implements ActionListener {
 			rows[i][4] = p.getGenero();
 			rows[i][5] = p.getEspecialidad();
 			i++;
+		}
+
+		DefaultTableModel model = new DefaultTableModel(rows, column) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+
+		vf.getVp().getPanelApartado().getTabla().setModel(model);
+		vf.getVp().getPanelApartado().getTabla().repaint();
+	}
+
+	public void setUpEspecialistAreaTable(String especialidad) {
+		String column[] = { "ID", "NOMBRE", "GMAIL", "EDAD", "GENERO", "ESPECIALIDAD" };
+		ArrayList<EspecialistaDTO> eList = mf.getEspecialistaDAO().getAll();
+
+		String[][] rows = new String[1][6];
+		if (eList != null) {
+			rows = new String[eList.size()][6];
+		}
+
+		int i = 0;
+		for (EspecialistaDTO p : eList) {
+			if (p.getEspecialidad().equals(especialidad)) {
+				rows[i][0] = Long.toString(p.getId());
+				rows[i][1] = p.getNombre();
+				rows[i][2] = p.getCorreo();
+				rows[i][3] = Integer.toString(p.getEdad());
+				rows[i][4] = p.getGenero();
+				rows[i][5] = p.getEspecialidad();
+				i++;
+			}
 		}
 
 		DefaultTableModel model = new DefaultTableModel(rows, column) {
@@ -1811,6 +2161,13 @@ public class Controller implements ActionListener {
 	@SuppressWarnings("deprecation")
 	public void generarCitas() {
 
+	}
+
+	public void fillCombxEspecialidades() {
+		especialidades = mf.getEspecialidadDAO().getAll();
+		for (int i = 0; i < especialidades.length; i++) {
+			vf.getVp().getPanelInput().getCmbxEspecialidad().addItem(especialidades[i]);
+		}
 	}
 
 }

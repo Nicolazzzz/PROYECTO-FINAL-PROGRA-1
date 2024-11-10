@@ -56,6 +56,7 @@ public class PanelApartado extends JPanel {
 				return false;
 			}
 		};
+
 		tabla = new JTable(model);
 		tabla.setEnabled(true);
 		tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
