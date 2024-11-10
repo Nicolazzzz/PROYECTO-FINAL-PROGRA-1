@@ -15,7 +15,9 @@ import javax.mail.internet.MimeMessage;
 import javax.swing.JOptionPane;
 
 public class EmailController {
-
+	
+	//PRUEBAAAA
+	private String eliminar;
 	private static String emailFrom = "bosquehealth.noreply@gmail.com";
 	private static String passwordFrom = "etbu bjjd xvzc yenm";
 
