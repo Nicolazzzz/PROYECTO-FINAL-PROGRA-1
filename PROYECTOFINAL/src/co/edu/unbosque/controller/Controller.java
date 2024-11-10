@@ -46,19 +46,18 @@ public class Controller implements ActionListener {
 	private boolean modPaciente;
 
 	private boolean paciente;
+	private AppointmentController gestor;
 
 	public Controller() {
-
-		AppointmentController gestor = new AppointmentController();
+		gestor = new AppointmentController();
 
 		// Generar varias citas
 //		for (int i = 0; i < 5; i++) {
 //			System.out.println("\nGenerando cita " + (i + 1) + ":");
-//			gestor.generarCitas();
 //		}
 //
 //		// Mostrar todas las citas asignadas
-//		gestor.mostrarCitasAsignadas();
+		
 
 		mf = new ModelFacade();
 		vf = new ViewFacade();
@@ -839,6 +838,7 @@ public class Controller implements ActionListener {
 			case 1: // Agendar Cita
 				vf.getCon().printLine("AGENDAR CITA");
 				pedirDatosPaciente(true, false);
+				gestor.generarCitas();
 				break;
 
 			case 2: // Reprogramar Cita
