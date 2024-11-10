@@ -1,6 +1,10 @@
 package co.edu.unbosque.controller;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.InputMismatchException;
 import java.util.Properties;
 
@@ -33,7 +37,17 @@ public class Controller {
 	private long especialistaTempId;
 
 	public Controller() {
-		enviarCorreosCitas();
+
+		AppointmentController gestor = new AppointmentController();
+
+		// Generar varias citas
+		for (int i = 0; i < 5; i++) {
+			System.out.println("\nGenerando cita " + (i + 1) + ":");
+			gestor.generarCitas();
+		}
+
+		// Mostrar todas las citas asignadas
+		gestor.mostrarCitasAsignadas();
 
 		mf = new ModelFacade();
 		vf = new ViewFacade();
@@ -251,6 +265,62 @@ public class Controller {
 	}
 
 	public void mostrarMenuPaciente() {
+		pacienteloop: while (true) {
+
+			String menu = """
+
+					Menu Paciente
+
+					1. Agendar Cita
+					2. Reprogramar Cita
+					3. Cancelar Cita
+					4. Salir
+
+
+					""";
+
+			vf.getCon().printLine(menu);
+			int op = vf.getCon().readInt();
+			switch (op) {
+			case 1: // Agendar Cita
+				vf.getCon().printLine("Ingrese los datos solicitados para agendar la cita");
+				vf.getCon().printLine("ID:");
+				long idP = vf.getCon().readLong();
+				vf.getCon().burnLine();
+				vf.getCon().printLine("Nombre:");
+				String nombreP = vf.getCon().readLine();
+				vf.getCon().printLine("Edad:");
+				int edadP = vf.getCon().readInt();
+				vf.getCon().burnLine();
+				vf.getCon().printLine("Genero: ");
+				String generoP = vf.getCon().readLine();
+				vf.getCon().printLine("Correo:");
+				String correoP = vf.getCon().readLine();
+				vf.getCon().printLine("Especialidad: ");
+				String especialidadP = vf.getCon().readLine();
+
+				mf.getPacienteDAO().add(
+						new PacienteDTO(idP, nombreP, edadP, generoP, correoP, null, null, especialidadP, null, false));
+
+				AppointmentController gestor = new AppointmentController();
+				gestor.generarCitas();
+
+				break;
+			case 2: // Reprogramar Cita
+
+				break;
+			case 3: // Cancelar Cita
+
+				break;
+			case 4:
+				vf.getCon().printLine("SALIENDO MENU PACIENTE");
+				break pacienteloop;
+
+			default:
+				vf.getCon().printLine("Debe seleccionar una opcion valida!");
+				break;
+			}
+		}
 	}
 
 	public void mostrarMenuDirectorEspecialidades() {
@@ -944,14 +1014,19 @@ public class Controller {
 
 	}
 
-	public void enviarCorreosCitas() {
-		// generar el formato de hora del properties
-		Calendar calendario = Calendar.getInstance();
-		int h = calendario.get(Calendar.HOUR_OF_DAY);
-		int m = calendario.get(Calendar.MINUTE);
-		String hora = h + ":" + m;
+	/*
+	 * public void enviarCorreosCitas() { // generar el formato de hora del
+	 * properties Calendar calendario = Calendar.getInstance(); int h =
+	 * calendario.get(Calendar.HOUR_OF_DAY); int m =
+	 * calendario.get(Calendar.MINUTE); String hora = h + ":" + m;
+	 * 
+	 * EspecialistaDAO edao = new EspecialistaDAO();
+	 * 
+	 * }
+	 */ // Esto deberia ir en EmailController
 
-		EspecialistaDAO edao = new EspecialistaDAO();
+	@SuppressWarnings("deprecation")
+	public void generarCitas() {
 
 	}
 }
