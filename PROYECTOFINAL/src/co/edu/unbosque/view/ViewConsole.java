@@ -6,6 +6,7 @@ public class ViewConsole {
 
 	private Scanner sc;
 
+	
 	public ViewConsole() {
 		sc = new Scanner(System.in);
 	}

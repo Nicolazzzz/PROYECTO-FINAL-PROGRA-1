@@ -1,10 +1,7 @@
 package co.edu.unbosque.controller;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.InputMismatchException;
 import java.util.Properties;
 
@@ -13,7 +10,6 @@ import co.edu.unbosque.model.EspecialidadDTO;
 import co.edu.unbosque.model.EspecialistaDTO;
 import co.edu.unbosque.model.ModelFacade;
 import co.edu.unbosque.model.PacienteDTO;
-import co.edu.unbosque.model.persistence.EspecialistaDAO;
 import co.edu.unbosque.model.persistence.FileHandler;
 import co.edu.unbosque.util.exception.EmailNotValidException;
 import co.edu.unbosque.util.exception.ExceptionChecker;
@@ -23,7 +19,7 @@ import co.edu.unbosque.util.exception.NotValidPasswordException;
 import co.edu.unbosque.util.exception.NotValidStringInputException;
 import co.edu.unbosque.view.ViewFacade;
 
-public class Controller {
+public class Controller implements ActionListener {
 
 	private ModelFacade mf;
 	private ViewFacade vf;
@@ -35,6 +31,9 @@ public class Controller {
 	private long pacienteTempId;
 	private String pacienteTempECita;
 	private long especialistaTempId;
+
+	private boolean loginDirector;
+	private boolean loginEspecialista;
 
 	public Controller() {
 
@@ -52,22 +51,89 @@ public class Controller {
 		mf = new ModelFacade();
 		vf = new ViewFacade();
 
-		vf.getCon().printLine(mf.getPacienteDAO().pickData(1122515555, "Cirugía", true, false));
+		asignarLectores();
+		vf.getVp().mostrarPanelWelcome();
 
 		vf.getCon().printLine(mf.getPacienteDAO().showAll());
-		System.out.println(mf.getEspecialistaDAO().getRandomSpecialist("Cirugía"));
 		prop = FileHandler.loadProperties("config.properties");
-
-//		vf.getCon().printLine("PACIENTES");
-//		vf.getCon().printLine(mf.getPacienteDAO().showAll());
-		vf.getCon().printLine("DIRECTOR");
-		vf.getCon().printLine(mf.getDirectorDAO().showAll());
-//		vf.getCon().printLine("ESPECIALISTA");
-//		vf.getCon().printLine(mf.getEspecialistaDAO().showAll());
 
 		especialidades = mf.getEspecialidadDAO().getAll();
 
 		mostrarMenuPrincipal();
+
+	}
+
+	public void asignarLectores() {
+		// WELCOME
+		vf.getVp().getPanelEntrada().getBtnDirector().addActionListener(this);
+		vf.getVp().getPanelEntrada().getBtnDirector().setActionCommand("DIRECTOR");
+
+		vf.getVp().getPanelEntrada().getBtnEspecialista().addActionListener(this);
+		vf.getVp().getPanelEntrada().getBtnEspecialista().setActionCommand("ESPECIALISTA");
+
+		vf.getVp().getPanelEntrada().getBtnPaciente().addActionListener(this);
+		vf.getVp().getPanelEntrada().getBtnPaciente().setActionCommand("PACIENTE");
+
+		// LOGIN
+		vf.getVp().getPanelLogin().getBtnEntrar().addActionListener(this);
+		vf.getVp().getPanelLogin().getBtnEntrar().setActionCommand("ENTRAR");
+
+		vf.getVp().getPanelLogin().getBtnVolver().addActionListener(this);
+		vf.getVp().getPanelLogin().getBtnVolver().setActionCommand("VOLVER");
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+
+		switch (e.getActionCommand()) {
+		// WELCOME
+		case "DIRECTOR":
+			vf.getVp().getPanelLogin().getImgD().setVisible(true);
+			vf.getVp().getPanelLogin().getImgE().setVisible(false);
+
+			vf.getVp().mostrarPanelLogin();
+			break;
+
+		case "ESPECIALISTA":
+			vf.getVp().getPanelLogin().getImgE().setVisible(true);
+			vf.getVp().getPanelLogin().getImgD().setVisible(false);
+			vf.getVp().mostrarPanelLogin();
+			break;
+
+		case "PACIENTE":
+			break;
+
+		// LOGIN
+		case "ENTRAR":
+			try {
+				vf.getCon().printLine("Bienvenido:");
+				vf.getCon().print("ID: ");
+				long id = vf.getCon().readLong();
+				ExceptionChecker.notValidIdException(id);
+				vf.getCon().print("Contraseña: ");
+				long password = vf.getCon().readLong();
+				ExceptionChecker.notValidPasswordException(password);
+				vf.getCon().printLine(mf.getDirectorDAO().verifyPassword(id, password));
+				if (mf.getDirectorDAO().checkLogIn(id, password) == true) {
+					directorTempId = id;
+					mostrarMenuDirector();
+				}
+
+			} catch (NotValidIdException j) {
+				vf.getCon().printLine("Formato de id no valido, verifique que tenga 10 digitos");
+			} catch (NotValidPasswordException j) {
+				vf.getCon().printLine("Formato de contraseña no valido, verifique su contraseña");
+			}
+			break;
+
+		case "VOLVER":
+			vf.getVp().getPanelLogin().getTxtId().setText("");
+			vf.getVp().getPanelLogin().getTxtPwd().setText("");
+			vf.getVp().mostrarPanelWelcome();
+			break;
+
+		}
 
 	}
 
@@ -354,9 +420,7 @@ public class Controller {
 	}
 
 	public void mostrarMenuPaciente() {
-<<<<<<< HEAD
 
-=======
 		pacienteloop: while (true) {
 
 			String menu = """
@@ -368,40 +432,50 @@ public class Controller {
 					3. Cancelar Cita
 					4. Salir
 
-
 					""";
 
 			vf.getCon().printLine(menu);
 			int op = vf.getCon().readInt();
 			switch (op) {
 			case 1: // Agendar Cita
-				vf.getCon().printLine("Ingrese los datos solicitados para agendar la cita");
-				vf.getCon().printLine("ID:");
-				long idP = vf.getCon().readLong();
-				vf.getCon().burnLine();
-				vf.getCon().printLine("Nombre:");
-				String nombreP = vf.getCon().readLine();
-				vf.getCon().printLine("Edad:");
-				int edadP = vf.getCon().readInt();
-				vf.getCon().burnLine();
-				vf.getCon().printLine("Genero: ");
-				String generoP = vf.getCon().readLine();
-				vf.getCon().printLine("Correo:");
-				String correoP = vf.getCon().readLine();
-				vf.getCon().printLine("Especialidad: ");
-				String especialidadP = vf.getCon().readLine();
-
-				mf.getPacienteDAO().add(
-						new PacienteDTO(idP, nombreP, edadP, generoP, correoP, null, null, especialidadP, null, false));
-
-				AppointmentController gestor = new AppointmentController();
-				gestor.generarCitas();
-
+				vf.getCon().printLine("AGENDAR CITA");
+				pedirDatosPaciente(true, false);
 				break;
+
 			case 2: // Reprogramar Cita
-
 				break;
+
 			case 3: // Cancelar Cita
+				vf.getCon().printLine("CANCELAR CITA");
+				int opE2;
+				specialtyloop: while (true) {
+					vf.getCon().printLine("Seleccione la especialidad: ");
+					mostrarLista();
+					opE2 = vf.getCon().readInt();
+					vf.getCon().burnLine();
+					if (opE2 > especialidades.length) {
+						vf.getCon().printLine("Opcion invalida, seleccione nuevamente");
+					} else {
+						break specialtyloop;
+					}
+				}
+
+				String specialty = especialidades[opE2 - 1];
+
+				vf.getCon().printLine("Ingrese su cedula: ");
+				long id1 = vf.getCon().readLong();
+				vf.getCon().burnLine();
+
+				String tempCorreo = mf.getPacienteDAO().pickData(id1, specialty, true, false);
+				String nombre = mf.getPacienteDAO().pickData(id1, specialty, false, true);
+
+				if (mf.getPacienteDAO()
+						.delete(new PacienteDTO(id1, null, 0, null, null, null, null, specialty, null, false))) {
+					vf.getCon().printLine("Operacion completada");
+					EmailController.sendCanceled(tempCorreo, nombre);
+				} else {
+					vf.getCon().printLine("Operacion incompleta");
+				}
 
 				break;
 			case 4:
@@ -413,7 +487,6 @@ public class Controller {
 				break;
 			}
 		}
->>>>>>> branch 'main' of https://github.com/Nicolazzzz/PROYECTO-FINAL-PROGRA-1
 	}
 
 	public void mostrarMenuDirectorEspecialidades() {
@@ -569,17 +642,17 @@ public class Controller {
 					} else {
 						break specialtyloop;
 					}
-					String specialty = especialidades[opE1 - 1];
-					pacienteTempECita = specialty;
-					vf.getCon().printLine(mf.getPacienteDAO().showSpecificPatientSpecialty(specialty));
-					vf.getCon().printLine("Ingrese la cedula del paciente a modificar: ");
-					long id = vf.getCon().readLong();
-					pacienteTempId = id;
-					vf.getCon().burnLine();
-					pedirDatosPaciente(false, true);
-					pacienteTempECita = null;
-					pacienteTempId = 0;
 				}
+				String specialty1 = especialidades[opE1 - 1];
+				pacienteTempECita = specialty1;
+				vf.getCon().printLine(mf.getPacienteDAO().showSpecificPatientSpecialty(specialty1));
+				vf.getCon().printLine("Ingrese la cedula del paciente a modificar: ");
+				long id = vf.getCon().readLong();
+				pacienteTempId = id;
+				vf.getCon().burnLine();
+				pedirDatosPaciente(false, true);
+				pacienteTempECita = null;
+				pacienteTempId = 0;
 				break;
 
 			case 4:
@@ -920,6 +993,7 @@ public class Controller {
 								new PacienteDTO(id, nombre, edad, genero, correo, null, null, especialidadCita, null,
 										false)) == true) {
 					vf.getCon().printLine("Paciente actualizado con exito");
+					EmailController.sendRescheduled(correo);
 				} else {
 					vf.getCon().printLine("Intente nuevamente, verifique los datos ingresados");
 				}
@@ -1129,4 +1203,5 @@ public class Controller {
 	public void generarCitas() {
 
 	}
+
 }
