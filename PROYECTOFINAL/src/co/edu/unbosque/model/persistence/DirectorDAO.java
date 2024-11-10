@@ -201,4 +201,22 @@ public class DirectorDAO implements CRUDOperation<DirectorDTO, Director> {
 		else
 			return true;
 	}
+
+	public String pickData(long id, boolean esNombre, boolean esGmail) {
+		String content = "";
+
+		for (Director d : listaDirectores) {
+			if (d.getId() == id) {
+				if (esNombre) {
+					content = d.getNombre();
+				}
+				if (esGmail) {
+					content = d.getCorreo();
+				}
+
+			}
+
+		}
+		return content;
+	}
 }

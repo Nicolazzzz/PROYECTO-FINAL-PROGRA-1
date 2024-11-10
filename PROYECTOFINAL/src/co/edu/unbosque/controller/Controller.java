@@ -37,25 +37,34 @@ public class Controller implements ActionListener {
 	private boolean loginDirector;
 	private boolean loginEspecialista;
 
+	private boolean createDirector;
+	private boolean createEspecialista;
+	private boolean createPaciente;
+
+	private boolean modDirector;
+	private boolean modEspecialista;
+	private boolean modPaciente;
+
+	private boolean paciente;
+
 	public Controller() {
 
 		AppointmentController gestor = new AppointmentController();
 
 		// Generar varias citas
-		for (int i = 0; i < 5; i++) {
-			System.out.println("\nGenerando cita " + (i + 1) + ":");
-			gestor.generarCitas();
-		}
-
-		// Mostrar todas las citas asignadas
-		gestor.mostrarCitasAsignadas();
+//		for (int i = 0; i < 5; i++) {
+//			System.out.println("\nGenerando cita " + (i + 1) + ":");
+//			gestor.generarCitas();
+//		}
+//
+//		// Mostrar todas las citas asignadas
+//		gestor.mostrarCitasAsignadas();
 
 		mf = new ModelFacade();
 		vf = new ViewFacade();
 
-		// prueba de yes or no
-		int yeso = vf.getCon().mostrarYesOrNo("Seguro?");
-		boolean com = vf.getCon().validarYesOrNo(yeso);
+		vf.getCon().printLine("Director");
+		vf.getCon().printLine(mf.getDirectorDAO().showAll());
 
 		asignarLectores();
 		vf.getVp().getPanelEntrada().getImg().setVisible(true);
@@ -75,6 +84,7 @@ public class Controller implements ActionListener {
 
 	public void asignarLectores() {
 		// WELCOME
+		// 3
 		vf.getVp().getPanelEntrada().getBtnDirector().addActionListener(this);
 		vf.getVp().getPanelEntrada().getBtnDirector().setActionCommand("DIRECTOR");
 
@@ -85,18 +95,41 @@ public class Controller implements ActionListener {
 		vf.getVp().getPanelEntrada().getBtnPaciente().setActionCommand("PACIENTE");
 
 		// LOGIN
+		// 2
 		vf.getVp().getPanelLogin().getBtnEntrar().addActionListener(this);
 		vf.getVp().getPanelLogin().getBtnEntrar().setActionCommand("ENTRAR");
 
 		vf.getVp().getPanelLogin().getBtnVolver().addActionListener(this);
 		vf.getVp().getPanelLogin().getBtnVolver().setActionCommand("VOLVER");
 
+		// HOME DIRECTOR
+		// 6
+		vf.getVp().getPanelHDirector().getBtnVolver().addActionListener(this);
+		vf.getVp().getPanelHDirector().getBtnVolver().setActionCommand("VOLVERHOMEDIRECTOR");
+
+		vf.getVp().getPanelHDirector().getBtnEliminar().addActionListener(this);
+		vf.getVp().getPanelHDirector().getBtnEliminar().setActionCommand("ELIMINARPERFIL");
+
+		vf.getVp().getPanelHDirector().getBtnModificar().addActionListener(this);
+		vf.getVp().getPanelHDirector().getBtnModificar().setActionCommand("MODIFICARPERFIL");
+
+		vf.getVp().getPanelHDirector().getBtnPacientes().addActionListener(this);
+		vf.getVp().getPanelHDirector().getBtnPacientes().setActionCommand("PACIENTES");
+
+		vf.getVp().getPanelHDirector().getBtnEspecialistas().addActionListener(this);
+		vf.getVp().getPanelHDirector().getBtnEspecialistas().setActionCommand("ESPECIALISTAS");
+
+		vf.getVp().getPanelHDirector().getBtnEspecialidades().addActionListener(this);
+		vf.getVp().getPanelHDirector().getBtnEspecialidades().setActionCommand("ESPECIALIDADES");
+
 		// Input
+		// 2
 		vf.getVp().getPanelInput().getBtnVolver().addActionListener(this);
 		vf.getVp().getPanelInput().getBtnVolver().setActionCommand("VOLVERINPUT");
 
 		vf.getVp().getPanelInput().getBtnGuardar().addActionListener(this);
 		vf.getVp().getPanelInput().getBtnGuardar().setActionCommand("GUARDAR");
+
 	}
 
 	@Override
@@ -111,7 +144,18 @@ public class Controller implements ActionListener {
 			loginDirector = true;
 			loginEspecialista = false;
 
-			vf.getVp().mostrarPanelLogin();
+			if (mf.getDirectorDAO().checkAdmin() == false) {
+				createDirector = true;
+				vf.getVp().getPanelInput().getCmbxEspecialidad().setVisible(false);
+				vf.getVp().getPanelInput().getImgD().setVisible(true);
+				vf.getVp().getPanelInput().getImgE().setVisible(false);
+				vf.getVp().getPanelInput().getImgP().setVisible(false);
+				vf.getVp().mostrarPanelInput();
+
+			} else {
+				vf.getVp().mostrarPanelLogin();
+			}
+
 			break;
 
 		case "ESPECIALISTA":
@@ -124,50 +168,57 @@ public class Controller implements ActionListener {
 			break;
 
 		case "PACIENTE":
+			createPaciente = true;
+
+			vf.getVp().getPanelInput().getImgD().setVisible(false);
+			vf.getVp().getPanelInput().getImgE().setVisible(false);
+			vf.getVp().getPanelInput().getImgP().setVisible(true);
+			vf.getVp().getPanelInput().getTxtPswd().setVisible(false);
+			vf.getVp().getPanelInput().getTxtConfirmPswd().setVisible(false);
+			vf.getVp().mostrarPanelInput();
 
 			break;
 
 		// LOGIN
 		case "ENTRAR":
+			if (loginDirector) {
 
-			if (loginDirector == true) {
-				if (mf.getDirectorDAO().checkAdmin() == false) {
-					vf.getVp().getPanelInput().getCmbxEspecialidad().setVisible(false);
-					vf.getVp().getPanelInput().getImgD().setVisible(true);
-					vf.getVp().getPanelInput().getImgE().setVisible(false);
-					vf.getVp().getPanelInput().getImgP().setVisible(false);
-					vf.getVp().mostrarPanelInput();
-				} else {
+				try {
+					long id = Long.parseLong(vf.getVp().getPanelLogin().getTxtId().getText());
+					ExceptionChecker.notValidIdException(id);
 
-					try {
-						long id = Long.parseLong(vf.getVp().getPanelLogin().getTxtId().getText());
-						ExceptionChecker.notValidIdException(id);
+					long password = Long.parseLong(vf.getVp().getPanelLogin().getTxtPwd().getText());
+					ExceptionChecker.notValidPasswordException(password);
+					vf.getCon().mostrarAlerta(mf.getDirectorDAO().verifyPassword(id, password));
+					if (mf.getDirectorDAO().checkLogIn(id, password) == true) {
 
-						long password = Long.parseLong(vf.getVp().getPanelLogin().getTxtPwd().getText());
-						ExceptionChecker.notValidPasswordException(password);
-						vf.getCon().mostrarAlerta(mf.getDirectorDAO().verifyPassword(id, password));
-						if (mf.getDirectorDAO().checkLogIn(id, password) == true) {
-							vf.getVp().getPanelInput().getCmbxEspecialidad().setVisible(false);
-							vf.getVp().getPanelInput().getImgD().setVisible(true);
-							vf.getVp().getPanelInput().getImgE().setVisible(false);
-							vf.getVp().getPanelInput().getImgP().setVisible(false);
-							vf.getVp().mostrarPanelInput();
-							directorTempId = id;
-						}
+						directorTempId = id;
+						vf.getVp().getPanelHDirector().getTxtId().setText(directorTempId + "");
+						vf.getVp().getPanelHDirector().getTxtName()
+								.setText(mf.getDirectorDAO().pickData(directorTempId, true, false));
 
-					} catch (NotValidIdException j) {
-						vf.getCon().mostrarAlerta("Formato de id no valido, verifique que tenga 10 digitos");
-						vf.getVp().getPanelLogin().getTxtId().setText("");
-						vf.getVp().getPanelLogin().getTxtPwd().setText("");
-					} catch (NotValidPasswordException j) {
-						vf.getVp().getPanelLogin().getTxtId().setText("");
-						vf.getVp().getPanelLogin().getTxtPwd().setText("");
-						vf.getCon().mostrarAlerta("Formato de contraseña no valido, verifique su contraseña");
+						vf.getVp().getPanelHDirector().getTxtGmail()
+								.setText(mf.getDirectorDAO().pickData(directorTempId, false, true));
+
+						vf.getVp().mostrarPanelHomeDirector();
+
 					}
+
+				} catch (NotValidIdException j) {
+					vf.getCon().mostrarAlerta("Formato de id no valido, verifique que tenga 10 digitos");
+					vf.getVp().getPanelLogin().getTxtId().setText("");
+					vf.getVp().getPanelLogin().getTxtPwd().setText("");
+				} catch (NotValidPasswordException j) {
+					vf.getVp().getPanelLogin().getTxtId().setText("");
+					vf.getVp().getPanelLogin().getTxtPwd().setText("");
+					vf.getCon().mostrarAlerta("Formato de contraseña no valido, verifique su contraseña");
+				} catch (NumberFormatException e2) {
+					vf.getCon().mostrarAlerta("Ingrese sus datos");
 				}
 			}
 
 			if (loginEspecialista == true) {
+
 				try {
 					long id = Long.parseLong(vf.getVp().getPanelLogin().getTxtId().getText());
 					ExceptionChecker.notValidIdException(id);
@@ -193,19 +244,86 @@ public class Controller implements ActionListener {
 			break;
 
 		case "VOLVER":
+
 			vf.getVp().getPanelLogin().getTxtId().setText("");
 			vf.getVp().getPanelLogin().getTxtPwd().setText("");
 			vf.getVp().getPanelEntrada().getImg().setVisible(true);
 			vf.getVp().mostrarPanelWelcome();
 			break;
 
+		// HOME DIRECTOR
+
+		case "ELIMINARPERFIL":
+			int eliminar = vf.getCon().mostrarYesOrNo("Esta seguro de eliminar este perfil?");
+			boolean com = vf.getCon().validarYesOrNo(eliminar);
+			if (com) {
+				mf.getDirectorDAO().delete(new DirectorDTO(directorTempId, null, 0, null, null, 0));
+				vf.getCon().mostrarMensajeEmergente("Perfil eliminado");
+				vf.getVp().getPanelLogin().getTxtId().setText("");
+				vf.getVp().getPanelLogin().getTxtPwd().setText("");
+				vf.getVp().mostrarPanelWelcome();
+			} else {
+				vf.getCon().mostrarMensajeEmergente("Operación cancelada");
+			}
+
+			break;
+
+		case "MODIFICARPERFIL":
+			int modificar = vf.getCon().mostrarYesOrNo("Esta seguro de modificar este perfil?");
+			boolean mod = vf.getCon().validarYesOrNo(modificar);
+			if (mod) {
+				modDirector = true;
+				vf.getVp().getPanelInput().getImgD().setVisible(true);
+				vf.getVp().getPanelInput().getCmbxEspecialidad().setVisible(false);
+				vf.getVp().mostrarPanelInput();
+			}
+			break;
+
+		case "PACIENTES":
+//vf.getVp().getPanelHPaciente().
+			break;
+		case "ESPECIALISTAS":
+			break;
+
+		case "ESPECIALIDADES":
+			break;
+
+		case "VOLVERHOMEDIRECTOR":
+			directorTempId = 0;
+			vf.getVp().getPanelLogin().getTxtId().setText("");
+			vf.getVp().getPanelLogin().getTxtPwd().setText("");
+			vf.getVp().mostrarPanelLogin();
+
+			break;
+
 		// INPUT
 
 		case "GUARDAR":
+			if (createPaciente) {
+				getDatosPaciente(true, false);
+			}
+			if (createDirector) {
+				getDatosDirector(true, false);
+			}
+			if (modDirector) {
+				getDatosDirector(false, true);
+			}
+
+//			createDirector = false;
+//			modDirector = false;
+//			createEspecialista = false;
+//			modEspecialista = false;
+//			createPaciente = false;
+//			modPaciente = false;
 			break;
 
 		case "VOLVERINPUT":
-			vf.getVp().mostrarPanelLogin();
+			if (paciente) {
+				vf.getVp().mostrarPanelWelcome();
+			} else {
+				vf.getVp().mostrarPanelLogin();
+			}
+			paciente = false;
 			break;
 		}
 
@@ -236,20 +354,36 @@ public class Controller implements ActionListener {
 				vf.getCon().mostrarAlerta("No coinciden las contraseñas, vuelva a ingresarlas");
 				vf.getVp().getPanelInput().getTxtPswd().setText("");
 				vf.getVp().getPanelInput().getTxtConfirmPswd().setText("");
-			}
+			} else if (password == confirmP) {
 
-			if (create == true && update == false) {
-				if (mf.getDirectorDAO().add(new DirectorDTO(id, nombre, edad, genero, correo, password)) == true) {
-					vf.getCon().mostrarMensajeEmergente("Director creado exitosamente");
-				} else {
-					vf.getCon().mostrarAlerta("Intente nuevamente, verifique los datos ingresados");
-				}
-			} else if (update == true && create == false) {
-				if (mf.getDirectorDAO().update(new DirectorDTO(directorTempId, null, 0, null, null, 0),
-						new DirectorDTO(id, nombre, edad, genero, correo, password)) == true) {
-					vf.getCon().mostrarMensajeEmergente("Director actualizado exitosamente");
-				} else {
-					vf.getCon().mostrarAlerta("Intente nuevamente, verifique los datos ingresados");
+				if (create == true && update == false) {
+					if (mf.getDirectorDAO().add(new DirectorDTO(id, nombre, edad, genero, correo, password)) == true) {
+						vf.getCon().mostrarMensajeEmergente("Director creado exitosamente");
+						vf.getVp().getPanelHDirector().getTxtId().setText(directorTempId + "");
+						vf.getVp().getPanelHDirector().getTxtName()
+								.setText(mf.getDirectorDAO().pickData(directorTempId, true, false));
+
+						vf.getVp().getPanelHDirector().getTxtGmail()
+								.setText(mf.getDirectorDAO().pickData(directorTempId, false, true));
+						vf.getVp().mostrarPanelHomeDirector();
+					} else {
+						vf.getCon().mostrarAlerta("Intente nuevamente, verifique los datos ingresados");
+					}
+				} else if (update == true && create == false) {
+					if (mf.getDirectorDAO().update(new DirectorDTO(directorTempId, null, 0, null, null, 0),
+							new DirectorDTO(id, nombre, edad, genero, correo, password)) == true) {
+						vf.getCon().mostrarMensajeEmergente("Director actualizado exitosamente");
+						directorTempId = id;
+						vf.getVp().getPanelHDirector().getTxtId().setText(directorTempId + "");
+						vf.getVp().getPanelHDirector().getTxtName()
+								.setText(mf.getDirectorDAO().pickData(directorTempId, true, false));
+
+						vf.getVp().getPanelHDirector().getTxtGmail()
+								.setText(mf.getDirectorDAO().pickData(directorTempId, false, true));
+						vf.getVp().mostrarPanelHomeDirector();
+					} else {
+						vf.getCon().mostrarAlerta("Intente nuevamente, verifique los datos ingresados");
+					}
 				}
 			}
 
@@ -264,6 +398,8 @@ public class Controller implements ActionListener {
 			vf.getCon().mostrarAlerta("Formato de correo no valido");
 		} catch (NotValidPasswordException e) {
 			vf.getCon().mostrarAlerta("Formato de contraseña no valido, minimo 5 digitos y maximo 10 digitos");
+			vf.getVp().getPanelInput().getTxtPswd().setText("");
+			vf.getVp().getPanelInput().getTxtConfirmPswd().setText("");
 		} catch (InputMismatchException e) {
 			vf.getCon().mostrarAlerta("Verifique el tipo de datos que va en los campos y lo que ingreso");
 		}
@@ -366,6 +502,9 @@ public class Controller implements ActionListener {
 				if (mf.getPacienteDAO().add(new PacienteDTO(id, nombre, edad, genero, correo, null, null, especialidad,
 						especialistaAsignado, false)) == true) {
 					vf.getCon().mostrarMensajeEmergente("Paciente creado con exito");
+					vf.getCon().mostrarMensajeEmergente("Espere a recibir la confirmación de correo enviado");
+					pacienteTempId = id;
+					pacienteTempECita = especialidad;
 					EmailController.sendScheduled(correo, nombre, especialistaAsignado, especialidad);
 				} else {
 					vf.getCon().mostrarAlerta("Intente nuevamente, verifique los datos ingresados");
@@ -417,7 +556,7 @@ public class Controller implements ActionListener {
 			switch (op) {
 			case 1:
 				vf.getCon().printLine("Director");
-				mostrarLogInDirector();
+				mostrarValidacionLogInDirector();
 				break;
 			case 2:
 				vf.getCon().printLine("Especialista");

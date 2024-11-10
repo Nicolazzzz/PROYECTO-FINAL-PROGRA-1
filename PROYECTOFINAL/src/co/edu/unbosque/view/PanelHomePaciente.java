@@ -1,5 +1,5 @@
 package co.edu.unbosque.view;
 
-public class HomeEspecialista {
+public class PanelHomePaciente {
 
 }

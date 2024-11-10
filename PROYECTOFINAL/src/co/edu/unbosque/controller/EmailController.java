@@ -71,8 +71,7 @@ public class EmailController {
 			mTransport.sendMessage(mCorreo, mCorreo.getRecipients(Message.RecipientType.TO));
 			mTransport.close();
 
-			System.out.println("CORREO ENVIADO");
-//			JOptionPane.showMessageDialog(null, "Correo enviado");
+			JOptionPane.showMessageDialog(null, "Correo enviado");
 		} catch (NoSuchProviderException ex) {
 			Logger.getLogger(EmailController.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (MessagingException ex) {
@@ -123,8 +122,7 @@ public class EmailController {
 			mTransport.sendMessage(mCorreo, mCorreo.getRecipients(Message.RecipientType.TO));
 			mTransport.close();
 
-			System.out.println("CORREO ENVIADO");
-//			JOptionPane.showMessageDialog(null, "Correo enviado");
+			JOptionPane.showMessageDialog(null, "Correo enviado");
 		} catch (NoSuchProviderException ex) {
 			Logger.getLogger(EmailController.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (MessagingException ex) {
@@ -171,8 +169,7 @@ public class EmailController {
 			mTransport.sendMessage(mCorreo, mCorreo.getRecipients(Message.RecipientType.TO));
 			mTransport.close();
 
-			System.out.println("CORREO ENVIADO");
-//			JOptionPane.showMessageDialog(null, "Correo enviado");
+			JOptionPane.showMessageDialog(null, "Correo enviado");
 		} catch (NoSuchProviderException ex) {
 			Logger.getLogger(EmailController.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (MessagingException ex) {
@@ -272,7 +269,7 @@ public class EmailController {
 			mTransport.sendMessage(mCorreo, mCorreo.getRecipients(Message.RecipientType.TO));
 			mTransport.close();
 
-			System.out.println("CORREO ENVIADO");
+			JOptionPane.showMessageDialog(null, "Correo enviado");
 		} catch (NoSuchProviderException ex) {
 			Logger.getLogger(EmailController.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (MessagingException ex) {
@@ -326,7 +323,7 @@ public class EmailController {
 			mTransport.sendMessage(mCorreo, mCorreo.getRecipients(Message.RecipientType.TO));
 			mTransport.close();
 
-			System.out.println("CORREO ENVIADO");
+			JOptionPane.showMessageDialog(null, "Correo enviado");
 		} catch (NoSuchProviderException ex) {
 			Logger.getLogger(EmailController.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (MessagingException ex) {
@@ -378,8 +375,7 @@ public class EmailController {
 			mTransport.sendMessage(mCorreo, mCorreo.getRecipients(Message.RecipientType.TO));
 			mTransport.close();
 
-			System.out.println("CORREO ENVIADO");
-//			JOptionPane.showMessageDialog(null, "Correo enviado");
+			JOptionPane.showMessageDialog(null, "Correo enviado");
 		} catch (NoSuchProviderException ex) {
 			Logger.getLogger(EmailController.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (MessagingException ex) {

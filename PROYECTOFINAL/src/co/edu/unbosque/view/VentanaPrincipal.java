@@ -13,6 +13,9 @@ public class VentanaPrincipal extends JFrame {
 	private PanelEntrada panelEntrada;
 	private PanelLogIn panelLogin;
 	private PanelInput panelInput;
+	private PanelHomeDirector panelHDirector;
+	private PanelHomeEspecialista panelHEspecialista;
+	private PanelHomePaciente panelHPaciente;
 
 	public VentanaPrincipal() {
 
@@ -30,6 +33,9 @@ public class VentanaPrincipal extends JFrame {
 		panelEntrada = new PanelEntrada();
 		panelLogin = new PanelLogIn();
 		panelInput = new PanelInput();
+		panelHDirector = new PanelHomeDirector();
+		panelHEspecialista = new PanelHomeEspecialista();
+		panelHPaciente = new PanelHomePaciente();
 
 	}
 
@@ -61,6 +67,30 @@ public class VentanaPrincipal extends JFrame {
 		this.panelInput = panelInput;
 	}
 
+	public PanelHomeDirector getPanelHDirector() {
+		return panelHDirector;
+	}
+
+	public void setPanelHDirector(PanelHomeDirector panelHDirector) {
+		this.panelHDirector = panelHDirector;
+	}
+
+	public PanelHomeEspecialista getPanelHEspecialista() {
+		return panelHEspecialista;
+	}
+
+	public void setPanelHEspecialista(PanelHomeEspecialista panelHEspecialista) {
+		this.panelHEspecialista = panelHEspecialista;
+	}
+
+	public PanelHomePaciente getPanelHPaciente() {
+		return panelHPaciente;
+	}
+
+	public void setPanelHPaciente(PanelHomePaciente panelHPaciente) {
+		this.panelHPaciente = panelHPaciente;
+	}
+
 	public void mostrarPanelWelcome() {
 		setContentPane(panelEntrada);
 	}
@@ -71,6 +101,18 @@ public class VentanaPrincipal extends JFrame {
 
 	public void mostrarPanelInput() {
 		setContentPane(panelInput);
+	}
+
+	public void mostrarPanelHomeDirector() {
+		setContentPane(panelHDirector);
+	}
+
+	public void mostrarPanelHomeEspecialista() {
+		setContentPane(panelHEspecialista);
+	}
+
+	public void mostrarPanelHomePaciente() {
+		setContentPane(panelHDirector);
 	}
 
 }
