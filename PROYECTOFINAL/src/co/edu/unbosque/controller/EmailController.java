@@ -27,12 +27,16 @@ public class EmailController {
 	private static Session mSession;
 	private static MimeMessage mCorreo;
 
-	public static void createScheduledEmail(String correo) {
+	public static void createScheduledEmail(String correo, String nombrePaciente, String nombreEspecialista,
+			String especialidad) {
 		mProperties = new Properties();
 
 		emailTo = correo;
 		subject = "Cita Agendada";
-		content = "Prueba gmail";
+		content = "Estimado/a " + nombrePaciente
+				+ "\n\nNos complace informarle que su cita ha sido agengada, su especialista asigando es "
+				+ nombreEspecialista + " de la especialidad de " + especialidad
+				+ "\n\nAgradecemos su confianza en nuestros servicios y nos mantenemos a su disposición para cualquier duda o consulta que pueda tener respecto a su tratamiento. \nCordialmente,\nEquipo de BosqueHealth";
 
 		mProperties.put("mail.smtp.host", "smtp.gmail.com");
 		mProperties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
@@ -58,15 +62,17 @@ public class EmailController {
 		}
 	}
 
-	public static void sendScheduled(String correo) {
-		createScheduledEmail(correo);
+	public static void sendScheduled(String correo, String nombrePaciente, String nombreEspecialista,
+			String especialidad) {
+		createScheduledEmail(correo, nombrePaciente, nombreEspecialista, especialidad);
 		try {
 			Transport mTransport = mSession.getTransport("smtp");
 			mTransport.connect(emailFrom, passwordFrom);
 			mTransport.sendMessage(mCorreo, mCorreo.getRecipients(Message.RecipientType.TO));
 			mTransport.close();
 
-			JOptionPane.showMessageDialog(null, "Correo enviado");
+			System.out.println("CORREO ENVIADO");
+//			JOptionPane.showMessageDialog(null, "Correo enviado");
 		} catch (NoSuchProviderException ex) {
 			Logger.getLogger(EmailController.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (MessagingException ex) {
@@ -74,12 +80,16 @@ public class EmailController {
 		}
 	}
 
-	public static void createCanceledEmail(String correo) {
+	public static void createCanceledEmail(String correo, String nombrePaciente) {
 		mProperties = new Properties();
 
 		emailTo = correo;
 		subject = "Cita Cancelada";
-		content = "Prueba gmail";
+		content = "Estimado/a " + nombrePaciente + "\nLamentamos informarle que su cita programada ha sido cancelada. "
+				+ "\n\nNos disculpamos por cualquier inconveniente que esto pueda causar y esperamos poder atenderle pronto en una nueva fecha.\n"
+				+ "\nNo dude en ponerse en contacto con nosotros para reprogramar su cita o si necesita alguna información adicional.\n"
+				+ "\nAgradecemos su comprensión y confianza en nuestros servicios.\n" + "\nCordialmente,\n"
+				+ "Equipo de BosqueHealth";
 
 		mProperties.put("mail.smtp.host", "smtp.gmail.com");
 		mProperties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
@@ -105,15 +115,16 @@ public class EmailController {
 		}
 	}
 
-	public static void sendCanceled(String correo) {
-		createCanceledEmail(correo);
+	public static void sendCanceled(String correo, String nombrePaciente) {
+		createCanceledEmail(correo, nombrePaciente);
 		try {
 			Transport mTransport = mSession.getTransport("smtp");
 			mTransport.connect(emailFrom, passwordFrom);
 			mTransport.sendMessage(mCorreo, mCorreo.getRecipients(Message.RecipientType.TO));
 			mTransport.close();
 
-			JOptionPane.showMessageDialog(null, "Correo enviado");
+			System.out.println("CORREO ENVIADO");
+//			JOptionPane.showMessageDialog(null, "Correo enviado");
 		} catch (NoSuchProviderException ex) {
 			Logger.getLogger(EmailController.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (MessagingException ex) {
@@ -160,7 +171,8 @@ public class EmailController {
 			mTransport.sendMessage(mCorreo, mCorreo.getRecipients(Message.RecipientType.TO));
 			mTransport.close();
 
-			JOptionPane.showMessageDialog(null, "Correo enviado");
+			System.out.println("CORREO ENVIADO");
+//			JOptionPane.showMessageDialog(null, "Correo enviado");
 		} catch (NoSuchProviderException ex) {
 			Logger.getLogger(EmailController.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (MessagingException ex) {
@@ -215,12 +227,17 @@ public class EmailController {
 		}
 	}
 
-	public static void createTreatmentEmail(String correo) {
+	public static void createTreatmentEmail(String correo, String nombrePaciente, String tratamiento,
+			String nombreEspecialista) {
 		mProperties = new Properties();
 
 		emailTo = correo;
 		subject = "Tratamiento Generado";
-		content = "Prueba gmail";
+		content = "Estimado/a " + nombrePaciente + "\n\nNos complace informarle que su especialista, "
+				+ nombreEspecialista
+				+ " ha generado un tratamiento personalizado para usted en BosqueHealth. \nDetalles del Tratamiento: "
+				+ tratamiento
+				+ "\n\nAgradecemos su confianza en nuestros servicios y nos mantenemos a su disposición para cualquier duda o consulta que pueda tener respecto a su tratamiento. \nCordialmente,\nEquipo de BosqueHealth";
 
 		mProperties.put("mail.smtp.host", "smtp.gmail.com");
 		mProperties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
@@ -246,15 +263,16 @@ public class EmailController {
 		}
 	}
 
-	public static void sendTreatment(String correo) {
-		createTreatmentEmail(correo);
+	public static void sendTreatment(String correo, String nombrePaciente, String tratamiento,
+			String nombreEspecialista) {
+		createTreatmentEmail(correo, nombrePaciente, tratamiento, nombreEspecialista);
 		try {
 			Transport mTransport = mSession.getTransport("smtp");
 			mTransport.connect(emailFrom, passwordFrom);
 			mTransport.sendMessage(mCorreo, mCorreo.getRecipients(Message.RecipientType.TO));
 			mTransport.close();
 
-			JOptionPane.showMessageDialog(null, "Correo enviado");
+			System.out.println("CORREO ENVIADO");
 		} catch (NoSuchProviderException ex) {
 			Logger.getLogger(EmailController.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (MessagingException ex) {
@@ -262,12 +280,17 @@ public class EmailController {
 		}
 	}
 
-	public static void createExaminationRequestedEmail(String correo) {
+	public static void createExaminationRequestedEmail(String correo, String nombrePaciente, String nombreEspecialista,
+			String examenes) {
 		mProperties = new Properties();
 
 		emailTo = correo;
 		subject = "Exámenes solicitados";
-		content = "Prueba gmail";
+		content = "Estimado " + nombrePaciente + "\n\nNos complace informarle que su especialista, "
+				+ nombreEspecialista
+				+ " le ha solicitado unos exámenes en nuestra clínica BosqueHealth. \nDetalles de los exámenes: "
+				+ examenes
+				+ "\n\nAgradecemos su confianza en nuestros servicios y nos mantenemos a su disposición para cualquier duda o consulta que pueda tener respecto a su tratamiento. \nCordialmente,\nEquipo de BosqueHealth";
 
 		mProperties.put("mail.smtp.host", "smtp.gmail.com");
 		mProperties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
@@ -294,15 +317,16 @@ public class EmailController {
 
 	}
 
-	public static void sendExaminationRequested(String correo) {
-		createExaminationRequestedEmail(correo);
+	public static void sendExaminationRequested(String correo, String nombrePaciente, String nombreEspecialista,
+			String examenes) {
+		createExaminationRequestedEmail(correo, nombrePaciente, nombreEspecialista, examenes);
 		try {
 			Transport mTransport = mSession.getTransport("smtp");
 			mTransport.connect(emailFrom, passwordFrom);
 			mTransport.sendMessage(mCorreo, mCorreo.getRecipients(Message.RecipientType.TO));
 			mTransport.close();
 
-			JOptionPane.showMessageDialog(null, "Correo enviado");
+			System.out.println("CORREO ENVIADO");
 		} catch (NoSuchProviderException ex) {
 			Logger.getLogger(EmailController.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (MessagingException ex) {
@@ -310,12 +334,16 @@ public class EmailController {
 		}
 	}
 
-	public static void createExaminationRequestedResultsEmail(String correo) {
+	public static void createExaminationRequestedResultsEmail(String correo, String nombrePaciente,
+			String nombreEspecialista, String resultados) {
 		mProperties = new Properties();
 
 		emailTo = correo;
 		subject = "Resultados de exámenes recibidos";
-		content = "Prueba gmail";
+		content = "Estimado/a " + nombrePaciente + "\n\nNos complace informarle que su especialista, "
+				+ nombreEspecialista + " ha generado los resultados de sus exámenes. \nDetalles de los resultados: "
+				+ resultados
+				+ "\n\nAgradecemos su confianza en nuestros servicios y nos mantenemos a su disposición para cualquier duda o consulta que pueda tener respecto a su tratamiento. \nCordialmente,\nEquipo de BosqueHealth";
 
 		mProperties.put("mail.smtp.host", "smtp.gmail.com");
 		mProperties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
@@ -341,15 +369,17 @@ public class EmailController {
 		}
 	}
 
-	public static void sendExaminationRequestedResults(String correo) {
-		createExaminationRequestedResultsEmail(correo);
+	public static void sendExaminationRequestedResults(String correo, String nombrePaciente, String nombreEspecialista,
+			String resultados) {
+		createExaminationRequestedResultsEmail(correo, nombrePaciente, nombreEspecialista, resultados);
 		try {
 			Transport mTransport = mSession.getTransport("smtp");
 			mTransport.connect(emailFrom, passwordFrom);
 			mTransport.sendMessage(mCorreo, mCorreo.getRecipients(Message.RecipientType.TO));
 			mTransport.close();
 
-			JOptionPane.showMessageDialog(null, "Correo enviado");
+			System.out.println("CORREO ENVIADO");
+//			JOptionPane.showMessageDialog(null, "Correo enviado");
 		} catch (NoSuchProviderException ex) {
 			Logger.getLogger(EmailController.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (MessagingException ex) {

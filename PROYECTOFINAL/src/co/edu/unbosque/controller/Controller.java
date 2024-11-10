@@ -37,6 +37,11 @@ public class Controller {
 
 		mf = new ModelFacade();
 		vf = new ViewFacade();
+
+		vf.getCon().printLine(mf.getPacienteDAO().pickData(1122515555, "Cirugía", true, false));
+
+		vf.getCon().printLine(mf.getPacienteDAO().showAll());
+		System.out.println(mf.getEspecialistaDAO().getRandomSpecialist("Cirugía"));
 		prop = FileHandler.loadProperties("config.properties");
 
 //		vf.getCon().printLine("PACIENTES");
@@ -215,31 +220,115 @@ public class Controller {
 					Menu Especialista
 
 					1. Ver turnos
-					2. Generar tratamiento
-					3. Solicitar examen medico
-					4. Generar resultados examen
-					5. Intercambiar turno
-					5. Salir
+					2. Solicitar examen medico
+					3. Enviar resultados medicos
+					4. Generar diagnostico
+					5. Generar tratamiento
+					6. Intercambiar turno
+					7. Salir
 
 
 					""";
 
 			vf.getCon().printLine(menu);
 			int op = vf.getCon().readInt();
+			vf.getCon().burnLine();
+			String nombreEspecialista = mf.getEspecialistaDAO().pickSpecialistData(especialistaTempId, true, false);
+			String areaEspecialista = mf.getEspecialistaDAO().pickSpecialistData(especialistaTempId, false, true);
 			switch (op) {
 			case 1:
-
+				vf.getCon().printLine("VIENDO TURNOS ESPECIALISTA");
+				vf.getCon().printLine(mf.getPacienteDAO().showAppointentSpecialist(nombreEspecialista));
 				break;
+
 			case 2:
-
+				vf.getCon().printLine("SOLICITAR EXAMENES MEDICOS");
+				vf.getCon().printLine("\n" + mf.getPacienteDAO().showAppointentSpecialist(nombreEspecialista));
+				vf.getCon().print("Ingrese el documento del paciente a generar tratamiento= ");
+				long idPacienteExamen = vf.getCon().readLong();
+				vf.getCon().burnLine();
+				vf.getCon().print("Ingrese los examenes a pedir ");
+				String examenes = vf.getCon().readLine();
+				vf.getCon().printLine("Exámenes solicitados exitosamente");
+				EmailController.sendExaminationRequested(
+						mf.getPacienteDAO().pickData(idPacienteExamen, areaEspecialista, true, false),
+						mf.getPacienteDAO().pickData(idPacienteExamen, areaEspecialista, false, true),
+						nombreEspecialista, examenes);
 				break;
+
 			case 3:
-
+				vf.getCon().printLine("ENVIAR RESULTADOS EXAMEN");
+				vf.getCon().printLine("\n" + mf.getPacienteDAO().showAppointentSpecialist(nombreEspecialista));
+				vf.getCon().print("Ingrese el documento del paciente a generar tratamiento= ");
+				long idPacienteResultados = vf.getCon().readLong();
+				vf.getCon().burnLine();
+				vf.getCon().print(
+						"Ingrese los resultados del exámen del paciente, no de enter hasta finalizar con el tratamiento= ");
+				String resultados = vf.getCon().readLine();
+				EmailController.sendExaminationRequestedResults(
+						mf.getPacienteDAO().pickData(idPacienteResultados, areaEspecialista, true, false),
+						mf.getPacienteDAO().pickData(idPacienteResultados, areaEspecialista, false, true),
+						nombreEspecialista, resultados);
 				break;
+
 			case 4:
+				vf.getCon().printLine("GENERAR DIAGNOSTICO");
+				vf.getCon().printLine("\n" + mf.getPacienteDAO().showAppointentSpecialist(nombreEspecialista));
+				vf.getCon().print("Ingrese el documento del paciente a generar tratamiento= ");
+				long idPacienteDiagnostico = vf.getCon().readLong();
+				vf.getCon().burnLine();
+				vf.getCon().printLine(
+						"Ingrese el diagnostico del paciente, no de enter hasta finalizar con el tratamiento= ");
+				String diagnostico = vf.getCon().readLine();
+
+				vf.getCon().printLine("El paciente requiere seguimiento? \n1.SI \t2.NO");
+				boolean seguimiento;
+				int verdad = vf.getCon().readInt();
+				vf.getCon().burnLine();
+				verdadloop: while (true) {
+
+					switch (verdad) {
+					case 1:
+						seguimiento = true;
+						break verdadloop;
+					case 2:
+						seguimiento = false;
+						break verdadloop;
+
+					default:
+						vf.getCon().printLine("Seleccione una opción válida");
+						break;
+					}
+				}
+
+				vf.getCon().printLine(mf.getPacienteDAO().setData(idPacienteDiagnostico, null, false, diagnostico, true,
+						seguimiento, true));
 
 				break;
 			case 5:
+
+				vf.getCon().printLine("GENERAR TRATAMIENTO");
+				vf.getCon().printLine("\n" + mf.getPacienteDAO().showAppointentSpecialist(nombreEspecialista));
+				vf.getCon().print("Ingrese el documento del paciente a generar tratamiento= ");
+				long idPacienteTratamiento = vf.getCon().readLong();
+				vf.getCon().burnLine();
+				vf.getCon()
+						.print("Ingrese el tratamiento a almacenar, no de enter hasta finalizar con el tratamiento= ");
+				String tratamiento = vf.getCon().readLine();
+				vf.getCon().printLine(mf.getPacienteDAO().setData(idPacienteTratamiento, tratamiento, true, null, false,
+						false, false));
+				System.out.println(mf.getPacienteDAO().pickData(idPacienteTratamiento, areaEspecialista, true, false));
+				EmailController.sendTreatment(
+						mf.getPacienteDAO().pickData(idPacienteTratamiento, areaEspecialista, true, false),
+						mf.getPacienteDAO().pickData(idPacienteTratamiento, areaEspecialista, false, true), tratamiento,
+						nombreEspecialista);
+				break;
+
+			case 6:
+
+				break;
+
+			case 7:
 				vf.getCon().printLine("SALIENDO MENU ESPECIALISTA");
 				break specialistloop;
 
@@ -251,6 +340,7 @@ public class Controller {
 	}
 
 	public void mostrarMenuPaciente() {
+
 	}
 
 	public void mostrarMenuDirectorEspecialidades() {
@@ -363,6 +453,7 @@ public class Controller {
 					3. Modificar cita paciente
 					4. Eliminar cita paciente
 					5. Salir
+
 					""";
 			vf.getCon().printLine(menu);
 			int op = vf.getCon().readInt();
@@ -383,8 +474,8 @@ public class Controller {
 						break specialtyloop;
 					}
 				}
-				vf.getCon().printLine("PACIENTES CON CITA EN ESPECIALIDAD " + especialidades[opE]);
-				vf.getCon().printLine(mf.getPacienteDAO().showSpecificPatientSpecialty(especialidades[opE]));
+				vf.getCon().printLine("PACIENTES CON CITA EN ESPECIALIDAD " + especialidades[opE - 1]);
+				vf.getCon().printLine(mf.getPacienteDAO().showSpecificPatientSpecialty(especialidades[opE - 1]));
 				break;
 
 			case 2:
@@ -432,18 +523,24 @@ public class Controller {
 					} else {
 						break specialtyloop;
 					}
+				}
 
-					String specialty = especialidades[opE2 - 1];
-					vf.getCon().printLine(mf.getPacienteDAO().showSpecificPatientSpecialty(specialty));
-					vf.getCon().printLine("Ingrese la cedula del paciente a eliminar: ");
-					long id = vf.getCon().readLong();
-					vf.getCon().burnLine();
-					if (mf.getPacienteDAO()
-							.delete(new PacienteDTO(id, null, 0, null, null, null, null, specialty, null, false))) {
-						vf.getCon().printLine("Operacion completada");
-					} else {
-						vf.getCon().printLine("Operacion incompleta");
-					}
+				String specialty = especialidades[opE2 - 1];
+
+				vf.getCon().printLine(mf.getPacienteDAO().showSpecificPatientSpecialty(specialty));
+				vf.getCon().printLine("Ingrese la cedula del paciente a eliminar: ");
+				long id1 = vf.getCon().readLong();
+				vf.getCon().burnLine();
+
+				String tempCorreo = mf.getPacienteDAO().pickData(id1, specialty, true, false);
+				String nombre = mf.getPacienteDAO().pickData(id1, specialty, false, true);
+
+				if (mf.getPacienteDAO()
+						.delete(new PacienteDTO(id1, null, 0, null, null, null, null, specialty, null, false))) {
+					vf.getCon().printLine("Operacion completada");
+					EmailController.sendCanceled(tempCorreo, nombre);
+				} else {
+					vf.getCon().printLine("Operacion incompleta");
 				}
 
 				break;
@@ -731,13 +828,14 @@ public class Controller {
 			String correo = vf.getCon().readLine();
 			ExceptionChecker.checkEmail(correo);
 
-			String especialistaAsignado = "";
+			vf.getCon().printLine("ESPECIALISTA: ");
+			String especialistaAsignado = vf.getCon().readLine();
 
 			if (create == true && update == false) {
 				if (mf.getPacienteDAO().add(new PacienteDTO(id, nombre, edad, genero, correo, null, null,
-						especialidadCita, null, false)) == true) {
+						especialidadCita, especialistaAsignado, false)) == true) {
 					vf.getCon().printLine("Paciente creado con exito");
-					EmailController.sendScheduled(correo);
+					EmailController.sendScheduled(correo, nombre, especialistaAsignado, especialidadCita);
 				} else {
 					vf.getCon().printLine("Intente nuevamente, verifique los datos ingresados");
 				}
@@ -915,9 +1013,8 @@ public class Controller {
 				vf.getCon().print("Contraseña: ");
 				long password = vf.getCon().readLong();
 				ExceptionChecker.notValidPasswordException(password);
-				vf.getCon().printLine(mf.getEspecialistaDAO().verifyPassword(id, password));
 				if (mf.getEspecialistaDAO().checkLogIn(id, password) == true) {
-					directorTempId = id;
+					especialistaTempId = id;
 					mostrarMenuEspecialista();
 					break passwordloop;
 				}

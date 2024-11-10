@@ -1,6 +1,7 @@
 package co.edu.unbosque.model.persistence;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import co.edu.unbosque.model.Especialista;
 import co.edu.unbosque.model.EspecialistaDTO;
@@ -236,22 +237,50 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 				}
 			}
 		}
-
 		return limite;
 	}
 
 	public String getRandomSpecialist(String especialidad) {
 
-		String especialista = "";
 		int contaEspecialista = 0;
 
 		for (Especialista e : listaEspecialistas) {
-			if (e.getEspecialidad().equalsIgnoreCase(especialista)) {
+			if (e.getEspecialidad().equalsIgnoreCase(especialidad)) {
 				contaEspecialista++;
 			}
 		}
 
 		String[] especialistaA = new String[contaEspecialista];
+		int index = 0;
+		for (Especialista e : listaEspecialistas) {
+			if (e.getEspecialidad().equalsIgnoreCase(especialidad)) {
+				especialistaA[index] = e.getNombre();
+				index++;
+			}
+		}
+		if (especialistaA.length == 0) {
+			return "No se encontraron especialistas en la especialidad solicitada.";
+		}
+
+		Random random = new Random();
+		int index1 = random.nextInt(especialistaA.length);
+		return especialistaA[index1];
+	}
+
+	public String pickSpecialistData(long id, boolean esNombre, boolean esEspecialidad) {
+
+		for (Especialista e : listaEspecialistas) {
+			if (e.getId() == id) {
+				if (esNombre) {
+					return e.getNombre();
+				}
+
+				if (esEspecialidad) {
+					return e.getEspecialidad();
+				}
+
+			}
+		}
 		return null;
 
 	}

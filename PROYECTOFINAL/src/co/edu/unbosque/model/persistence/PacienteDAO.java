@@ -23,7 +23,7 @@ public class PacienteDAO implements CRUDOperation<PacienteDTO, Paciente> {
 		int pos = 1;
 		if (!listaPacientes.isEmpty()) {
 			for (Paciente p : listaPacientes) {
-				content += "Paciente " + pos + "\n";
+				content += "\nPaciente " + pos;
 				content += p + "\n";
 				pos++;
 			}
@@ -39,8 +39,8 @@ public class PacienteDAO implements CRUDOperation<PacienteDTO, Paciente> {
 		String content = "";
 		int pos = 1;
 		for (Paciente p : listaPacientes) {
-			if (p.getEspecialidadCita() == especialidad) {
-				content += "Paciente " + pos + "\n";
+			if (p.getEspecialidadCita().equalsIgnoreCase(especialidad)) {
+				content += "\nPaciente " + pos;
 				content += p + "\n";
 				pos++;
 
@@ -65,6 +65,21 @@ public class PacienteDAO implements CRUDOperation<PacienteDTO, Paciente> {
 		}
 		if (content.equals("") || content == null) {
 			content = "No se encontro al paciente, verifique el id";
+		}
+		return content;
+	}
+
+	public String showAppointentSpecialist(String nombre) {
+		String content = "";
+		for (Paciente p : listaPacientes) {
+			if (p.getEspecialistaAsignado().equalsIgnoreCase(nombre)) {
+				content += "\nPaciente " + p.getNombre();
+				content += p + "\n";
+			}
+
+		}
+		if (content.equals("") || content == null) {
+			content = "No tiene turnos";
 		}
 		return content;
 	}
@@ -185,6 +200,49 @@ public class PacienteDAO implements CRUDOperation<PacienteDTO, Paciente> {
 	@Override
 	public void writeSerialized() {
 		FileHandler.writeSerialized(SERIALIZED_NAME, listaPacientes);
+	}
+
+	public String setData(long id, String tratamiento, boolean esTratamiento, String diagnostico, boolean esDiagnostico,
+			boolean requiereSeguimiento, boolean esSeguimiento) {
+
+		String content = "";
+		for (Paciente p : listaPacientes) {
+			if (p.getId() == id) {
+
+				if (esTratamiento) {
+					p.setTratamiento(tratamiento);
+					content = "Tratamiento generado exitosamente";
+				}
+
+				if (esDiagnostico) {
+					p.setDiagnostico(diagnostico);
+					content = "Diagnostico generado exitosamente";
+				}
+
+				if (esSeguimiento) {
+					p.setRequiereSeguimiento(requiereSeguimiento);
+					content = "Seguimiento guardado exitosamente";
+				}
+			}
+		}
+		writeFile();
+		writeSerialized();
+		return content;
+	}
+
+	public String pickData(long id, String especialidad, boolean esCorreo, boolean esNombre) {
+		String content = "";
+		for (Paciente p : listaPacientes) {
+			if (p.getId() == id && p.getEspecialidadCita().equalsIgnoreCase(especialidad)) {
+				if (esCorreo) {
+					content = p.getCorreo();
+				}
+				if (esNombre) {
+					content = p.getNombre();
+				}
+			}
+		}
+		return content;
 	}
 
 }
