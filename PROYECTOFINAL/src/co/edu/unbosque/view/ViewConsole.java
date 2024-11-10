@@ -73,6 +73,42 @@ public class ViewConsole {
 		return input;
 	}
 
+	public int pedirOpcionDeLista(String mensaje, String[] listaMensajes) {
+		StringBuilder mensajeCompleto = new StringBuilder(mensaje + "\n\nOpciones:\n");
+
+		for (int i = 0; i < listaMensajes.length; i++) {
+			mensajeCompleto.append((i + 1) + ". " + listaMensajes[i] + "\n");
+		}
+
+		int opcion = -1;
+		boolean esValido = false;
+
+		while (!esValido) {
+			String input = JOptionPane.showInputDialog(null, mensajeCompleto.toString(), "Elegir opción",
+					JOptionPane.QUESTION_MESSAGE);
+
+			if (input == null) {
+				return -1;
+			}
+
+			try {
+				opcion = Integer.parseInt(input) - 1;
+
+				if (opcion >= 0 && opcion < listaMensajes.length) {
+					esValido = true;
+				} else {
+					JOptionPane.showMessageDialog(null, "Por favor ingrese un número válido de la lista.",
+							"Entrada inválida", JOptionPane.WARNING_MESSAGE);
+				}
+			} catch (NumberFormatException e) {
+				JOptionPane.showMessageDialog(null, "Por favor ingrese un número válido.", "Entrada inválida",
+						JOptionPane.WARNING_MESSAGE);
+			}
+		}
+
+		return opcion;
+	}
+
 	public int mostrarYesOrNo(String txt) {
 		int op = JOptionPane.showConfirmDialog(null, txt, "Confirmación", JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
