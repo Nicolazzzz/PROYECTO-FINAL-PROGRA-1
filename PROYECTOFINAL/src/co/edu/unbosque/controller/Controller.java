@@ -459,7 +459,7 @@ public class Controller implements ActionListener {
 					if (op < 0) {
 						vf.getCon().mostrarAlerta("Entrada Inválida");
 					} else {
-						
+
 						vf.getVp().getPanelApartado().getScroll().setVisible(true);
 						vf.getVp().getPanelApartado().getTabla().setVisible(true);
 						setUpEspecialistAreaTable(especialidades[op]);
@@ -509,15 +509,19 @@ public class Controller implements ActionListener {
 						vf.getVp().getPanelApartado().getScroll().setVisible(true);
 						vf.getVp().getPanelApartado().getTabla().setVisible(true);
 						setUpEspecialistAreaTable(especialidades[op]);
-						long id = vf.getCon().pedirLong("Ingrese el número de identificación");
-						ExceptionChecker.notValidIdException(id);
-
-						String nombre = mf.getEspecialistaDAO().pickSpecialistData(id, true, false);
-
-						if (mf.getEspecialistaDAO().delete(new EspecialistaDTO(id, null, 0, null, null, null, 0))) {
-							vf.getCon().mostrarMensajeEmergente("El especialista " + nombre + " ha sido eliminado");
+						Long id = vf.getCon().pedirLong("Ingrese el número de identificación");
+						if (id == null) {
+							vf.getCon().mostrarAlerta("Entrada Inválida");
 						} else {
-							vf.getCon().mostrarAlerta("Operacion incompleta");
+							ExceptionChecker.notValidIdException(id);
+
+							String nombre = mf.getEspecialistaDAO().pickSpecialistData(id, true, false);
+
+							if (mf.getEspecialistaDAO().delete(new EspecialistaDTO(id, null, 0, null, null, null, 0))) {
+								vf.getCon().mostrarMensajeEmergente("El especialista " + nombre + " ha sido eliminado");
+							} else {
+								vf.getCon().mostrarAlerta("Operacion incompleta");
+							}
 						}
 					}
 
@@ -541,18 +545,23 @@ public class Controller implements ActionListener {
 						vf.getVp().getPanelApartado().getScroll().setVisible(true);
 						vf.getVp().getPanelApartado().getTabla().setVisible(true);
 						setUpPatientSpecialtyTable(especialidades[op]);
-						long id = vf.getCon().pedirLong("Ingrese el número de identificación");
-						ExceptionChecker.notValidIdException(id);
-						String tempCorreo = mf.getPacienteDAO().pickData(id, especialidades[op], true, false);
-						String nombre = mf.getPacienteDAO().pickData(id, especialidades[op], false, true);
-
-						if (mf.getPacienteDAO().delete(new PacienteDTO(id, null, 0, null, null, null, null,
-								especialidades[op], null, false))) {
-							vf.getCon().mostrarAlerta("Paciente " + nombre + " eliminado");
-							vf.getCon().mostrarMensajeEmergente("Espere a recibir la confirmación de correo enviado");
-							EmailController.sendCanceled(tempCorreo, nombre);
+						Long id = vf.getCon().pedirLong("Ingrese el número de identificación");
+						if (id == null) {
+							vf.getCon().mostrarAlerta("Entrada Inválida");
 						} else {
-							vf.getCon().mostrarAlerta("Operacion incompleta");
+							ExceptionChecker.notValidIdException(id);
+							String tempCorreo = mf.getPacienteDAO().pickData(id, especialidades[op], true, false);
+							String nombre = mf.getPacienteDAO().pickData(id, especialidades[op], false, true);
+
+							if (mf.getPacienteDAO().delete(new PacienteDTO(id, null, 0, null, null, null, null,
+									especialidades[op], null, false))) {
+								vf.getCon().mostrarAlerta("Paciente " + nombre + " eliminado");
+								vf.getCon()
+										.mostrarMensajeEmergente("Espere a recibir la confirmación de correo enviado");
+								EmailController.sendCanceled(tempCorreo, nombre);
+							} else {
+								vf.getCon().mostrarAlerta("Operacion incompleta");
+							}
 						}
 					}
 
