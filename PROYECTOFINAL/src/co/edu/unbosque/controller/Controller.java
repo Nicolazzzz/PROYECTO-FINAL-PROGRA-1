@@ -56,6 +56,8 @@ public class Controller implements ActionListener {
 	private AppointmentController gestor;
 
 	public Controller() {
+		
+		generarEspecialista();
 		gestor = new AppointmentController();
 
 		// Generar varias citas
@@ -2168,6 +2170,12 @@ public class Controller implements ActionListener {
 		for (int i = 0; i < especialidades.length; i++) {
 			vf.getVp().getPanelInput().getCmbxEspecialidad().addItem(especialidades[i]);
 		}
+	}
+	
+	public String generarEspecialista() {
+		mf.getEspecialistaDAO().getAll().toString();
+		return mf.getEspecialistaDAO().getAll().toString();
+		
 	}
 
 }
