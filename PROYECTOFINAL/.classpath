@@ -11,7 +11,6 @@
 	<classpathentry kind="lib" path="libraries/javax.faces-api-2.0.jar"/>
 	<classpathentry kind="lib" path="libraries/javax-inject.jar"/>
 	<classpathentry kind="lib" path="libraries/mail.jar" sourcepath="libraries/javax.activation-1.1.0.v201105071233.jar"/>
-	<classpathentry kind="lib" path="/Proyecto_1ProgramacionYSS/Librerias/junit-4.13.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
