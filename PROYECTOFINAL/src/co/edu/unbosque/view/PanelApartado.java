@@ -11,23 +11,48 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
+/**
+ * Clase PanelApartado. Representa un panel personalizado que incluye botones de
+ * acción, etiquetas de imagen y una tabla con scroll para mostrar datos en una
+ * interfaz gráfica.
+ * 
+ * Esta clase extiende JPanel y contiene varios elementos gráficos, tales como
+ * botones para ver, agregar, modificar y eliminar datos, además de un botón
+ * para volver al panel anterior.
+ * 
+ * Se define un modelo de tabla que no permite la edición de las celdas. También
+ * incluye tres imágenes de fondo, cada una asignada a una etiqueta JLabel.
+ * 
+ * @author Mario Rodriguez
+ * @version 1.0
+ */
 public class PanelApartado extends JPanel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+
+	// Etiquetas de imagen
 	private JLabel imgP, imgE, imgA;
+
+	// Tabla y barra de desplazamiento
 	private JTable tabla;
 	private JScrollPane scroll;
+
+	// Botones de acción
 	private JButton btnVer, btnAgregar, btnMod, btnDelete, btnVolver;
 
+	/**
+	 * Constructor de PanelApartado. Inicializa el panel con todos sus componentes
+	 * gráficos y los añade a la interfaz.
+	 */
 	public PanelApartado() {
+		// Configuración de tamaño y disposición
 		setSize(1280, 720);
 		setLayout(null);
 		setVisible(true);
 
+		// Inicialización y configuración de imágenes
 		imgP = new JLabel();
 		ImageIcon imagenPortada2 = new ImageIcon("src/media/apartadoPacientes.png");
 		Image portadaRedimensionada2 = imagenPortada2.getImage().getScaledInstance(1280, 720, Image.SCALE_SMOOTH);
@@ -53,12 +78,25 @@ public class PanelApartado extends JPanel {
 		tabla.setEnabled(true);
 		tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		tabla.getTableHeader().setReorderingAllowed(true);
+		DefaultTableModel model = new DefaultTableModel() {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+
+		// Inicialización de la tabla y la barra de desplazamiento
+		tabla = new JTable(model);
+		tabla.setEnabled(true);
+		tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		tabla.getTableHeader().setReorderingAllowed(true);
 
 		scroll = new JScrollPane(tabla);
 		scroll.setBounds(80, 200, 700, 350);
 		scroll.setVisible(true);
 		scroll.setOpaque(true);
 
+		// Configuración de botones
 		btnVer = new JButton("VER");
 		btnVer.setActionCommand("APARTADOVER");
 		btnVer.setOpaque(true);
@@ -99,6 +137,7 @@ public class PanelApartado extends JPanel {
 		btnVolver.setBackground(new Color(213, 101, 49));
 		btnVolver.setBorder(BorderFactory.createBevelBorder(1));
 
+		// Añadir componentes al panel
 		add(btnAgregar);
 		add(btnDelete);
 		add(btnMod);
@@ -109,6 +148,8 @@ public class PanelApartado extends JPanel {
 		add(imgP);
 		add(scroll);
 	}
+
+	// Getters y setters para cada componente gráfico
 
 	public JTable getTabla() {
 		return tabla;

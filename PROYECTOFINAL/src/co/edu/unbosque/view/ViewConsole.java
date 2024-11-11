@@ -1,163 +1,242 @@
 package co.edu.unbosque.view;
 
 import java.util.Scanner;
-
 import javax.swing.JOptionPane;
 
+/**
+ * La clase ViewConsole proporciona métodos para interactuar con el usuario 
+ * mediante mensajes emergentes (usando JOptionPane) o mediante la consola (Scanner).
+ * Los métodos permiten mostrar mensajes, pedir entradas al usuario y realizar 
+ * validaciones de entradas en diversas formas.
+ * 
+ * @author Nicolas Zambrano
+ * @version 1.0
+ */
 public class ViewConsole {
 
-	private Scanner sc;
+    private Scanner sc;
 
-	/**
-	 * Muestra un mensaje emergente simple.
-	 * 
-	 * @param texto el texto a mostrar en el cuadro de diálogo
-	 */
-	public void mostrarMensajeEmergente(String texto) {
-		JOptionPane.showMessageDialog(null, texto, "Mensaje", JOptionPane.INFORMATION_MESSAGE);
-	}
+    /**
+     * Muestra un mensaje emergente informativo al usuario.
+     * 
+     * @param texto El texto que se muestra en el cuadro de diálogo.
+     */
+    public void mostrarMensajeEmergente(String texto) {
+        JOptionPane.showMessageDialog(null, texto, "Mensaje", JOptionPane.INFORMATION_MESSAGE);
+    }
 
-	/**
-	 * Muestra una alerta emergente.
-	 * 
-	 * @param texto el texto de alerta a mostrar
-	 */
-	public void mostrarAlerta(String texto) {
-		JOptionPane.showMessageDialog(null, texto, "Alerta", JOptionPane.WARNING_MESSAGE);
-	}
+    /**
+     * Muestra una alerta emergente al usuario.
+     * 
+     * @param texto El texto de la alerta que se muestra en el cuadro de diálogo.
+     */
+    public void mostrarAlerta(String texto) {
+        JOptionPane.showMessageDialog(null, texto, "Alerta", JOptionPane.WARNING_MESSAGE);
+    }
 
-	/**
-	 * Muestra un mensaje de error emergente.
-	 * 
-	 * @param texto el mensaje de error a mostrar
-	 */
-	public void mostrarError(String texto) {
-		JOptionPane.showMessageDialog(null, texto, "Error", JOptionPane.ERROR_MESSAGE);
-	}
+    /**
+     * Muestra un mensaje de error emergente al usuario.
+     * 
+     * @param texto El mensaje de error que se muestra en el cuadro de diálogo.
+     */
+    public void mostrarError(String texto) {
+        JOptionPane.showMessageDialog(null, texto, "Error", JOptionPane.ERROR_MESSAGE);
+    }
 
-	public Long pedirLong(String mensaje) {
-		Long numero = null;
-		boolean esValido = false;
+    /**
+     * Pide un número de tipo Long al usuario mediante un cuadro de diálogo, 
+     * con validación para asegurarse de que la entrada sea un número válido.
+     * 
+     * @param mensaje El mensaje que se muestra al usuario.
+     * @return El número de tipo Long ingresado por el usuario, o null si el usuario cancela.
+     */
+    public Long pedirLong(String mensaje) {
+        Long numero = null;
+        boolean esValido = false;
 
-		while (!esValido) {
-			String input = JOptionPane.showInputDialog(null, mensaje, "Ingresar número", JOptionPane.QUESTION_MESSAGE);
-			if (input == null) {
-				return null;
-			}
+        while (!esValido) {
+            String input = JOptionPane.showInputDialog(null, mensaje, "Ingresar número", JOptionPane.QUESTION_MESSAGE);
+            if (input == null) {
+                return null;
+            }
 
-			try {
-				numero = Long.parseLong(input);
-				esValido = true;
-			} catch (NumberFormatException e) {
-				JOptionPane.showMessageDialog(null, "Por favor ingrese un número válido", "Entrada inválida",
-						JOptionPane.WARNING_MESSAGE);
-			}
-		}
+            try {
+                numero = Long.parseLong(input);
+                esValido = true;
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Por favor ingrese un número válido", "Entrada inválida",
+                        JOptionPane.WARNING_MESSAGE);
+            }
+        }
 
-		return numero;
-	}
+        return numero;
+    }
 
-	public String pedirString(String mensaje) {
-		String input = null;
+    /**
+     * Pide un texto al usuario mediante un cuadro de diálogo, 
+     * con validación para asegurarse de que la entrada no esté vacía.
+     * 
+     * @param mensaje El mensaje que se muestra al usuario.
+     * @return El texto ingresado por el usuario, o null si el usuario cancela.
+     */
+    public String pedirString(String mensaje) {
+        String input = null;
 
-		while (input == null || input.trim().isEmpty()) {
-			input = JOptionPane.showInputDialog(null, mensaje, "Ingresar texto", JOptionPane.QUESTION_MESSAGE);
-			if (input == null) {
-				return null;
-			} else if (input.trim().isEmpty()) {
-				JOptionPane.showMessageDialog(null, "Por favor ingrese un texto válido.", "Entrada inválida",
-						JOptionPane.WARNING_MESSAGE);
-			}
-		}
+        while (input == null || input.trim().isEmpty()) {
+            input = JOptionPane.showInputDialog(null, mensaje, "Ingresar texto", JOptionPane.QUESTION_MESSAGE);
+            if (input == null) {
+                return null;
+            } else if (input.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Por favor ingrese un texto válido.", "Entrada inválida",
+                        JOptionPane.WARNING_MESSAGE);
+            }
+        }
 
-		return input;
-	}
+        return input;
+    }
 
-	public int pedirOpcionDeLista(String mensaje, String[] listaMensajes) {
-		StringBuilder mensajeCompleto = new StringBuilder(mensaje + "\n\nOpciones:\n");
+    /**
+     * Muestra un cuadro de diálogo con una lista de opciones y pide al usuario 
+     * que seleccione una opción. Si la entrada no es válida, se vuelve a pedir.
+     * 
+     * @param mensaje El mensaje que se muestra al usuario.
+     * @param listaMensajes Las opciones que se muestran al usuario.
+     * @return El índice de la opción seleccionada, o -1 si el usuario cancela.
+     */
+    public int pedirOpcionDeLista(String mensaje, String[] listaMensajes) {
+        StringBuilder mensajeCompleto = new StringBuilder(mensaje + "\n\nOpciones:\n");
 
-		for (int i = 0; i < listaMensajes.length; i++) {
-			mensajeCompleto.append((i + 1) + ". " + listaMensajes[i] + "\n");
-		}
+        for (int i = 0; i < listaMensajes.length; i++) {
+            mensajeCompleto.append((i + 1) + ". " + listaMensajes[i] + "\n");
+        }
 
-		int opcion = -1;
-		boolean esValido = false;
+        int opcion = -1;
+        boolean esValido = false;
 
-		while (!esValido) {
-			String input = JOptionPane.showInputDialog(null, mensajeCompleto.toString(), "Elegir opción",
-					JOptionPane.QUESTION_MESSAGE);
+        while (!esValido) {
+            String input = JOptionPane.showInputDialog(null, mensajeCompleto.toString(), "Elegir opción",
+                    JOptionPane.QUESTION_MESSAGE);
 
-			if (input == null) {
-				return -1;
-			}
+            if (input == null) {
+                return -1;
+            }
 
-			try {
-				opcion = Integer.parseInt(input) - 1;
+            try {
+                opcion = Integer.parseInt(input) - 1;
 
-				if (opcion >= 0 && opcion < listaMensajes.length) {
-					esValido = true;
-				} else {
-					JOptionPane.showMessageDialog(null, "Por favor ingrese un número válido de la lista.",
-							"Entrada inválida", JOptionPane.WARNING_MESSAGE);
-				}
-			} catch (NumberFormatException e) {
-				JOptionPane.showMessageDialog(null, "Por favor ingrese un número válido.", "Entrada inválida",
-						JOptionPane.WARNING_MESSAGE);
-			}
-		}
+                if (opcion >= 0 && opcion < listaMensajes.length) {
+                    esValido = true;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Por favor ingrese un número válido de la lista.",
+                            "Entrada inválida", JOptionPane.WARNING_MESSAGE);
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Por favor ingrese un número válido.", "Entrada inválida",
+                        JOptionPane.WARNING_MESSAGE);
+            }
+        }
 
-		return opcion;
-	}
+        return opcion;
+    }
 
-	public int mostrarYesOrNo(String txt) {
-		int op = JOptionPane.showConfirmDialog(null, txt, "Confirmación", JOptionPane.YES_NO_OPTION,
-				JOptionPane.QUESTION_MESSAGE);
-		return op;
-	}
+    /**
+     * Muestra un cuadro de diálogo de confirmación con opciones de sí/no.
+     * 
+     * @param txt El mensaje que se muestra al usuario.
+     * @return El valor seleccionado por el usuario: 
+     *         JOptionPane.YES_OPTION para "Sí" o JOptionPane.NO_OPTION para "No".
+     */
+    public int mostrarYesOrNo(String txt) {
+        int op = JOptionPane.showConfirmDialog(null, txt, "Confirmación", JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
+        return op;
+    }
 
-	public boolean validarYesOrNo(int op) {
-		if (op == JOptionPane.YES_OPTION) {
-			return true;
-		} else if (op == JOptionPane.NO_OPTION) {
-			return false;
-		}
-		return false;
-	}
+    /**
+     * Valida la respuesta a una pregunta de sí/no y devuelve un valor booleano.
+     * 
+     * @param op El valor de la opción seleccionada (JOptionPane.YES_OPTION o JOptionPane.NO_OPTION).
+     * @return true si el usuario seleccionó "Sí", false si seleccionó "No".
+     */
+    public boolean validarYesOrNo(int op) {
+        return op == JOptionPane.YES_OPTION;
+    }
 
-	public ViewConsole() {
-		sc = new Scanner(System.in);
-	}
+    /**
+     * Constructor que inicializa un objeto Scanner para lectura desde la consola.
+     */
+    public ViewConsole() {
+        sc = new Scanner(System.in);
+    }
 
-	public void printLine(String txt) {
-		System.out.println(txt);
-	}
+    /**
+     * Imprime una línea de texto en la consola.
+     * 
+     * @param txt El texto a imprimir.
+     */
+    public void printLine(String txt) {
+        System.out.println(txt);
+    }
 
-	public void print(String txt) {
-		System.out.print(txt);
-	}
+    /**
+     * Imprime un texto en la consola sin salto de línea.
+     * 
+     * @param txt El texto a imprimir.
+     */
+    public void print(String txt) {
+        System.out.print(txt);
+    }
 
-	public void burnLine() {
-		sc.nextLine();
-	}
+    /**
+     * Avanza una línea en la consola.
+     */
+    public void burnLine() {
+        sc.nextLine();
+    }
 
-	public int readInt() {
-		return sc.nextInt();
-	}
+    /**
+     * Lee un número entero desde la consola.
+     * 
+     * @return El número entero ingresado.
+     */
+    public int readInt() {
+        return sc.nextInt();
+    }
 
-	public long readLong() {
-		return sc.nextLong();
-	}
+    /**
+     * Lee un número largo (long) desde la consola.
+     * 
+     * @return El número largo ingresado.
+     */
+    public long readLong() {
+        return sc.nextLong();
+    }
 
-	public double readDouble() {
-		return sc.nextDouble();
-	}
+    /**
+     * Lee un número decimal (double) desde la consola.
+     * 
+     * @return El número decimal ingresado.
+     */
+    public double readDouble() {
+        return sc.nextDouble();
+    }
 
-	public String readLine() {
-		return sc.nextLine();
-	}
+    /**
+     * Lee una línea de texto desde la consola.
+     * 
+     * @return La línea de texto ingresada.
+     */
+    public String readLine() {
+        return sc.nextLine();
+    }
 
-	public String readWord() {
-		return sc.next();
-	}
+    /**
+     * Lee una palabra desde la consola.
+     * 
+     * @return La palabra ingresada.
+     */
+    public String readWord() {
+        return sc.next();
+    }
 
 }

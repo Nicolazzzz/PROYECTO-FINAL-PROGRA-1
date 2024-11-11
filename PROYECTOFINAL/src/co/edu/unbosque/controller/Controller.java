@@ -58,6 +58,8 @@ public class Controller implements ActionListener {
 	private AppointmentController gestor;
 
 	public Controller() {
+		
+		generarEspecialista();
 		gestor = new AppointmentController();
 
 		// Generar varias citas
@@ -1838,7 +1840,7 @@ public class Controller implements ActionListener {
 
 					""";
 			vf.getCon().printLine(menu);
-			int op = vf.getCon().readInt();
+			int op = vf.getCon().readInt();//agg excepciones
 			vf.getCon().burnLine();
 
 			switch (op) {
@@ -1863,6 +1865,7 @@ public class Controller implements ActionListener {
 			case 2:
 				vf.getCon().printLine("---AGREGANDO CITA PACIENTE---");
 				pedirDatosPaciente(true, false);
+				
 				break;
 
 			case 3:
@@ -2445,6 +2448,12 @@ public class Controller implements ActionListener {
 		for (int i = 0; i < especialidades.length; i++) {
 			vf.getVp().getPanelInput().getCmbxEspecialidad().addItem(especialidades[i]);
 		}
+	}
+	
+	public String generarEspecialista() {
+		mf.getEspecialistaDAO().getAll().toString();
+		return mf.getEspecialistaDAO().getAll().toString();
+		
 	}
 
 }

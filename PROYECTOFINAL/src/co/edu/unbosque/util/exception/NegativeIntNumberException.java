@@ -8,17 +8,19 @@ package co.edu.unbosque.util.exception;
  * ingresado no es válido debido a que es negativo.
  * </p>
  * 
- * @author Emmanuel
- * @since 2024-09-24
+ * @author Nicolas Zambrano 
  * @version 1.0
  */
 public class NegativeIntNumberException extends Exception {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     * Serial version UID para la serialización de la excepción.
+     */
+    private static final long serialVersionUID = 1L;
 
-	public NegativeIntNumberException() {
-		super("NO PUEDE INGRESAR NÚMEROS NEGATIVOS");
-	}
+    /**
+     * Constructor por defecto que inicializa la excepción con un mensaje predeterminado.
+     */
+    public NegativeIntNumberException() {
+        super("NO PUEDE INGRESAR NÚMEROS NEGATIVOS");
+    }
 }
