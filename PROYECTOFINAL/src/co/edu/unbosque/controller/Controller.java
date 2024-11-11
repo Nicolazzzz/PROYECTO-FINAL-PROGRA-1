@@ -59,7 +59,7 @@ public class Controller implements ActionListener {
 	private boolean pacienteR;
 
 	public Controller() {
-
+		
 		mf = new ModelFacade();
 		vf = new ViewFacade();
 

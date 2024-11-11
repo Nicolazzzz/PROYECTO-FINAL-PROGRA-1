@@ -73,7 +73,7 @@ public class EmailController {
 			mTransport.connect(emailFrom, passwordFrom);
 			mTransport.sendMessage(mCorreo, mCorreo.getRecipients(Message.RecipientType.TO));
 			mTransport.close();
-
+			
 			JOptionPane.showMessageDialog(null, "Correo enviado");
 		} catch (NoSuchProviderException ex) {
 			Logger.getLogger(EmailController.class.getName()).log(Level.SEVERE, null, ex);

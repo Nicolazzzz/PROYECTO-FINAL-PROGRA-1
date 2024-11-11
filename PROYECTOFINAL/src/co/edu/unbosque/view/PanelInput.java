@@ -22,7 +22,7 @@ import javax.swing.SwingConstants;
  * correo electrónico, contraseñas, género y especialidad. También incluye botones
  * para guardar la información o volver al panel anterior.
  * 
- * @author Nicolas Zambrano
+ * @author Juan de la Hoz
  * @version 1.0
  */
 public class PanelInput extends JPanel {

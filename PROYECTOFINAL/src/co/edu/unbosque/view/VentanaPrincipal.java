@@ -10,7 +10,7 @@ import javax.swing.JFrame;
  * inicio de sesión, y las pantallas de inicio de director, especialista,
  * paciente y apartado.
  * 
- * @author Nicolas Zambrano
+ * @author Juan de la Hoz
  * @version 1.0
  */
 public class VentanaPrincipal extends JFrame {

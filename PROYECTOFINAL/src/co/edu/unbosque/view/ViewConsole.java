@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
  * (Scanner). Los métodos permiten mostrar mensajes, pedir entradas al usuario y
  * realizar validaciones de entradas en diversas formas.
  * 
- * @author Nicolas Zambrano
+ * @author Juan de la Hoz
  * @version 1.0
  */
 public class ViewConsole {

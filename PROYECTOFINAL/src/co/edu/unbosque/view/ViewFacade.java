@@ -4,7 +4,7 @@ package co.edu.unbosque.view;
  * La clase ViewFacade actúa como un intermediario entre la vista de consola (ViewConsole) 
  * y la ventana principal (VentanaPrincipal). Su propósito es proporcionar acceso a 
  * ambas vistas a través de una única interfaz, simplificando la interacción con la interfaz de usuario.
- * @author Nicolas Zambrano
+ * @author Juan de la Hoz
  * @version 1.0
  */
 public class ViewFacade {
