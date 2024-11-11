@@ -1,6 +1,5 @@
 package co.edu.unbosque.controller;
 
-import java.util.ArrayList;
 import java.util.Properties;
 
 import java.util.logging.Level;
@@ -16,9 +15,8 @@ import javax.mail.internet.MimeMessage;
 import javax.swing.JOptionPane;
 
 public class EmailController {
-	
-	//PRUEBAAAA
-	private String eliminar;
+
+	// PRUEBAAAA
 	private static String emailFrom = "bosquehealth.noreply@gmail.com";
 	private static String passwordFrom = "etbu bjjd xvzc yenm";
 
@@ -30,18 +28,17 @@ public class EmailController {
 	private static Session mSession;
 	private static MimeMessage mCorreo;
 	private static AppointmentController citas = new AppointmentController();
-	
 
 	public static void createScheduledEmail(String correo, String nombrePaciente, String nombreEspecialista,
 			String especialidad, String fechaC) {
 		mProperties = new Properties();
-		fechaC = citas.generarCitas(); 
-		
+		fechaC = citas.generarCitas();
+
 		emailTo = correo;
 		subject = "Cita Agendada";
 		content = "Estimado/a " + nombrePaciente
-				+ "\n\nNos complace informarle que su cita ha sido agengada para el dia: "+"\n"+ fechaC +"\nSu especialista asigando es "
-				+ nombreEspecialista + " de la especialidad de " + especialidad
+				+ "\n\nNos complace informarle que su cita ha sido agengada para el dia: " + "\n" + fechaC
+				+ "\nSu especialista asigando es " + nombreEspecialista + " de la especialidad de " + especialidad
 				+ "\n\nAgradecemos su confianza en nuestros servicios y nos mantenemos a su disposición para cualquier duda o consulta que pueda tener respecto a su tratamiento. \nCordialmente,\nEquipo de BosqueHealth";
 
 		mProperties.put("mail.smtp.host", "smtp.gmail.com");
@@ -136,12 +133,17 @@ public class EmailController {
 		}
 	}
 
-	public static void createRescheduledEmail(String correo) {
+	public static void createRescheduledEmail(String correo, String nombrePaciente, String nombreEspecialista,
+			String especialidad, String fechaC) {
 		mProperties = new Properties();
+		fechaC = citas.generarCitas();
 
 		emailTo = correo;
 		subject = "Cita Reagendada";
-		content = "Prueba gmail";
+		content = "Estimado/a " + nombrePaciente
+				+ "\n\nNos complace informarle que su cita ha sido reprogramada para el dia: " + "\n" + fechaC
+				+ "\nSu especialista asigando es " + nombreEspecialista + " de la especialidad de " + especialidad
+				+ "\n\nAgradecemos su confianza en nuestros servicios y nos mantenemos a su disposición para cualquier duda o consulta que pueda tener respecto a su tratamiento. \nCordialmente,\nEquipo de BosqueHealth";
 
 		mProperties.put("mail.smtp.host", "smtp.gmail.com");
 		mProperties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
@@ -167,8 +169,9 @@ public class EmailController {
 		}
 	}
 
-	public static void sendRescheduled(String correo) {
-		createRescheduledEmail(correo);
+	public static void sendRescheduled(String correo, String nombrePaciente, String nombreEspecialista,
+			String especialidad) {
+		createRescheduledEmail(correo, nombrePaciente, nombreEspecialista, especialidad, null);
 		try {
 			Transport mTransport = mSession.getTransport("smtp");
 			mTransport.connect(emailFrom, passwordFrom);

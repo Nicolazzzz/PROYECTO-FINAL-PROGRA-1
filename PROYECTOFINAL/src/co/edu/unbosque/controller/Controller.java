@@ -50,7 +50,11 @@ public class Controller implements ActionListener {
 	private boolean apartadoEspecialista;
 	private boolean apartadoEspecialidad;
 
-	private boolean paciente;
+	private boolean solicitarE;
+	private boolean enviarRM;
+	private boolean generarD;
+	private boolean generarT;
+
 	private AppointmentController gestor;
 
 	public Controller() {
@@ -70,8 +74,10 @@ public class Controller implements ActionListener {
 		vf.getCon().printLine(mf.getDirectorDAO().showAll());
 
 		asignarLectores();
-		vf.getVp().getPanelHEspecialista().getImg().setVisible(true);
-		vf.getVp().mostrarPanelHomeEspecialista();
+
+		vf.getVp().getPanelHPaciente().getImgP().setVisible(true);
+		vf.getVp().mostrarPanelHomePaciente();
+
 //		vf.getVp().getPanelEntrada().getImg().setVisible(true);
 //		vf.getVp().mostrarPanelWelcome();
 
@@ -122,6 +128,31 @@ public class Controller implements ActionListener {
 
 		vf.getVp().getPanelHDirector().getBtnEspecialidades().addActionListener(this);
 		vf.getVp().getPanelHDirector().getBtnEspecialidades().setActionCommand("ESPECIALIDADES");
+
+		// HOME ESPECIALISTA
+		vf.getVp().getPanelHEspecialista().getBtnVolver().addActionListener(this);
+		vf.getVp().getPanelHEspecialista().getBtnVolver().setActionCommand("VOLVERHOMEESPECIALISTA");
+
+		vf.getVp().getPanelHEspecialista().getBtnEnviar().addActionListener(this);
+		vf.getVp().getPanelHEspecialista().getBtnEnviar().setActionCommand("ENVIARC");
+
+		vf.getVp().getPanelHEspecialista().getBtnVer().addActionListener(this);
+		vf.getVp().getPanelHEspecialista().getBtnVer().setActionCommand("VERTURNOS");
+
+		vf.getVp().getPanelHEspecialista().getBtnSolicitarE().addActionListener(this);
+		vf.getVp().getPanelHEspecialista().getBtnSolicitarE().setActionCommand("SOLICITARE");
+
+		vf.getVp().getPanelHEspecialista().getBtnEnviarRM().addActionListener(this);
+		vf.getVp().getPanelHEspecialista().getBtnEnviarRM().setActionCommand("ENVIARR");
+
+		vf.getVp().getPanelHEspecialista().getBtnGenerarD().addActionListener(this);
+		vf.getVp().getPanelHEspecialista().getBtnGenerarD().setActionCommand("GENERARD");
+
+		vf.getVp().getPanelHEspecialista().getBtnGenerarT().addActionListener(this);
+		vf.getVp().getPanelHEspecialista().getBtnGenerarT().setActionCommand("GENERART");
+
+		vf.getVp().getPanelHEspecialista().getBtnChange().addActionListener(this);
+		vf.getVp().getPanelHEspecialista().getBtnChange().setActionCommand("CAMBIART");
 
 		// APARTADOS
 		vf.getVp().getPanelApartado().getBtnVolver().addActionListener(this);
@@ -244,12 +275,13 @@ public class Controller implements ActionListener {
 					ExceptionChecker.notValidPasswordException(password);
 					vf.getCon().mostrarAlerta(mf.getEspecialistaDAO().verifyPassword(id, password));
 					if (mf.getEspecialistaDAO().checkLogIn(id, password) == true) {
-						vf.getVp().getPanelInput().getCmbxEspecialidad().setVisible(true);
-						vf.getVp().getPanelInput().getImgD().setVisible(false);
-						vf.getVp().getPanelInput().getImgE().setVisible(true);
-						vf.getVp().getPanelInput().getImgP().setVisible(false);
-						vf.getVp().mostrarPanelInput();
 						especialistaTempId = id;
+						vf.getVp().getPanelHEspecialista().getTxtId().setText(especialistaTempId + "");
+						vf.getVp().getPanelHEspecialista().getTxtName().setText(
+								mf.getEspecialistaDAO().pickSpecialistData(especialistaTempId, true, false, false));
+						vf.getVp().getPanelHEspecialista().getTxtGmail().setText(
+								mf.getEspecialistaDAO().pickSpecialistData(especialistaTempId, false, false, true));
+						vf.getVp().mostrarPanelHomeEspecialista();
 					}
 
 				} catch (NotValidIdException j) {
@@ -323,8 +355,204 @@ public class Controller implements ActionListener {
 			directorTempId = 0;
 			vf.getVp().getPanelLogin().getTxtId().setText("");
 			vf.getVp().getPanelLogin().getTxtPwd().setText("");
+			vf.getVp().getPanelLogin().getImgE().setVisible(false);
+			vf.getVp().getPanelLogin().getImgD().setVisible(true);
 			vf.getVp().mostrarPanelLogin();
 
+			break;
+
+		// HOME ESPECIALISTA
+		case "VERTURNOS":
+			vf.getVp().getPanelHEspecialista().getScrollP().setVisible(true);
+			vf.getVp().getPanelHEspecialista().getTabla().setVisible(true);
+			setUpTurnsTable(mf.getEspecialistaDAO().pickSpecialistData(especialistaTempId, true, false, false));
+
+			break;
+
+		case "SOLICITARE":
+			vf.getVp().getPanelHEspecialista().getScrollP().setVisible(true);
+			vf.getVp().getPanelHEspecialista().getTabla().setVisible(true);
+			setUpTurnsTable(mf.getEspecialistaDAO().pickSpecialistData(especialistaTempId, true, false, false));
+			try {
+
+				Long id = vf.getCon().pedirLong("Ingrese el número de identificación del paciente");
+				if (id == null) {
+					vf.getCon().mostrarAlerta("Entrada inválida");
+				} else {
+					ExceptionChecker.notValidIdException(id);
+					vf.getCon().mostrarMensajeEmergente("Ingrese los exámenes a solicitar en el recuadro");
+					vf.getVp().getPanelHEspecialista().getScrollP().setVisible(false);
+					vf.getVp().getPanelHEspecialista().getTabla().setVisible(false);
+					vf.getVp().getPanelHEspecialista().getActionTxt().setText("SOLICITANDO EXAMENES");
+					vf.getVp().getPanelHEspecialista().getActionTxt().setVisible(true);
+					vf.getVp().getPanelHEspecialista().getScroll().setVisible(true);
+					vf.getVp().getPanelHEspecialista().getBtnEnviar().setVisible(true);
+					vf.getVp().getPanelHEspecialista().getBtnEnviar().setOpaque(true);
+
+					solicitarE = true;
+					pacienteTempId = id;
+				}
+			} catch (NotValidIdException j) {
+				vf.getCon().mostrarAlerta(
+						"Formato de id no valido, verifique que tenga minimo 8 digitos y maximo 10 digitos");
+			}
+
+			break;
+		case "ENVIARR":
+			vf.getVp().getPanelHEspecialista().getScrollP().setVisible(true);
+			vf.getVp().getPanelHEspecialista().getTabla().setVisible(true);
+			setUpTurnsTable(mf.getEspecialistaDAO().pickSpecialistData(especialistaTempId, true, false, false));
+			try {
+
+				Long id = vf.getCon().pedirLong("Ingrese el número de identificación del paciente");
+				if (id == null) {
+					vf.getCon().mostrarAlerta("Entrada inválida");
+				} else {
+					ExceptionChecker.notValidIdException(id);
+					vf.getCon().mostrarMensajeEmergente("Ingrese los resultados de los exámenes en el recuadro");
+					vf.getVp().getPanelHEspecialista().getScrollP().setVisible(false);
+					vf.getVp().getPanelHEspecialista().getActionTxt().setText("ENVIANDO RESULTADOS EXAMEN");
+					vf.getVp().getPanelHEspecialista().getActionTxt().setVisible(true);
+					vf.getVp().getPanelHEspecialista().getScroll().setVisible(true);
+					vf.getVp().getPanelHEspecialista().getBtnEnviar().setVisible(true);
+					vf.getVp().getPanelHEspecialista().getBtnEnviar().setOpaque(true);
+
+					enviarRM = true;
+					pacienteTempId = id;
+				}
+			} catch (NotValidIdException j) {
+				vf.getCon().mostrarAlerta(
+						"Formato de id no valido, verifique que tenga minimo 8 digitos y maximo 10 digitos");
+			}
+
+			break;
+		case "GENERARD":
+			vf.getVp().getPanelHEspecialista().getScrollP().setVisible(true);
+			vf.getVp().getPanelHEspecialista().getTabla().setVisible(true);
+			setUpTurnsTable(mf.getEspecialistaDAO().pickSpecialistData(especialistaTempId, true, false, false));
+			try {
+
+				Long id = vf.getCon().pedirLong("Ingrese el número de identificación del paciente");
+				if (id == null) {
+					vf.getCon().mostrarAlerta("Entrada inválida");
+				} else {
+					ExceptionChecker.notValidIdException(id);
+					vf.getCon().mostrarMensajeEmergente("Ingrese el diagnóstico en el recuadro");
+					vf.getVp().getPanelHEspecialista().getScrollP().setVisible(false);
+					vf.getVp().getPanelHEspecialista().getActionTxt().setText("GENERANDO DIAGNOSTICO");
+					vf.getVp().getPanelHEspecialista().getActionTxt().setVisible(true);
+					vf.getVp().getPanelHEspecialista().getScroll().setVisible(true);
+					vf.getVp().getPanelHEspecialista().getBtnEnviar().setText("GUARDAR");
+					vf.getVp().getPanelHEspecialista().getBtnEnviar().setVisible(true);
+					vf.getVp().getPanelHEspecialista().getBtnEnviar().setOpaque(true);
+
+					generarD = true;
+					pacienteTempId = id;
+				}
+			} catch (NotValidIdException j) {
+				vf.getCon().mostrarAlerta(
+						"Formato de id no valido, verifique que tenga minimo 8 digitos y maximo 10 digitos");
+			}
+			break;
+		case "GENERART":
+			vf.getVp().getPanelHEspecialista().getScrollP().setVisible(true);
+			vf.getVp().getPanelHEspecialista().getTabla().setVisible(true);
+			setUpTurnsTable(mf.getEspecialistaDAO().pickSpecialistData(especialistaTempId, true, false, false));
+			try {
+
+				Long id = vf.getCon().pedirLong("Ingrese el número de identificación del paciente");
+				if (id == null) {
+					vf.getCon().mostrarAlerta("Entrada inválida");
+				} else {
+					ExceptionChecker.notValidIdException(id);
+					vf.getCon().mostrarMensajeEmergente("Ingrese el diagnóstico en el recuadro");
+					vf.getVp().getPanelHEspecialista().getScrollP().setVisible(false);
+					vf.getVp().getPanelHEspecialista().getActionTxt().setText("GENERANDO TRATAMIENDO");
+					vf.getVp().getPanelHEspecialista().getScroll().setVisible(true);
+					vf.getVp().getPanelHEspecialista().getActionTxt().setVisible(true);
+					vf.getVp().getPanelHEspecialista().getBtnEnviar().setText("ENVIAR");
+					vf.getVp().getPanelHEspecialista().getBtnEnviar().setVisible(true);
+					vf.getVp().getPanelHEspecialista().getBtnEnviar().setOpaque(true);
+
+					generarT = true;
+					pacienteTempId = id;
+				}
+			} catch (NotValidIdException j) {
+				vf.getCon().mostrarAlerta(
+						"Formato de id no valido, verifique que tenga minimo 8 digitos y maximo 10 digitos");
+			}
+			break;
+		case "CAMBIART":
+			vf.getCon().mostrarError("Esta función no se encuentra disponible, proximamente....");
+			break;
+		case "ENVIARC":
+			vf.getCon().mostrarMensajeEmergente("Espere a recibir la confirmación de correo enviado");
+
+			if (solicitarE) {
+				String areaEspecialista = mf.getEspecialistaDAO().pickSpecialistData(especialistaTempId, false, true,
+						false);
+				String nombreEspecialista = mf.getEspecialistaDAO().pickSpecialistData(especialistaTempId, true, false,
+						false);
+				String examenSoli = vf.getVp().getPanelHEspecialista().getTxtEntrada().getText();
+				EmailController.sendExaminationRequested(
+						mf.getPacienteDAO().pickData(pacienteTempId, areaEspecialista, true, false),
+						mf.getPacienteDAO().pickData(pacienteTempId, areaEspecialista, false, true), nombreEspecialista,
+						examenSoli);
+			}
+
+			if (enviarRM) {
+				String areaEspecialista = mf.getEspecialistaDAO().pickSpecialistData(especialistaTempId, false, true,
+						false);
+				String nombreEspecialista = mf.getEspecialistaDAO().pickSpecialistData(especialistaTempId, true, false,
+						false);
+				String resultados = vf.getVp().getPanelHEspecialista().getTxtEntrada().getText();
+				EmailController.sendExaminationRequestedResults(
+						mf.getPacienteDAO().pickData(pacienteTempId, areaEspecialista, true, false),
+						mf.getPacienteDAO().pickData(pacienteTempId, areaEspecialista, false, true), nombreEspecialista,
+						resultados);
+			}
+
+			if (generarD) {
+
+				String diagnos = vf.getVp().getPanelHEspecialista().getTxtEntrada().getText();
+
+				int seguimiento = vf.getCon().mostrarYesOrNo("El paciente requiere seguimiento?");
+				boolean esSeg = vf.getCon().validarYesOrNo(seguimiento);
+				vf.getCon().mostrarMensajeEmergente(
+						mf.getPacienteDAO().setData(pacienteTempId, null, false, diagnos, true, esSeg, true));
+				vf.getVp().getPanelHEspecialista().getBtnEnviar().setText("ENVIAR");
+
+			}
+
+			if (generarT) {
+				String areaEspecialista = mf.getEspecialistaDAO().pickSpecialistData(especialistaTempId, false, true,
+						false);
+				String nombreEspecialista = mf.getEspecialistaDAO().pickSpecialistData(especialistaTempId, true, false,
+						false);
+				String tratamiento = vf.getVp().getPanelHEspecialista().getTxtEntrada().getText();
+
+				EmailController.sendTreatment(
+						mf.getPacienteDAO().pickData(pacienteTempId, areaEspecialista, true, false),
+						mf.getPacienteDAO().pickData(pacienteTempId, areaEspecialista, false, true), tratamiento,
+						nombreEspecialista);
+			}
+
+			solicitarE = false;
+			enviarRM = false;
+			generarD = false;
+			generarT = false;
+			vf.getVp().getPanelHEspecialista().getBtnEnviar().setVisible(false);
+			vf.getVp().getPanelHEspecialista().getScroll().setVisible(false);
+			vf.getVp().getPanelHEspecialista().getActionTxt().setVisible(false);
+
+			break;
+		case "VOLVERHOMEESPECIALISTA":
+			especialistaTempId = 0;
+			vf.getVp().getPanelLogin().getTxtId().setText("");
+			vf.getVp().getPanelLogin().getTxtPwd().setText("");
+			vf.getVp().getPanelLogin().getImgE().setVisible(true);
+			vf.getVp().getPanelLogin().getImgD().setVisible(false);
+			vf.getVp().mostrarPanelLogin();
 			break;
 
 		// APARTADOS
@@ -436,7 +664,9 @@ public class Controller implements ActionListener {
 
 							pacienteTempECita = especialidades[op];
 							pacienteTempId = id;
-
+							vf.getVp().getPanelInput().getImgD().setVisible(false);
+							vf.getVp().getPanelInput().getImgE().setVisible(false);
+							vf.getVp().getPanelInput().getImgP().setVisible(true);
 							vf.getVp().mostrarPanelInput();
 						}
 					}
@@ -469,6 +699,9 @@ public class Controller implements ActionListener {
 						} else {
 							ExceptionChecker.notValidIdException(id);
 							especialistaTempId = id;
+							vf.getVp().getPanelInput().getImgD().setVisible(false);
+							vf.getVp().getPanelInput().getImgE().setVisible(true);
+							vf.getVp().getPanelInput().getImgP().setVisible(false);
 							vf.getVp().mostrarPanelInput();
 						}
 					}
@@ -515,7 +748,7 @@ public class Controller implements ActionListener {
 						} else {
 							ExceptionChecker.notValidIdException(id);
 
-							String nombre = mf.getEspecialistaDAO().pickSpecialistData(id, true, false);
+							String nombre = mf.getEspecialistaDAO().pickSpecialistData(id, true, false, false);
 
 							if (mf.getEspecialistaDAO().delete(new EspecialistaDTO(id, null, 0, null, null, null, 0))) {
 								vf.getCon().mostrarMensajeEmergente("El especialista " + nombre + " ha sido eliminado");
@@ -609,7 +842,7 @@ public class Controller implements ActionListener {
 				getDatosPaciente(false, true);
 			}
 			if (modEspecialista) {
-				getDatosPaciente(false, true);
+				getDatosEspecialista(false, true);
 			}
 
 			break;
@@ -630,11 +863,13 @@ public class Controller implements ActionListener {
 				vf.getVp().mostrarPanelApartado();
 			}
 
-			if (paciente) {
-				vf.getVp().mostrarPanelWelcome();
-			}
+			vf.getVp().getPanelInput().getTxtId().setText("");
+			vf.getVp().getPanelInput().getTxtName().setText("");
+			vf.getVp().getPanelInput().getTxtEdad().setText("");
+			vf.getVp().getPanelInput().getTxtConfirmPswd().setText("");
+			vf.getVp().getPanelInput().getTxtPswd().setText("");
+			vf.getVp().getPanelInput().getTxtGmail().setText("");
 
-			paciente = false;
 			createDirector = false;
 			modDirector = false;
 			createEspecialista = false;
@@ -828,7 +1063,7 @@ public class Controller implements ActionListener {
 //		PENDIENTE			
 //			
 //			
-			String especialistaAsignado = "";
+			String especialistaAsignado = mf.getEspecialistaDAO().getRandomSpecialist(especialidad);
 
 			if (create == true && update == false) {
 				if (mf.getPacienteDAO().add(new PacienteDTO(id, nombre, edad, genero, correo, null, null, especialidad,
@@ -865,12 +1100,12 @@ public class Controller implements ActionListener {
 						vf.getVp().getPanelApartado().getImgP().setVisible(true);
 						vf.getCon().mostrarMensajeEmergente("Paciente actualizado con exito");
 						vf.getCon().mostrarMensajeEmergente("Espere a recibir la confirmación de correo enviado");
-						EmailController.sendRescheduled(correo);
+						EmailController.sendRescheduled(correo, nombre, especialistaAsignado, especialidad);
 						vf.getVp().mostrarPanelApartado();
 					} else {
 						vf.getCon().mostrarMensajeEmergente("Paciente actualizado con exito");
 						vf.getCon().mostrarMensajeEmergente("Espere a recibir la confirmación de correo enviado");
-						EmailController.sendRescheduled(correo);
+						EmailController.sendRescheduled(correo, nombre, especialistaAsignado, especialidad);
 
 					}
 				} else {
@@ -938,6 +1173,47 @@ public class Controller implements ActionListener {
 		vf.getVp().getPanelApartado().getTabla().repaint();
 	}
 
+	public void setUpTurnsTable(String especialista) {
+		String column[] = { "ID PACIENTE", "NOMBRE PACIENTE", "CORREO PACIENTE", "EDAD PACIENTE", "GENERO PACIENTE" };
+		ArrayList<PacienteDTO> pList = mf.getPacienteDAO().getAll();
+
+		String[][] rows = new String[1][5];
+		if (pList != null) {
+			rows = new String[pList.size()][5];
+		}
+
+		int i = 0;
+		for (PacienteDTO p : pList) {
+
+			if (p.getEspecialistaAsignado().equalsIgnoreCase(especialista)) {
+
+				rows[i][0] = Long.toString(p.getId());
+
+				rows[i][1] = p.getNombre();
+				rows[i][2] = p.getCorreo();
+				rows[i][3] = Integer.toString(p.getEdad());
+				rows[i][4] = p.getGenero();
+
+				i++;
+			}
+		}
+
+		DefaultTableModel model = new DefaultTableModel(rows, column) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+
+		vf.getVp().getPanelHEspecialista().getTabla().setModel(model);
+		vf.getVp().getPanelHEspecialista().getTabla().repaint();
+	}
+
 	public void setUpPatientSpecialtyTable(String especialidad) {
 		String column[] = { "ID", "NOMBRE", "GMAIL", "EDAD", "GENERO", "ESPECIALISTA", "ESPECIALIDAD", "SEGUIMIENTO" };
 		ArrayList<PacienteDTO> pList = mf.getPacienteDAO().getAll();
@@ -989,24 +1265,23 @@ public class Controller implements ActionListener {
 	}
 
 	public void setUpEspecialistTable() {
-		String column[] = { "ID", "NOMBRE", "GMAIL", "EDAD", "GENERO", "ESPECIALIDAD" };
+		String column[] = { "ID", "NOMBRE", "GMAIL", "EDAD", "GENERO", "ESPECIALIDAD", "CONTRASEÑA" };
 		ArrayList<EspecialistaDTO> eList = mf.getEspecialistaDAO().getAll();
 
-		String[][] rows = new String[1][6];
+		String[][] rows = new String[1][7];
 		if (eList != null) {
-			rows = new String[eList.size()][6];
+			rows = new String[eList.size()][7];
 		}
 
 		int i = 0;
 		for (EspecialistaDTO p : eList) {
 			rows[i][0] = Long.toString(p.getId());
-			// recuperar el Especialista
-
 			rows[i][1] = p.getNombre();
 			rows[i][2] = p.getCorreo();
 			rows[i][3] = Integer.toString(p.getEdad());
 			rows[i][4] = p.getGenero();
 			rows[i][5] = p.getEspecialidad();
+			rows[i][6] = Long.toString(p.getPassword());
 			i++;
 		}
 
@@ -1271,8 +1546,10 @@ public class Controller implements ActionListener {
 			vf.getCon().printLine(menu);
 			int op = vf.getCon().readInt();
 			vf.getCon().burnLine();
-			String nombreEspecialista = mf.getEspecialistaDAO().pickSpecialistData(especialistaTempId, true, false);
-			String areaEspecialista = mf.getEspecialistaDAO().pickSpecialistData(especialistaTempId, false, true);
+			String nombreEspecialista = mf.getEspecialistaDAO().pickSpecialistData(especialistaTempId, true, false,
+					false);
+			String areaEspecialista = mf.getEspecialistaDAO().pickSpecialistData(especialistaTempId, false, true,
+					false);
 			switch (op) {
 			case 1:
 				vf.getCon().printLine("VIENDO TURNOS ESPECIALISTA");
@@ -1952,7 +2229,7 @@ public class Controller implements ActionListener {
 								new PacienteDTO(id, nombre, edad, genero, correo, null, null, especialidadCita, null,
 										false)) == true) {
 					vf.getCon().printLine("Paciente actualizado con exito");
-					EmailController.sendRescheduled(correo);
+					EmailController.sendRescheduled(correo, nombre, especialistaAsignado, especialidadCita);
 				} else {
 					vf.getCon().printLine("Intente nuevamente, verifique los datos ingresados");
 				}

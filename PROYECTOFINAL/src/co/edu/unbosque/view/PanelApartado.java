@@ -11,7 +11,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
 
 public class PanelApartado extends JPanel {
 
@@ -50,14 +49,7 @@ public class PanelApartado extends JPanel {
 		imgA.setBounds(0, 0, 1280, 720);
 		imgA.setVisible(true);
 
-		DefaultTableModel model = new DefaultTableModel() {
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return false;
-			}
-		};
-
-		tabla = new JTable(model);
+		tabla = new JTable();
 		tabla.setEnabled(true);
 		tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		tabla.getTableHeader().setReorderingAllowed(true);

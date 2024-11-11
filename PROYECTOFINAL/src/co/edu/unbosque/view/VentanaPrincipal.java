@@ -122,7 +122,7 @@ public class VentanaPrincipal extends JFrame {
 	}
 
 	public void mostrarPanelHomePaciente() {
-		setContentPane(panelHDirector);
+		setContentPane(panelHPaciente);
 	}
 
 	public void mostrarPanelApartado() {

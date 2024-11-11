@@ -3,6 +3,7 @@ package co.edu.unbosque.model.persistence;
 import java.util.ArrayList;
 import java.util.Random;
 
+import co.edu.unbosque.model.Director;
 import co.edu.unbosque.model.Especialista;
 import co.edu.unbosque.model.EspecialistaDTO;
 
@@ -172,59 +173,49 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 		FileHandler.writeSerialized(SERIALIZED_NAME, listaEspecialistas);
 	}
 
-	public String logIn(long id, long password) {
-
-		for (Especialista e : listaEspecialistas) {
-			if (e.getId() == id) {
-
-				if (e.getPassword() == password) {
-					return "Bienvenido!";
-				} else {
-					return "Contraseña equivocada, Verifique su contraseña";
-				}
-
-			} else {
-				return "Número de identificación equivocado, verifique los datos ingresados";
-			}
-		}
-
-		return null;
-	}
-
 	public String verifyPassword(long id, long password) {
 
-		for (Especialista d : listaEspecialistas) {
-			if (d.getId() == id) {
-				if (d.getPassword() == password) {
-					return "Bienvenido " + d.getNombre() + "!";
-				} else {
-					return "Contraseña equivocada, Verifique su contraseña";
-				}
+		String content = "";
+		boolean cc = false;
+		boolean pswrd = false;
 
-			} else {
-				return "Número de identificación equivocado, verifique los datos ingresados";
+		for (Especialista e : listaEspecialistas) {
+			if (e.getPassword() == password)
+				pswrd = true;
+			if (e.getId() == id) {
+				cc = true;
+				if (e.getPassword() == password) {
+					pswrd = true;
+					content = "Bienvenido " + e.getNombre() + "!";
+				}
 			}
 		}
 
-		return null;
+		if (cc == false) {
+			content = "Número de identificación equivocado, verifique los datos ingresados";
+		} else if (pswrd == false) {
+			content = "Contraseña equivocada, Verifique su contraseña";
+		}
+		if (cc == false && pswrd == false) {
+			content = "Contraseña y usuario incorrectos, intente nuevamente";
+		}
+
+		return content;
 	}
 
 	public boolean checkLogIn(long id, long password) {
 
+		boolean confirmed = false;
 		for (Especialista e : listaEspecialistas) {
 			if (e.getId() == id) {
 				if (e.getPassword() == password) {
-					return true;
-				} else {
-					return false;
+					confirmed = true;
 				}
 
-			} else {
-				return false;
 			}
 		}
 
-		return false;
+		return confirmed;
 	}
 
 	public boolean setLimitSpecialist(int index, String especialidad) {
@@ -271,7 +262,7 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 		return especialistaA[index1];
 	}
 
-	public String pickSpecialistData(long id, boolean esNombre, boolean esEspecialidad) {
+	public String pickSpecialistData(long id, boolean esNombre, boolean esEspecialidad, boolean esCorreo) {
 
 		for (Especialista e : listaEspecialistas) {
 			if (e.getId() == id) {
@@ -281,6 +272,10 @@ public class EspecialistaDAO implements CRUDOperation<EspecialistaDTO, Especiali
 
 				if (esEspecialidad) {
 					return e.getEspecialidad();
+				}
+
+				if (esCorreo) {
+					return e.getCorreo();
 				}
 
 			}
