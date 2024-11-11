@@ -49,7 +49,7 @@ public class PanelHomeEspecialista extends JPanel {
 		img.setVisible(true);
 
 		actionTxt = new JLabel("Generando diagnostico", SwingConstants.CENTER);
-		actionTxt.setFont(new Font("SansSerif", Font.BOLD, 30));
+		actionTxt.setFont(new Font("SansSerif", Font.BOLD, 20));
 		actionTxt.setForeground(Color.RED);
 		actionTxt.setBounds(480, 315, 380, 50);
 		actionTxt.setVisible(false);
