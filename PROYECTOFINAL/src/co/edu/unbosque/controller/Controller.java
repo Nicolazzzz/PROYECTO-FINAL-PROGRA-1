@@ -22,44 +22,57 @@ import co.edu.unbosque.util.exception.NotValidPasswordException;
 import co.edu.unbosque.util.exception.NotValidStringInputException;
 import co.edu.unbosque.view.ViewFacade;
 
+/**
+ * Controlador principal de la aplicación que implementa la interfaz
+ * {@link ActionListener}. Maneja las interacciones entre el modelo
+ * ({@link ModelFacade}) y la vista ({@link ViewFacade}), y gestiona las
+ * acciones del usuario.
+ *
+ * @author Mario Rodríguez
+ * @version 1.0
+ */
 public class Controller implements ActionListener {
 
-	private ModelFacade mf;
-	private ViewFacade vf;
-	private Properties prop;
+	private ModelFacade mf; // Fachada para manejar el modelo de la aplicación
+	private ViewFacade vf; // Fachada para manejar la vista de la aplicación
+	private Properties prop; // Propiedades cargadas desde archivo de configuración
 
-	private String[] especialidades;
+	private String[] especialidades; // Arreglo de especialidades médicas
 
-	private long directorTempId;
-	private long pacienteTempId;
-	private String pacienteTempECita;
-	private long especialistaTempId;
+	private long directorTempId; // Identificación temporal del director
+	private long pacienteTempId; // Identificación temporal del paciente
+	private String pacienteTempECita; // Estado temporal de la cita del paciente
+	private long especialistaTempId; // Identificación temporal del especialista
 
-	private boolean loginDirector;
-	private boolean loginEspecialista;
+	private boolean loginDirector; // Indicador de sesión de director iniciada
+	private boolean loginEspecialista; // Indicador de sesión de especialista iniciada
 
-	private boolean createDirector;
-	private boolean createEspecialista;
-	private boolean createPaciente;
+	private boolean createDirector; // Bandera para la creación de un director
+	private boolean createEspecialista; // Bandera para la creación de un especialista
+	private boolean createPaciente; // Bandera para la creación de un paciente
 
-	private boolean modDirector;
-	private boolean modEspecialista;
-	private boolean modPaciente;
+	private boolean modDirector; // Bandera para modificar un director
+	private boolean modEspecialista; // Bandera para modificar un especialista
+	private boolean modPaciente; // Bandera para modificar un paciente
 
-	private boolean apartadoPaciente;
-	private boolean apartadoEspecialista;
-	private boolean apartadoEspecialidad;
+	private boolean apartadoPaciente; // Bandera para gestionar el apartado de pacientes
+	private boolean apartadoEspecialista; // Bandera para gestionar el apartado de especialistas
+	private boolean apartadoEspecialidad; // Bandera para gestionar el apartado de especialidades
 
-	private boolean solicitarE;
-	private boolean enviarRM;
-	private boolean generarD;
-	private boolean generarT;
+	private boolean solicitarE; // Bandera para solicitar una especialidad
+	private boolean enviarRM; // Bandera para enviar resultados médicos
+	private boolean generarD; // Bandera para generar un diagnóstico
+	private boolean generarT; // Bandera para generar un tratamiento
 
-	private boolean pacienteA;
-	private boolean pacienteR;
+	private boolean pacienteA; // Bandera para aceptar un paciente
+	private boolean pacienteR; // Bandera para rechazar un paciente
 
+	/**
+	 * Constructor de la clase Controller. Inicializa las instancias de ModelFacade
+	 * y ViewFacade, asigna los listeners a los componentes de la vista y carga las
+	 * propiedades de configuración.
+	 */
 	public Controller() {
-		
 		mf = new ModelFacade();
 		vf = new ViewFacade();
 
@@ -71,9 +84,12 @@ public class Controller implements ActionListener {
 		prop = FileHandler.loadProperties("config.properties");
 
 		fillCombxEspecialidades();
-
 	}
 
+	/**
+	 * Asigna los listeners a los componentes de la interfaz de usuario. Este método
+	 * configura los eventos que serán escuchados por el controlador.
+	 */
 	public void asignarLectores() {
 		// WELCOME
 		// 3
@@ -178,6 +194,12 @@ public class Controller implements ActionListener {
 
 	}
 
+	/**
+	 * Método que maneja los eventos de acción generados por los componentes de la
+	 * interfaz.
+	 * 
+	 * @param e el evento de acción que fue generado
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
@@ -1006,7 +1028,10 @@ public class Controller implements ActionListener {
 		}
 
 	}
-
+	/**
+     * Método que recibe los datos del director.
+     * @param leer y extraer el texto del director.
+     */
 	public void getDatosDirector(boolean create, boolean update) {
 		try {
 			long id = Long.parseLong(vf.getVp().getPanelInput().getTxtId().getText());
@@ -1083,6 +1108,10 @@ public class Controller implements ActionListener {
 		}
 	}
 
+	/**
+     * Método que recibe los datos del especialista.
+     * @param leer y extraer el texto del especialista.
+     */
 	public void getDatosEspecialista(boolean create, boolean update) {
 		try {
 			long id = Long.parseLong(vf.getVp().getPanelInput().getTxtId().getText());
@@ -1166,7 +1195,10 @@ public class Controller implements ActionListener {
 			vf.getCon().mostrarAlerta("Verifique el tipo de datos que va en los campos y lo que ingreso");
 		}
 	}
-
+	/**
+     * Método que recibe los datos del paciente.
+     * @param leer y extraer el texto del paciente.
+     */
 	public void getDatosPaciente(boolean create, boolean update) {
 		try {
 			long id = Long.parseLong(vf.getVp().getPanelInput().getTxtId().getText());
@@ -1262,7 +1294,10 @@ public class Controller implements ActionListener {
 			vf.getCon().mostrarAlerta("Verifique el tipo de datos que va en los campos y lo que ingreso");
 		}
 	}
-
+	/**
+     * Método setea las tablas de paciente.
+     * @param para rellenar las tablas.
+     */
 	public void setUpPatientTable() {
 		String column[] = { "ID", "NOMBRE", "GMAIL", "EDAD", "GENERO", "ESPECIALISTA", "ESPECIALIDAD", "SEGUIMIENTO" };
 		ArrayList<PacienteDTO> pList = mf.getPacienteDAO().getAll();
@@ -1307,6 +1342,11 @@ public class Controller implements ActionListener {
 		vf.getVp().getPanelApartado().getTabla().setModel(model);
 		vf.getVp().getPanelApartado().getTabla().repaint();
 	}
+	
+	/**
+     * Método setea las tablas de turno.
+     * @param para rellenar las tablas.
+     */
 
 	public void setUpTurnsTable(String especialista) {
 		String column[] = { "ID PACIENTE", "NOMBRE PACIENTE", "CORREO PACIENTE", "EDAD PACIENTE", "GENERO PACIENTE" };
@@ -1349,6 +1389,10 @@ public class Controller implements ActionListener {
 		vf.getVp().getPanelHEspecialista().getTabla().repaint();
 	}
 
+	/**
+     * Método setea las tablas de paciente especialidad.
+     * @param para rellenar las tablas.
+     */
 	public void setUpPatientSpecialtyTable(String especialidad) {
 		String column[] = { "ID", "NOMBRE", "GMAIL", "EDAD", "GENERO", "ESPECIALISTA", "ESPECIALIDAD", "SEGUIMIENTO" };
 		ArrayList<PacienteDTO> pList = mf.getPacienteDAO().getAll();
